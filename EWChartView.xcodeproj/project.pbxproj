@@ -14,6 +14,7 @@
 		AA5A1C081B70E314000B37C3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA5A1C071B70E314000B37C3 /* Images.xcassets */; };
 		AA5A1C0B1B70E314000B37C3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA5A1C091B70E314000B37C3 /* LaunchScreen.xib */; };
 		AA5A1C171B70E314000B37C3 /* EWChartViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C161B70E314000B37C3 /* EWChartViewTests.m */; };
+		AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C231B70E512000B37C3 /* EWPieChartView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		AA5A1C101B70E314000B37C3 /* EWChartViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EWChartViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA5A1C151B70E314000B37C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA5A1C161B70E314000B37C3 /* EWChartViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EWChartViewTests.m; sourceTree = "<group>"; };
+		AA5A1C221B70E512000B37C3 /* EWPieChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWPieChartView.h; sourceTree = "<group>"; };
+		AA5A1C231B70E512000B37C3 /* EWPieChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWPieChartView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		AA5A1BF91B70E313000B37C3 /* EWChartView */ = {
 			isa = PBXGroup;
 			children = (
+				AA5A1C211B70E4FF000B37C3 /* EWChartViews */,
 				AA5A1BFE1B70E314000B37C3 /* AppDelegate.h */,
 				AA5A1BFF1B70E314000B37C3 /* AppDelegate.m */,
 				AA5A1C011B70E314000B37C3 /* ViewController.h */,
@@ -117,6 +121,15 @@
 				AA5A1C151B70E314000B37C3 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AA5A1C211B70E4FF000B37C3 /* EWChartViews */ = {
+			isa = PBXGroup;
+			children = (
+				AA5A1C221B70E512000B37C3 /* EWPieChartView.h */,
+				AA5A1C231B70E512000B37C3 /* EWPieChartView.m */,
+			);
+			path = EWChartViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,6 +234,7 @@
 			files = (
 				AA5A1C031B70E314000B37C3 /* ViewController.m in Sources */,
 				AA5A1C001B70E314000B37C3 /* AppDelegate.m in Sources */,
+				AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */,
 				AA5A1BFD1B70E314000B37C3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
