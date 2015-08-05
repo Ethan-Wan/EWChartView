@@ -9,7 +9,7 @@
 #import "EWChartView.h"
 @class EWLineCharView;
 
-@protocol EWLineCharViewDataSource <EWChartViewDataSource>
+@protocol EWLineChartViewDataSource <EWChartViewDataSource>
 
 @required
 
@@ -78,7 +78,7 @@
 
 @end
 
-@protocol EWLineCharViewDelegate <EWChartViewDelegate>
+@protocol EWLineChartViewDelegate <EWChartViewDelegate>
 
 @optional
 
@@ -145,8 +145,8 @@
 
 @interface EWLineCharView : EWChartView
 
-@property (nonatomic, weak) id<EWLineCharViewDataSource> dataSource;
-@property (nonatomic, weak) id<EWLineCharViewDelegate> delegate;
+@property (nonatomic, weak) id<EWLineChartViewDataSource> dataSource;
+@property (nonatomic, weak) id<EWLineChartViewDelegate> delegate;
 
 /** 是否显示坐标网格 */
 @property (nonatomic, assign) BOOL showGrid  ; //default NO

@@ -10,21 +10,38 @@
 
 //default parameter
 BOOL static const kEWPieChartViewShowGrid = NO;
+CGFloat static const kEWPieChartViewLineWidth = 3.0f;
+NSInteger static const kEWPieChartViewLineNumber = 1;
 
-@interface JBLineChartPoint : NSObject
+//macro
+#define EWPieChartViewLineDefalutColor [UIColor blackColor];
+
+@interface EWLineChartPoint : NSObject
 
 @property (nonatomic, assign) CGPoint position;
 @property (nonatomic, assign) BOOL hidden;
 
 @end
 
+@interface EWChartView (Private)
+
+- (BOOL)hasMaximumValue;
+- (BOOL)hasMinimumValue;
+
+@end
+
+
 @interface EWLineCharView()
 
 @property (nonatomic, strong) NSArray *chartData;
+@property (nonatomic, assign) CGFloat cachedMinHeight;
+@property (nonatomic, assign) CGFloat cachedMaxHeight;
 
 @end
 
 @implementation EWLineCharView
+@dynamic dataSource;
+@dynamic delegate;
 
 #pragma mark - init
 
@@ -50,7 +67,42 @@ BOOL static const kEWPieChartViewShowGrid = NO;
 
 - (void)setup
 {
+    self.backgroundColor = [UIColor whiteColor];
     self.showGrid = kEWPieChartViewShowGrid;
+}
+
+
+-(NSInteger)numberOfLineInLineChart
+{
+    if ([self.dataSource respondsToSelector:@selector(numberOfLinesInLineChartView:)])
+    {
+        return [self.dataSource numberOfLinesInLineChartView:self];
+    }else
+    {
+        return kEWPieChartViewLineNumber;
+    }
+}
+
+-(UIColor *)colorForLineAtLineIndex:(NSInteger)lineIndex
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartView:colorForLineAtLineIndex:)])
+    {
+        return [self.delegate lineChartView:self colorForLineAtLineIndex:lineIndex];
+    }else
+    {
+        return EWPieChartViewLineDefalutColor;
+    }
+}
+
+-(CGFloat)widthForLineAtLineIndex:(NSInteger)lineIndex
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartView:widthForLineAtLineIndex:)])
+    {
+        return [self.delegate lineChartView:self widthForLineAtLineIndex:lineIndex];
+    }else
+    {
+        return kEWPieChartViewLineWidth;
+    }
 }
 
 /**
@@ -60,9 +112,8 @@ BOOL static const kEWPieChartViewShowGrid = NO;
  */
 -(void)drawGrid:(CGContextRef)ctx
 {
-     CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/self.sectionCount;
-    
-    for (int index = 0; index < self.sectionCount + 1; index++) {
+     CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/[super sectionCount];
+    for (int index = 0; index < self.sectionCount ; index++) {
         CGContextSaveGState(ctx);
         {
             CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + verticalLength * index);
@@ -76,7 +127,7 @@ BOOL static const kEWPieChartViewShowGrid = NO;
     CGFloat dataCount = [self dataCount];
     CGFloat horizontalSpace = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / dataCount;
     
-    for (int index = 0; index < dataCount; index++) {
+    for (int index = 1; index < dataCount + 1 ; index++) {
         CGContextSaveGState(ctx);
         {
             CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, kEWChartViewHeaderPadding);
@@ -99,8 +150,7 @@ BOOL static const kEWPieChartViewShowGrid = NO;
 - (NSUInteger)dataCount
 {
     NSUInteger dataCount = 0;
-    NSAssert([self.dataSource respondsToSelector:@selector(numberOfLinesInLineChartView:)], @"EWLineChartView // dataSource must implement - (NSUInteger)numberOfLinesInLineChartView:(EWLineChartView *)lineChartView");
-    NSInteger numberOfLines = [self.dataSource numberOfLinesInLineChartView:self];
+    NSInteger numberOfLines = [self numberOfLineInLineChart];
     for (NSInteger lineIndex = 0; lineIndex < numberOfLines; lineIndex++)
     {
         NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:numberOfLinesAtLineIndex:)], @"EWLineChartView // dataSource must implement - (NSUInteger)lineChartView:(EWLineChartView *)lineChartView numberOfVerticalValuesAtLineIndex:(NSUInteger)lineIndex");
@@ -120,50 +170,66 @@ BOOL static const kEWPieChartViewShowGrid = NO;
  */
 -(CGFloat)standardizedHeightForvalueHeight:(CGFloat)valueHeight
 {
-    return 0;
+    CGFloat minHeight = [self minimumValue];
+    CGFloat maxHeight = [self maximumValue];
+    
+    if ((maxHeight - minHeight) <= 0)
+    {
+        return 0;
+    }
+    
+    return ((valueHeight - minHeight) / (maxHeight - minHeight)) * (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight);
 }
+
 #pragma mark - Public Method
 
 -(void)reloadData
 {
-     __block CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
-    
+    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
         
-        CGFloat pointSpace = mainViewRect.size.width / [self dataCount]; // Space in between points
+    CGFloat pointSpace = mainViewRect.size.width / [self dataCount]; // Space in between points
     
-//      CGFloat xOffset = chartPadding + pointSpace * 0.5 + self.lefterView.frame.size.width;
-//      CGFloat yOffset = 0;
+    CGFloat xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+    CGFloat yOffset = 0;
     
-        NSMutableArray *mutableChartData = [NSMutableArray array];
-        NSUInteger numberOfLines = [self.dataSource numberOfLinesInLineChartView:self];
-        for (NSUInteger lineIndex=0; lineIndex<numberOfLines; lineIndex++)
+    NSMutableArray *mutableChartData = [NSMutableArray array];
+    NSUInteger numberOfLines = [self numberOfLineInLineChart];
+    
+    for (NSUInteger lineIndex=0; lineIndex<numberOfLines; lineIndex++)
+    {
+        NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+        NSMutableArray *chartPointData = [NSMutableArray array];
+        for (NSUInteger horizontalIndex=0; horizontalIndex<dataCount; horizontalIndex++)
         {
-            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
-            NSMutableArray *chartPointData = [NSMutableArray array];
-            for (NSUInteger horizontalIndex=0; horizontalIndex<dataCount; horizontalIndex++)
-            {
-                NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:verticalValueForHorizontalIndex:atLineIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex");
-                CGFloat valueHeight =  [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+            NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:verticalValueForHorizontalIndex:atLineIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex");
+            CGFloat valueHeight =  [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
                 
-                JBLineChartPoint *chartPoint = [[JBLineChartPoint alloc] init];
+            EWLineChartPoint *chartPoint = [[EWLineChartPoint alloc] init];
                 
-//                CGFloat normalizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
-//                yOffset = mainViewRect.size.height - normalizedHeight;
-//                
-//                chartPoint.position = CGPointMake(xOffset, yOffset);
-//                
-//                [chartPointData addObject:chartPoint];
-//                xOffset += pointSpace;
-            }
-//            [mutableChartData addObject:chartPointData];
-//            xOffset = chartPadding + pointSpace * 0.5 + self.lefterView.frame.size.width;
+            CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
+            
+            yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
+
+            chartPoint.position = CGPointMake(xOffset, yOffset);
+
+            [chartPointData addObject:chartPoint];
+            xOffset += pointSpace;
         }
-        self.chartData = [NSArray arrayWithArray:mutableChartData];
+        [mutableChartData addObject:chartPointData];
+        xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+    }
+    self.chartData = [NSArray arrayWithArray:mutableChartData];
+    [self setNeedsDisplay];
 }
 
 #pragma mark - drawRect
 
 - (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    
+    if (self.chartData.count <= 0) {
+        return;
+    }
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
@@ -172,16 +238,127 @@ BOOL static const kEWPieChartViewShowGrid = NO;
         [self drawGrid:ctx];
         CGContextRestoreGState(ctx);
     }
+    
+    int index = 0;
+
+    for (NSArray *lineData in self.chartData)
+    {
+        CGContextSaveGState(ctx);
+        if (lineData.count == 0)
+        {
+            continue;
+        }
+        
+       [lineData enumerateObjectsUsingBlock:^(EWLineChartPoint *point, NSUInteger idx, BOOL *stop) {
+           if (idx == 0)
+           {
+                CGContextMoveToPoint(ctx, point.position.x, point.position.y);
+           }else
+           {
+               CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
+           }
+           
+           NSLog(@"%f--%f",point.position.x,point.position.y);
+       }];
+        CGContextSetLineWidth(ctx, [self widthForLineAtLineIndex:index]);
+        CGContextSetLineJoin(ctx, kCGLineJoinRound);
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+        [[self colorForLineAtLineIndex:index] set];
+        
+        CGContextStrokePath(ctx);
+        
+        index++;
+        CGContextRestoreGState(ctx);
+    }
+    
+    
+    
 }
 
-#pragma mark - drawRect
+#pragma mark - Getter And Setter
 
--(NSArray *)chartData
+- (CGFloat)minimumValue
 {
-    if (_chartData) {
-        self.chartData = [NSMutableArray array];
+    if ([self hasMinimumValue])
+    {
+        return fminf(self.cachedMinHeight, [super minimumValue]);
     }
-    return _chartData;
+    return self.cachedMinHeight;
+}
+
+- (CGFloat)maximumValue
+{
+    if ([self hasMaximumValue])
+    {
+        return fmaxf(self.cachedMaxHeight, [super maximumValue]);
+    }
+    return self.cachedMaxHeight;
+}
+
+-(CGFloat)cachedMinHeight
+{
+    if (!_cachedMinHeight) {
+        CGFloat minHeight = 0;
+        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+        {
+            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+            {
+                CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+                if (height < minHeight)
+                {
+                    minHeight = height;
+                }
+            }
+        }
+        _cachedMinHeight = minHeight;
+    }
+    return _cachedMinHeight;
+}
+
+-(CGFloat)cachedMaxHeight
+{
+    if (!_cachedMaxHeight) {
+        CGFloat maxHeight = 0;
+        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+        {
+            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+            {
+                 CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+                if (height > maxHeight)
+                {
+                    maxHeight = height;
+                }
+            }
+        }
+        _cachedMaxHeight = maxHeight;
+    }
+    return _cachedMaxHeight;
+}
+
+@end
+@implementation EWLineChartPoint
+
+#pragma mark - Alloc/Init
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        _position = CGPointZero;
+    }
+    return self;
+}
+
+#pragma mark - Compare
+
+- (NSComparisonResult)compare:(EWLineChartPoint *)otherObject
+{
+    return self.position.x > otherObject.position.x;
 }
 
 @end

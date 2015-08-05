@@ -9,14 +9,19 @@
 #import "EWChartView.h"
 
 //default parameter
-CGFloat   static const kEWChartViewMinValue     = 0.0f;
-CGFloat   static const kEWChartViewManValue     = 1.0f;
 NSInteger static const kEWChartViewSectionCount = 1;
 NSInteger static const kEWChartViewLabelFont    = 12;
 
 //const
-CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
+//CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
 CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
+
+@interface EWChartView ()
+
+@property (nonatomic, assign) BOOL hasMaximumValue;
+@property (nonatomic, assign) BOOL hasMinimumValue;
+
+@end
 
 @implementation EWChartView
 
@@ -24,34 +29,42 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    if(self){
-        [self setup];
+    if(self = [super initWithFrame:frame]){
+        [self setupInitData];
+        
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super initWithCoder:aDecoder];
-    if(self){
-        [self setup];
+   
+    if(self = [super initWithCoder:aDecoder]){
+        [self setupInitData];
     }
     return self;
 }
 
 #pragma mark - public method
 
--(void)setup
+-(void)setupInitData
 {
     self.backgroundColor = [UIColor whiteColor];
-    self.minimumValue = kEWChartViewMinValue;
-    self.maximumValue = kEWChartViewManValue;
     self.sectionCount = kEWChartViewSectionCount;
     self.yLabelFont = [UIFont systemFontOfSize:kEWChartViewLabelFont];
     self.xLabelFont = [UIFont systemFontOfSize:kEWChartViewLabelFont];
     self.coordinateColor = kEWChartViewcoordinateColor;
     self.coordinateLabelColor = kEWChartViewcoordinateLabelColor;
+}
+
+- (void)resetMinimumValue
+{
+    _hasMinimumValue = NO; // clears min
+}
+
+- (void)resetMaximumValue
+{
+    _hasMaximumValue = NO; // clears max
 }
 
 #pragma mark - public method
@@ -77,7 +90,7 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    CGContextSaveGState(ctx);
+//    CGContextSaveGState(ctx);
     
     CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding);
     CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight);
@@ -87,31 +100,32 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
     CGContextSetLineWidth(ctx, kEWChartViewXYAxisWidth);
     
     CGContextStrokePath(ctx);
+//    CGContextRestoreGState(ctx);
     
-    CGContextRestoreGState(ctx);
-    
-    CGFloat stepLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/self.sectionCount;
-    CGFloat stepValue = (self.maximumValue - self.minimumValue)/ self.sectionCount;
-    
-    for (int index = 0; index < self.sectionCount + 1; index++) {
-        NSString *yValue = [NSString stringWithFormat:@"%.1f",1-(stepValue * index)];
-        
-        CGContextSaveGState(ctx);
-        {
-            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + stepLength * index);
-            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding, kEWChartViewHeaderPadding + stepLength * index);
-            [self.coordinateColor set];
-            CGContextStrokePath(ctx);
-        
-            CGSize valueSize = [yValue sizeWithAttributes:@{NSFontAttributeName:self.yLabelFont}];
-            CGFloat pointX = (kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding) * 0.5 - valueSize.width * 0.5;
-            CGFloat pointY = kEWChartViewHeaderPadding + stepLength * index - valueSize.height * 0.5;
-        
-            CGPoint point = (CGPoint){pointX,pointY};
-            [yValue drawAtPoint:point withAttributes:@{NSFontAttributeName:self.yLabelFont,NSForegroundColorAttributeName:self.coordinateLabelColor}];
-        }
-        CGContextRestoreGState(ctx);
-    }
+//    CGFloat stepLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/self.sectionCount;
+//    CGFloat stepValue = (self.maximumValue - self.minimumValue)/ self.sectionCount;
+//    
+//    NSLog(@"%f--%f",self.bounds.size.height,self.maximumValue);
+//    
+//    for (int index = 0; index < self.sectionCount + 1; index++) {
+//        NSString *yValue = [NSString stringWithFormat:@"%.1f",1-(stepValue * index)];
+//        
+//        CGContextSaveGState(ctx);
+//        {
+//            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + stepLength * index);
+//            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding, kEWChartViewHeaderPadding + stepLength * index);
+//            [self.coordinateColor set];
+//            CGContextStrokePath(ctx);
+//        
+//            CGSize valueSize = [yValue sizeWithAttributes:@{NSFontAttributeName:self.yLabelFont}];
+//            CGFloat pointX = (kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding) * 0.5 - valueSize.width * 0.5;
+//            CGFloat pointY = kEWChartViewHeaderPadding + stepLength * index - valueSize.height * 0.5;
+//        
+//            CGPoint point = (CGPoint){pointX,pointY};
+//            [yValue drawAtPoint:point withAttributes:@{NSFontAttributeName:self.yLabelFont,NSForegroundColorAttributeName:self.coordinateLabelColor}];
+//        }
+//        CGContextRestoreGState(ctx);
+//    }
     
 }
 
@@ -121,12 +135,14 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 {
     NSAssert(minimumValue >= 0, @"EWChartView // the minimumValue must be >= 0.");
     _minimumValue = minimumValue;
+    _hasMinimumValue = YES;
 }
 
 - (void)setMaximumValue:(CGFloat)maximumValue
 {
     NSAssert(maximumValue >= 0, @"EWChartView // the maximumValue must be >= 0.");
     _maximumValue = maximumValue;
+    _hasMaximumValue = YES;
 }
 
 

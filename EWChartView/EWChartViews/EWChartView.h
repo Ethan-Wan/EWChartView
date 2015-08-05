@@ -35,10 +35,10 @@ CGFloat static const kEWChartViewXAxisHeight = 20.0f;
 @property (nonatomic, weak) id<EWChartViewDelegate> delegate;
 
 /** y坐标的最小值 */
-@property (nonatomic, assign) CGFloat minimumValue; //default 0
+@property (nonatomic, assign) CGFloat minimumValue; //default 数据源数组中的最小值
 
 /** y坐标的最大值 */
-@property (nonatomic, assign) CGFloat maximumValue; //default
+@property (nonatomic, assign) CGFloat maximumValue; //default 数据源数据中的最大值
 
 /** y坐标上的分段数 */
 @property (nonatomic, assign) NSInteger sectionCount; //default one
@@ -60,6 +60,10 @@ CGFloat static const kEWChartViewXAxisHeight = 20.0f;
 @property (nonatomic, strong) UIColor *coordinateLabelColor; //default lightGrayColor
 
 -(void)reloadData;
+
+// 将最大值和最小值reset为默认值
+- (void)resetMinimumValue;
+- (void)resetMaximumValue;
 
 -(void)creatYAxisWithSectionCount:(NSInteger)sectionCount minValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
 
