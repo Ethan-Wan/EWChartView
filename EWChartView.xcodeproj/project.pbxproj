@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		AA119A811B71A6880096432F /* EWPieChartViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A801B71A6880096432F /* EWPieChartViewCell.m */; };
+		AA119A841B71D1F60096432F /* EWChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A831B71D1F60096432F /* EWChartView.m */; };
+		AA119A871B71D20D0096432F /* EWLineCharView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A861B71D20D0096432F /* EWLineCharView.m */; };
+		AA119A8A1B71D21E0096432F /* EWBarChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A891B71D21E0096432F /* EWBarChartView.m */; };
 		AA5A1BFD1B70E314000B37C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1BFC1B70E314000B37C3 /* main.m */; };
 		AA5A1C001B70E314000B37C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1BFF1B70E314000B37C3 /* AppDelegate.m */; };
 		AA5A1C031B70E314000B37C3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C021B70E314000B37C3 /* ViewController.m */; };
@@ -31,6 +34,12 @@
 /* Begin PBXFileReference section */
 		AA119A7F1B71A6880096432F /* EWPieChartViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWPieChartViewCell.h; sourceTree = "<group>"; };
 		AA119A801B71A6880096432F /* EWPieChartViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWPieChartViewCell.m; sourceTree = "<group>"; };
+		AA119A821B71D1F60096432F /* EWChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWChartView.h; sourceTree = "<group>"; };
+		AA119A831B71D1F60096432F /* EWChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWChartView.m; sourceTree = "<group>"; };
+		AA119A851B71D20D0096432F /* EWLineCharView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWLineCharView.h; sourceTree = "<group>"; };
+		AA119A861B71D20D0096432F /* EWLineCharView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWLineCharView.m; sourceTree = "<group>"; };
+		AA119A881B71D21E0096432F /* EWBarChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWBarChartView.h; sourceTree = "<group>"; };
+		AA119A891B71D21E0096432F /* EWBarChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWBarChartView.m; sourceTree = "<group>"; };
 		AA5A1BF71B70E313000B37C3 /* EWChartView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EWChartView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA5A1BFB1B70E314000B37C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA5A1BFC1B70E314000B37C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -133,6 +142,12 @@
 				AA5A1C231B70E512000B37C3 /* EWPieChartView.m */,
 				AA119A7F1B71A6880096432F /* EWPieChartViewCell.h */,
 				AA119A801B71A6880096432F /* EWPieChartViewCell.m */,
+				AA119A821B71D1F60096432F /* EWChartView.h */,
+				AA119A831B71D1F60096432F /* EWChartView.m */,
+				AA119A851B71D20D0096432F /* EWLineCharView.h */,
+				AA119A861B71D20D0096432F /* EWLineCharView.m */,
+				AA119A881B71D21E0096432F /* EWBarChartView.h */,
+				AA119A891B71D21E0096432F /* EWBarChartView.m */,
 			);
 			path = EWChartViews;
 			sourceTree = "<group>";
@@ -238,10 +253,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA5A1C031B70E314000B37C3 /* ViewController.m in Sources */,
+				AA119A8A1B71D21E0096432F /* EWBarChartView.m in Sources */,
 				AA5A1C001B70E314000B37C3 /* AppDelegate.m in Sources */,
+				AA119A871B71D20D0096432F /* EWLineCharView.m in Sources */,
 				AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */,
 				AA5A1BFD1B70E314000B37C3 /* main.m in Sources */,
 				AA119A811B71A6880096432F /* EWPieChartViewCell.m in Sources */,
+				AA119A841B71D1F60096432F /* EWChartView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

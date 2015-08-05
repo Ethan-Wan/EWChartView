@@ -8,8 +8,9 @@
 
 #import "ViewController.h"
 #import "EWPieChartView.h"
+#import "EWChartView.h"
 
-@interface ViewController ()<EWPieChartViewDataSource,EWPieChartViewDelegate>
+@interface ViewController ()<EWPieChartViewDataSource,EWPieChartViewDelegate,UITableViewDataSource>
 
 @property(nonatomic,strong) NSArray *array;
 @end
@@ -28,8 +29,15 @@
     pie.showTitleType = EWPieChartShowTitleOutItem;
     pie.showItemPercent = YES;
     [pie reloadData];
-    [self.view addSubview:pie];
+//    [self.view addSubview:pie];
+    
+    EWChartView *chartView = [[EWChartView alloc] init];
+    
+    chartView.frame = self.view.bounds;
+    [self.view addSubview:chartView];
+
 }
+
 
 #pragma mark - EWPieChartViewDataSource
 

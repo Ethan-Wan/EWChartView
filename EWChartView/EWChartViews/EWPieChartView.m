@@ -13,7 +13,7 @@ CGFloat static const kEWPieChartViewMaxRadius = 100.0f;
 CGFloat static const kEWPieChartViewMinRadius = 0.0f;
 CGFloat static const kEWPieChartViewStartAngle = 0.0f;
 CGFloat static const kEWPieChartViewEndAngle = 360.0f;
-CGFloat static const kEWPieChartViewAnimationDuration = 0.6f;
+//CGFloat static const kEWPieChartViewAnimationDuration = 0.6f;
 EWPieChartShowTitleType static const kEWPieChartViewShowTitleType = EWPieChartShowTitleDefault;
 BOOL static const kEWPieChartViewShowItemPercent = NO;
 
