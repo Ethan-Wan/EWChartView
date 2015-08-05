@@ -3,7 +3,7 @@
 //  JBChartViewDemo
 //
 //  Created by wansy on 15/8/4.
-//  Copyright (c) 2015年 Jawbone. All rights reserved.
+//  Copyright (c) 2015年 wansy. All rights reserved.
 //
 
 #import "EWPieChartView.h"
@@ -17,6 +17,16 @@ CGFloat static const kEWPieChartViewAnimationDuration = 0.6f;
 EWPieChartShowTitleType static const kEWPieChartViewShowTitleType = EWPieChartShowTitleDefault;
 BOOL static const kEWPieChartViewShowItemPercent = NO;
 
+static inline float radians(float degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+//in [0..1], out [0..1]
+static inline float easeInOut(float x){
+    //1/(1+e^((0.5-x)*12))
+    return 1/(1+powf(M_E, (0.5-x)*12));
+}
+
 //颜色
 #define EWColor(r,g,b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
 //随即色
@@ -27,6 +37,8 @@ BOOL static const kEWPieChartViewShowItemPercent = NO;
 @property (nonatomic, strong) UIFont* font;
 
 @property (nonatomic, strong) NSArray *chartData;
+
+@property (nonatomic, strong) NSMutableArray *values;
 
 @end
 
@@ -61,112 +73,141 @@ BOOL static const kEWPieChartViewShowItemPercent = NO;
     self.minRadius = kEWPieChartViewMinRadius;
     self.startAngle = kEWPieChartViewStartAngle;
     self.endAngle = kEWPieChartViewEndAngle;
-    self.animationDuration = kEWPieChartViewAnimationDuration;
+//    self.animationDuration = kEWPieChartViewAnimationDuration;
     self.showTitleType = kEWPieChartViewShowTitleType;
     self.showItemPercent = kEWPieChartViewShowItemPercent;
     self.font = [UIFont systemFontOfSize:15];
 }
 
-//-(UIColor *)itemColorAtItemIndex:(NSInteger)index
-//{
-//    if ([self.delegate respondsToSelector:@selector(pieChartView:colorForItemAtItemIndex:)])
-//    {
-//        return [self.delegate pieChartView:self colorForItemAtItemIndex:index];
-//    }else
-//    {
-//        return EWRandomColor;
-//    }
-//}
-
 -(EWPieChartShowTitleType)showItemTitleTypeAtItemIndex:(NSInteger)index
 {
     if ([self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)])
     {
-        return [self.delegate pieChartView:self showItemTitleTypeAtItemIndex:index];
+        return [self.delegate pieChartView:self showItemTitleTypeAtItemIndex:index]?[self.delegate pieChartView:self showItemTitleTypeAtItemIndex:index]:EWPieChartShowTitleDefault;
     }else
     {
-        return EWPieChartShowTitleDefault;
+        return self.showTitleType;
     }
 }
 
-//-(NSString *)itemTitleAtItemIndex:(NSInteger)index
-//{
-//    if ([self.delegate respondsToSelector:@selector(pieChartView:colorForItemAtItemIndex:)])
-//    {
-//        return [self.delegate pieChartView:self colorForItemAtItemIndex:index];
-//    }else
-//    {
-//        return EWRandomColor;
-//    }
-//}
+-(BOOL)showItemPercentAtItemIndex:(NSInteger)index
+{
+    if ([self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)])
+    {
+        return [self.delegate pieChartView:self showItemPercentAtItemIndex:index]?[self.delegate pieChartView:self showItemPercentAtItemIndex:index]:NO;
+    }else
+    {
+        return self.showItemPercent;
+    }
+}
+
 
 -(void)drawItemTitles:(CGContextRef)ctx sumValues:(CGFloat)sum
 {
     CGContextSetShadowWithColor(ctx, CGSizeMake(0,1), 3, [UIColor blackColor].CGColor);
     
-    __block float angleStart = self.startAngle * M_PI / 180.0;
-    float angleInterval = (self.endAngle - self.startAngle) * M_PI / 180.0;
+    float angleStart = radians(self.startAngle);
+    float angleInterval = radians(self.endAngle - self.startAngle);
     
-    
-    [self.chartData enumerateObjectsUsingBlock:^(EWPieChartViewCell *cell, NSUInteger idx, BOOL *stop) {
+    for (int index = 0; index < self.chartData.count; index++) {
+        EWPieChartViewCell *cell = self.chartData[index];
         float angleEnd = angleStart + angleInterval * cell.value / sum;
         
-        EWPieChartShowTitleType showTitleType = [self showItemTitleTypeAtItemIndex:idx];
+        EWPieChartShowTitleType showTitleType = [self showItemTitleTypeAtItemIndex:index];
         if(showTitleType == EWPieChartShowTitleDefault){
             angleStart = angleEnd;
-//            continue;
+            continue;
         }
         UIColor *color = cell.color?: [UIColor blackColor];
         CGContextSetFillColorWithColor(ctx, color.CGColor);
-
+        
         float angle = (angleStart + angleEnd) / 2.0;
         
-//        NSString *text = self.transformTitleBlock? self.transformTitleBlock(elem) : [NSString stringWithFormat:@"%.2f", cell.value];
+        NSString *title = cell.title?cell.title:[NSString stringWithFormat:@"%.2f", cell.value];
         float radius = self.maxRadius;
-//        [self drawText:text angle:-angle radius:radius context:ctx];
+        [self drawText:title angle:angle - M_PI radius:radius context:ctx font:self.font];
         
         angleStart = angleEnd;
-
-    }];
+    }
 }
 
+-(void)drawItemPercent:(CGContextRef)ctx sumValues:(CGFloat)sum
+{
+    float angleStart = radians(self.startAngle);
+    float angleInterval = radians(self.endAngle - self.startAngle);
+    
+    for (int index = 0; index < self.chartData.count; index++) {
+        EWPieChartViewCell *cell = self.chartData[index];
+        float angleEnd = angleStart + angleInterval * cell.value / sum;
+        
+        BOOL showPercent = [self showItemPercentAtItemIndex:index];
+        if(!showPercent){
+            angleStart = angleEnd;
+            continue;
+        }
+        [[UIColor whiteColor] set];
+        
+        float angle = (angleStart + angleEnd) / 2.0;
+        
+        NSString *percent = [NSString stringWithFormat:@"%.1f%%",(cell.value / sum)*100];
+        float radius = (self.maxRadius - self.minRadius) * 0.5;
+        [self drawText:percent angle:angle - M_PI radius:radius context:ctx font:[UIFont systemFontOfSize:12]];
+        
+        angleStart = angleEnd;
+    }
+}
+
+
+- (void)drawText:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font
+{
+    
+    CGSize textSize = [text sizeWithAttributes:@{NSFontAttributeName:font}];
+    CGPoint anchorPoint;
+    
+    if(angle >= -M_PI_4 && angle < M_PI_4){
+        anchorPoint = CGPointMake(0, easeInOut((M_PI_4-angle) / M_PI_2));
+    } else if(angle >= M_PI_4 && angle < M_PI_2+M_PI_4){
+        anchorPoint = CGPointMake(easeInOut((angle-M_PI_4) / M_PI_2), 0);
+    } else if(angle >= M_PI_2+M_PI_4 && angle < M_PI+M_PI_4){
+        anchorPoint = CGPointMake(1, easeInOut((angle - (M_PI_2+M_PI_4)) / M_PI_2));
+    } else {
+        anchorPoint = CGPointMake(easeInOut(((2*M_PI - M_PI_4) - angle) / M_PI_2), 1);
+    }
+    
+    CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+    CGPoint pos = CGPointMake(center.x + radius*cosf(angle), center.y + radius*sinf(angle));
+    
+    CGRect frame = CGRectMake(pos.x - anchorPoint.x * textSize.width,
+                              pos.y - anchorPoint.y * textSize.height,
+                              textSize.width,
+                              textSize.height);
+    UIGraphicsPushContext(ctx);
+    [text drawInRect:frame withAttributes:@{NSFontAttributeName:font}];
+    UIGraphicsPopContext();
+}
+    
 #pragma mark - Public Method
 
 -(void)reloadData
 {
     [self setNeedsDisplay];
     
-    //获取图表数据
-//    dispatch_block_t createChartData = ^{
-        NSMutableArray *mutableChartData = [NSMutableArray array];
+    NSMutableArray *mutableChartData = [NSMutableArray array];
         
-        NSAssert([self.dataSource respondsToSelector:@selector(numberOfItemInPieChartView)], @"EWPieChartView // dataSource must implement - (NSUInteger)numberOfSection");
-        NSUInteger numberOfItem = [self.dataSource numberOfItemInPieChartView];
+    NSAssert([self.dataSource respondsToSelector:@selector(numberOfItemInPieChartView)], @"EWPieChartView // dataSource must implement - (NSUInteger)numberOfSection");
+    NSUInteger numberOfItem = [self.dataSource numberOfItemInPieChartView];
         
-        for (NSUInteger itemIndex = 0; itemIndex < numberOfItem; itemIndex++)
-        {
-            NSAssert([self.dataSource respondsToSelector:@selector(pieChartView:pieChartViewCellForItemIndex:)], @"EWPieChartView // delegate must implement - - (CGFloat)pieChartView:(EWPieChartView *)pieChartViewitemValueForItemIndex:(NSUInteger)itemIndex;");
-            EWPieChartViewCell *cell =  [self.dataSource pieChartView:self pieChartViewCellForItemIndex:itemIndex];
+    for (NSUInteger itemIndex = 0; itemIndex < numberOfItem; itemIndex++)
+    {
+        NSAssert([self.dataSource respondsToSelector:@selector(pieChartView:pieChartViewCellForItemIndex:)], @"EWPieChartView // delegate must implement - - (CGFloat)pieChartView(EWPieChartView *)pieChartViewitemValueForItemIndex:(NSUInteger)itemIndex;");
+        EWPieChartViewCell *cell =  [self.dataSource pieChartView:self pieChartViewCellForItemIndex:itemIndex];
             
-            [mutableChartData addObject:cell];
-        }
-        self.chartData = [NSArray arrayWithArray:mutableChartData];
-//    };
-    
-    
-//    createChartData();
+        [mutableChartData addObject:cell];
+        [self.values addObject:@(cell.value)];
+    }
+    self.chartData = [NSArray arrayWithArray:mutableChartData];
     
     [self setNeedsDisplay];
-}
-
-- (void)setMaxRadius:(float)maxRadius minRadius:(float)minRadius animated:(BOOL)isAnimated
-{
-    
-}
-
-- (void)setStartAngle:(float)startAngle endAngle:(float)endAngle animated:(BOOL)isAnimated
-{
-    
 }
 
 #pragma mark - drawRect
@@ -176,7 +217,7 @@ BOOL static const kEWPieChartViewShowItemPercent = NO;
     if(self.chartData.count == 0 || self.minRadius >= self.maxRadius)
         return;
 
-    float sum = [[self.chartData valueForKeyPath:@"@sum.floatValue"] floatValue];
+    float sum = [[self.values valueForKeyPath:@"@sum.floatValue"] floatValue];
     if(sum <= 0)
         return;
     
@@ -189,8 +230,8 @@ BOOL static const kEWPieChartViewShowItemPercent = NO;
     CGContextTranslateCTM(ctx, self.bounds.size.width, self.bounds.size.height);
     CGContextScaleCTM(ctx, -1, -1);
     
-    __block float angleStart = self.startAngle * M_PI / 180.0;
-    float angleInterval = (self.endAngle - self.startAngle) * M_PI / 180.0;
+    __block float angleStart = radians(self.startAngle);
+    float angleInterval = radians(self.endAngle - self.startAngle);
     
     [self.chartData enumerateObjectsUsingBlock:^(EWPieChartViewCell *cell, NSUInteger idx, BOOL *stop) {
         float angleEnd = angleStart + angleInterval * cell.value / sum;
@@ -224,10 +265,27 @@ BOOL static const kEWPieChartViewShowItemPercent = NO;
     }];
     
     CGContextRestoreGState(ctx);
+    CGContextSaveGState(ctx);
     
     if (self.showTitleType != EWPieChartShowTitleDefault || [self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)]) {
         [self drawItemTitles:ctx sumValues:sum];
     }
+    
+    CGContextRestoreGState(ctx);
+    
+    if (self.showItemPercent || [self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)]) {
+        [self drawItemPercent:ctx sumValues:sum];
+    }
+
 }
 
+#pragma mark - getter and setter
+
+-(NSMutableArray *)values
+{
+    if (!_values) {
+        self.values = [NSMutableArray array];
+    }
+    return _values;
+}
 @end

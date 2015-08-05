@@ -6,8 +6,16 @@
 //  Copyright (c) 2015年 wansy. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface EWPieChartViewCell : NSObject
+@interface EWPieChartViewCell : UIView
+/** 标题 */
+@property (nonatomic, copy) NSString *title;
+
+/** 颜色 */
+@property (nonatomic, strong) UIColor *color;
+
+/** 值 */
+@property (nonatomic, assign) CGFloat value;
 
 @end

@@ -23,8 +23,10 @@
     pie.frame = self.view.bounds;
     pie.dataSource = self;
     pie.delegate = self;
-    self.array = [NSArray arrayWithObjects:@"1.0",@"2.0",@"2.0",@"5.0", nil];
-    pie.minRadius = 50.0;
+    self.array = [NSArray arrayWithObjects:@"1.0",@"2.0",@"2.0",@"2.0",@"3.0", nil];
+    pie.minRadius = 30.0;
+    pie.showTitleType = EWPieChartShowTitleOutItem;
+    pie.showItemPercent = YES;
     [pie reloadData];
     [self.view addSubview:pie];
 }
@@ -40,11 +42,8 @@
 {
     EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
     cell.value = [self.array[itemIndex] floatValue];
+    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
     return cell;
 }
-//-(CGFloat)pieChartView:(EWPieChartView *)pieChartView itemValueForItemIndex:(NSUInteger)itemIndex
-//{
-//    return [self.array[itemIndex] floatValue];
-//}
 
 @end
