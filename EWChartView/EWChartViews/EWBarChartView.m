@@ -10,7 +10,7 @@
 
 //default parameter
 NSInteger static const kEWBarChartViewBarNumber  = 1;
-CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
+CGFloat static const   kEWChartViewDefalutCachedHeight  = -1.0f;
 CGFloat static const   kEWChartViewXYAxisPadding = 3.0f;
 
 //一个表的柱状图之间的距离 *0.5
@@ -19,7 +19,7 @@ CGFloat static const   kEWBarChartViewBarMargin  = 3.0f;
 CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 
 //macro
-#define kEWBarChartViewBarColor [UIColor greenColor]
+#define kEWBarChartViewBarColor nil
 
 @interface EWChartView (Private)
 
@@ -48,8 +48,30 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 
 @implementation EWBarChartView
 
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if(self){
+        [self setup];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if(self){
+        [self setup];
+    }
+    return self;
+}
 
 #pragma mark - Private Method
+
+- (void)setup
+{
+    self.barColor = kEWBarChartViewBarColor;
+}
 
 -(NSInteger)numberOfBarInLineChart
 {
@@ -69,9 +91,21 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
         return [self.delegate barChartView:self colorForBarAtBarIndex:barIndex];
     }else
     {
-        return kEWBarChartViewBarColor;
+        return self.barColor;
     }
 }
+
+-(UIColor *)colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex;
+{
+    if ([self.delegate respondsToSelector:@selector(barChartView:colorForBarAtHorizontalIndex:)])
+    {
+        return [self.delegate barChartView:self colorForBarAtHorizontalIndex:horizontalIndex];
+    }else
+    {
+        return self.barColor;
+    }
+}
+
 
 /**
  *  水平方向上数据个数
@@ -125,12 +159,12 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 -(void)reloadData
 {
     // Reset
-    self.cachedMinHeight = kEWChartViewcachedHeight;
-    self.cachedMaxHeight = kEWChartViewcachedHeight;
+    self.cachedMinHeight = kEWChartViewDefalutCachedHeight;
+    self.cachedMaxHeight = kEWChartViewDefalutCachedHeight;
     
     self.dataNumber = [self dataCount];
     
-    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding - kEWChartViewXYAxisWidth);
     
     CGFloat yOffset = 0;
     
@@ -190,24 +224,30 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
     
     for (NSArray *barData in self.chartData)
     {
-        CGContextSaveGState(ctx);
         if (barData.count == 0)
         {
             continue;
         }
         __block CGFloat barX = kEWChartViewYAxisWidth + kEWBarChartViewBarMargin + index * (barWidth + kEWBarChartViewMarginBetweenBarChart);
         
+        
         [barData enumerateObjectsUsingBlock:^(EWBarChartInfo *barInfo, NSUInteger idx, BOOL *stop) {
+            CGContextSaveGState(ctx);
+            
             CGContextAddRect(ctx, CGRectMake(barX, barInfo.y, barWidth, barInfo.height));
             
             barX += xstepLength;
+            
+            [[self colorForBarAtBarIndex:index] set];
+            [[self colorForBarAtHorizontalIndex:idx] set];
+            
+            CGContextFillPath(ctx);
+            
+            CGContextRestoreGState(ctx);
         }];
-        
-        [[self colorForBarAtBarIndex:index] set];
-        CGContextFillPath(ctx);
+
         
         index++;
-        CGContextRestoreGState(ctx);
     }
 }
 
@@ -227,12 +267,12 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
         }
         CGContextSaveGState(ctx);
         {
-            CGSize valueSize = [title sizeWithAttributes:@{NSFontAttributeName:[super xLabelFont]}];
+            CGSize valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
             CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
             CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
             
             CGPoint point = (CGPoint){pointX,pointY};
-            [title drawAtPoint:point withAttributes:@{NSFontAttributeName:[super xLabelFont],NSForegroundColorAttributeName:[super coordinateLabelColor]}];
+            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
         }
         CGContextRestoreGState(ctx);
     }
@@ -261,13 +301,13 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 
 -(CGFloat)cachedMinHeight
 {
-    if (_cachedMinHeight == kEWChartViewcachedHeight) {
-        CGFloat minHeight = 0;
+    if (_cachedMinHeight == kEWChartViewDefalutCachedHeight) {
+        CGFloat minHeight = FLT_MAX;
         NSUInteger numberOfBar = [self numberOfBarInLineChart];
         for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
         {
             NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
-            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+            for (NSUInteger horizontalIndex = 0; horizontalIndex < dataCount; horizontalIndex++)
             {
                 CGFloat height = [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
                 if (height < minHeight)
@@ -283,7 +323,7 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 
 -(CGFloat)cachedMaxHeight
 {
-    if (_cachedMaxHeight == kEWChartViewcachedHeight) {
+    if (_cachedMaxHeight == kEWChartViewDefalutCachedHeight) {
         CGFloat maxHeight = 0;
         NSUInteger numberOfBar = [self numberOfBarInLineChart];
         for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)

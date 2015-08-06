@@ -10,11 +10,13 @@
 
 //default parameter
 NSInteger static const kEWChartViewSectionCount = 1;
-NSInteger static const kEWChartViewLabelFont    = 12;
+NSInteger static const kEWChartViewLabelFont    = 10;
 
 //const
-CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
+
+//macro
+#define kEWChartViewcoordinateLabelColor [UIColor blackColor]
 
 @interface EWChartView ()
 
@@ -32,7 +34,7 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
 - (id)initWithFrame:(CGRect)frame
 {
     if(self = [super initWithFrame:frame]){
-        [self setupInitData];
+        [self initData];
         
     }
     return self;
@@ -42,21 +44,24 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
 {
    
     if(self = [super initWithCoder:aDecoder]){
-        [self setupInitData];
+        [self initData];
     }
     return self;
 }
 
 #pragma mark - public method
 
--(void)setupInitData
+-(void)initData
 {
     self.backgroundColor = [UIColor whiteColor];
     self.sectionCount = kEWChartViewSectionCount;
-    self.yLabelFont = [UIFont systemFontOfSize:kEWChartViewLabelFont];
-    self.xLabelFont = [UIFont systemFontOfSize:kEWChartViewLabelFont];
     self.coordinateColor = kEWChartViewcoordinateColor;
-    self.coordinateLabelColor = kEWChartViewcoordinateLabelColor;
+    self.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+                              NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                              };
+    self.yLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+                              NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                              };
 }
 
 - (void)resetMinimumValue
@@ -95,8 +100,8 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
 //    CGContextSaveGState(ctx);
     
     CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding);
-    CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight);
-    CGContextAddLineToPoint(ctx, self.bounds.size.width - kEWChartViewXYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight);
+    CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisWidth);
+    CGContextAddLineToPoint(ctx, self.bounds.size.width - kEWChartViewXYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisWidth);
     
     [self.coordinateColor set];
     CGContextSetLineWidth(ctx, kEWChartViewXYAxisWidth);
@@ -115,18 +120,19 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
         CGContextSaveGState(ctx);
         {
             if (!showGrid) {
-                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + ystepLength * index);
-                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding, kEWChartViewHeaderPadding + ystepLength * index);
+                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + ystepLength * index);
+                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + ystepLength * index);
                 [self.coordinateColor set];
+                CGContextSetLineWidth(ctx, kEWChartViewXYAxisWidth);
                 CGContextStrokePath(ctx);
             }
             
-            CGSize valueSize = [yValue sizeWithAttributes:@{NSFontAttributeName:self.yLabelFont}];
+            CGSize valueSize = [yValue sizeWithAttributes:self.yLabelAttributes];
             CGFloat pointX = (kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding) * 0.5 - valueSize.width * 0.5;
             CGFloat pointY = kEWChartViewHeaderPadding + ystepLength * index - valueSize.height * 0.5;
             
             CGPoint point = (CGPoint){pointX,pointY};
-            [yValue drawAtPoint:point withAttributes:@{NSFontAttributeName:self.yLabelFont,NSForegroundColorAttributeName:self.coordinateLabelColor}];
+            [yValue drawAtPoint:point withAttributes:self.yLabelAttributes];
         }
         CGContextRestoreGState(ctx);
     }

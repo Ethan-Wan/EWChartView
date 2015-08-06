@@ -11,6 +11,12 @@
 #import "EWLineCharView.h"
 #import "EWBarChartView.h"
 
+//颜色
+#define EWColor(r,g,b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
+//随即色
+#define EWRandomColor EWColor(arc4random_uniform(256),arc4random_uniform(256),arc4random_uniform(256))
+
+
 @interface ViewController ()<EWBarChartViewDataSource,EWBarChartViewDelegate>
 
 @property(nonatomic,strong) NSMutableArray *array;
@@ -28,11 +34,12 @@
 //    pie.delegate = self;
     
     NSArray *array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
-    NSArray *array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.3",@"2.1",@"1.1", nil];
+    NSArray *array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+//    NSArray *array3 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.3",@"2.1",@"1.1", nil];
     self.array = [NSMutableArray array];
     [self.array addObject:array1];
     [self.array addObject:array2];
-    
+//    [self.array addObject:array3];
     
     self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
 //    pie.minRadius = 30.0;
@@ -62,7 +69,10 @@
     barChart.dataSource = self;
     barChart.delegate =self;
     barChart.maximumValue = 3.0;
-    barChart.sectionCount = 3;
+    barChart.minimumValue = 0.0;
+    barChart.sectionCount = 4;
+//    barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
+//    barChart.coordinateColor = [UIColor redColor];
     barChart.frame = CGRectMake(10, 50, 300, 200);
     [barChart reloadData];
     [self.view addSubview:barChart];
@@ -95,11 +105,36 @@
     if (barIndex == 0) {
         return [UIColor redColor];
     }
-    else
+    else if(barIndex == 1)
     {
-        return [UIColor greenColor];
+        return [UIColor yellowColor];
     }
+    return nil;
 }
+
+//-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex
+//{
+//    switch (horizontalIndex) {
+//        case 0:
+//            return [UIColor redColor];
+//            break;
+//        case 1:
+//            return [UIColor blackColor];
+//            break;
+//        case 2:
+//            return [UIColor greenColor];
+//            break;
+//        case 3:
+//            return [UIColor yellowColor];
+//            break;
+//        case 4:
+//            return [UIColor grayColor];
+//            break;
+//            
+//        default:
+//            break;
+//    }return nil;
+//}
 
 //-----------------------line-----------------
 //-(NSUInteger)numberOfLinesInLineChartView:(EWLineCharView *)lineChartView

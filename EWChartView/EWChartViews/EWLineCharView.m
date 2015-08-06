@@ -160,7 +160,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
     //
     self.dataNumber = [self dataCount];
     
-    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding - kEWChartViewXYAxisWidth);
     
     CGFloat pointSpace = mainViewRect.size.width / self.dataNumber; // Space in between points
     
@@ -231,8 +231,8 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
     for (int index = 0; index < self.sectionCount ; index++) {
         CGContextSaveGState(ctx);
         {
-            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + verticalLength * index);
-            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + verticalLength * index);
+            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
+            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
             [[super coordinateColor] set];
             CGContextStrokePath(ctx);
         }
@@ -322,12 +322,12 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
                 CGContextStrokePath(ctx);
             }
             
-            CGSize valueSize = [title sizeWithAttributes:@{NSFontAttributeName:[super xLabelFont]}];
+            CGSize valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
             CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
             CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
             
             CGPoint point = (CGPoint){pointX,pointY};
-            [title drawAtPoint:point withAttributes:@{NSFontAttributeName:[super xLabelFont],NSForegroundColorAttributeName:[super coordinateLabelColor]}];
+            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
         }
         CGContextRestoreGState(ctx);
 
@@ -358,7 +358,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 -(CGFloat)cachedMinHeight
 {
     if (_cachedMinHeight == kEWChartViewcachedHeight) {
-        CGFloat minHeight = 0;
+        CGFloat minHeight = FLT_MAX;
         NSUInteger numberOfLines = [self numberOfLineInLineChart];
         for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
         {

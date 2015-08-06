@@ -116,6 +116,8 @@
 @property (nonatomic, weak) id<EWBarChartViewDataSource> dataSource;
 @property (nonatomic, weak) id<EWBarChartViewDelegate> delegate;
 
+@property (nonatomic ,strong) UIColor *barColor;  //defalut nil
+
 -(void)reloadData;
 
 @end

@@ -12,10 +12,10 @@
 CGFloat static const kEWChartViewHeaderPadding = 10.0f;
 CGFloat static const kEWChartViewYAxisWidth = 25.0f;
 CGFloat static const kEWChartViewXAxisHeight = 20.0f;
+CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 
 //macro
 #define kEWChartViewcoordinateColor [UIColor lightGrayColor]
-#define kEWChartViewcoordinateLabelColor [UIColor blackColor]
 
 @protocol EWChartViewDataSource <NSObject>
 
@@ -46,18 +46,8 @@ CGFloat static const kEWChartViewXAxisHeight = 20.0f;
 /** 是否显示坐标网格 */
 //@property (nonatomic, assign) BOOL showGrid  ; //default NO  (暂定为折线图所有)
 
-
-/** y坐标上的文字font */
-@property (nonatomic, strong) UIFont *yLabelFont  ; //default 12
-
-/** x坐标上的文字font */
-@property (nonatomic, strong) UIFont *xLabelFont  ; //default 12
-
 /** 坐标轴的颜色 */
 @property (nonatomic, strong) UIColor *coordinateColor; //default lightGrayColor
-
-/** 坐标上字体的颜色 */
-@property (nonatomic, strong) UIColor *coordinateLabelColor; //default lightGrayColor
 
 /** x坐标上文字的样式 */
 @property (nonatomic, strong) NSDictionary *xLabelAttributes; //default
