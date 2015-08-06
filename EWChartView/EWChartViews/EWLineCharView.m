@@ -9,9 +9,11 @@
 #import "EWLineCharView.h"
 
 //default parameter
-BOOL static const kEWPieChartViewShowGrid = NO;
-CGFloat static const kEWPieChartViewLineWidth = 3.0f;
-NSInteger static const kEWPieChartViewLineNumber = 1;
+BOOL static const      kEWLineChartViewShowGrid   = NO;
+CGFloat static const   kEWLineChartViewLineWidth  = 2.0f;
+NSInteger static const kEWLineChartViewLineNumber = 1;
+CGFloat static const   kEWChartViewXYAxisPadding = 3.0f;
+CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 
 //macro
 #define EWPieChartViewLineDefalutColor [UIColor blackColor];
@@ -28,6 +30,8 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 - (BOOL)hasMaximumValue;
 - (BOOL)hasMinimumValue;
 
+-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+
 @end
 
 
@@ -36,6 +40,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 @property (nonatomic, strong) NSArray *chartData;
 @property (nonatomic, assign) CGFloat cachedMinHeight;
 @property (nonatomic, assign) CGFloat cachedMaxHeight;
+@property (nonatomic, assign) NSInteger dataNumber;
 
 @end
 
@@ -68,7 +73,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 - (void)setup
 {
     self.backgroundColor = [UIColor whiteColor];
-    self.showGrid = kEWPieChartViewShowGrid;
+    self.showGrid = kEWLineChartViewShowGrid;
 }
 
 
@@ -79,7 +84,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
         return [self.dataSource numberOfLinesInLineChartView:self];
     }else
     {
-        return kEWPieChartViewLineNumber;
+        return kEWLineChartViewLineNumber;
     }
 }
 
@@ -101,45 +106,8 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
         return [self.delegate lineChartView:self widthForLineAtLineIndex:lineIndex];
     }else
     {
-        return kEWPieChartViewLineWidth;
+        return kEWLineChartViewLineWidth;
     }
-}
-
-/**
- *  画网格
- *
- *  @param ctx 上下文
- */
--(void)drawGrid:(CGContextRef)ctx
-{
-     CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/[super sectionCount];
-    for (int index = 0; index < self.sectionCount ; index++) {
-        CGContextSaveGState(ctx);
-        {
-            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + verticalLength * index);
-            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + verticalLength * index);
-            [self.coordinateColor set];
-            CGContextStrokePath(ctx);
-        }
-        CGContextRestoreGState(ctx);
-    }
-    
-    CGFloat dataCount = [self dataCount];
-    CGFloat horizontalSpace = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / dataCount;
-    
-    for (int index = 1; index < dataCount + 1 ; index++) {
-        CGContextSaveGState(ctx);
-        {
-            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, kEWChartViewHeaderPadding);
-            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, self.bounds.size.height - kEWChartViewXAxisHeight);
-            [self.coordinateColor set];
-//            可设置虚线
-//            CGContextSetLineDash(ctx, <#CGFloat phase#>, <#const CGFloat *lengths#>, <#size_t count#>)
-            CGContextStrokePath(ctx);
-        }
-        CGContextRestoreGState(ctx);
-    }
-
 }
 
 /**
@@ -185,9 +153,16 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 
 -(void)reloadData
 {
+    // Reset
+    self.cachedMinHeight = kEWChartViewcachedHeight;
+    self.cachedMaxHeight = kEWChartViewcachedHeight;
+    
+    //
+    self.dataNumber = [self dataCount];
+    
     CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
-        
-    CGFloat pointSpace = mainViewRect.size.width / [self dataCount]; // Space in between points
+    
+    CGFloat pointSpace = mainViewRect.size.width / self.dataNumber; // Space in between points
     
     CGFloat xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
     CGFloat yOffset = 0;
@@ -219,6 +194,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
         xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
     }
     self.chartData = [NSArray arrayWithArray:mutableChartData];
+    
     [self setNeedsDisplay];
 }
 
@@ -239,8 +215,56 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
         CGContextRestoreGState(ctx);
     }
     
-    int index = 0;
+    [self drawLineChart:ctx];
+    
+    [self drawXYLabelText:ctx];
+}
 
+/**
+ *  画网格
+ *
+ *  @param ctx 上下文
+ */
+-(void)drawGrid:(CGContextRef)ctx
+{
+    CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/[super sectionCount];
+    for (int index = 0; index < self.sectionCount ; index++) {
+        CGContextSaveGState(ctx);
+        {
+            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + verticalLength * index);
+            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + verticalLength * index);
+            [[super coordinateColor] set];
+            CGContextStrokePath(ctx);
+        }
+        CGContextRestoreGState(ctx);
+    }
+    
+    CGFloat horizontalSpace = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / self.dataNumber;
+    
+    for (int index = 1; index < self.dataNumber + 1 ; index++) {
+        CGContextSaveGState(ctx);
+        {
+            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, kEWChartViewHeaderPadding);
+            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, self.bounds.size.height - kEWChartViewXAxisHeight);
+            [[super coordinateColor] set];
+            //            可设置虚线
+            //            CGContextSetLineDash(ctx, <#CGFloat phase#>, <#const CGFloat *lengths#>, <#size_t count#>)
+            CGContextStrokePath(ctx);
+        }
+        CGContextRestoreGState(ctx);
+    }
+    
+}
+
+/**
+ *  画折线图
+ *
+ *  @param ctx 上下文
+ */
+-(void)drawLineChart:(CGContextRef)ctx
+{
+    int index = 0;
+    
     for (NSArray *lineData in self.chartData)
     {
         CGContextSaveGState(ctx);
@@ -249,17 +273,15 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
             continue;
         }
         
-       [lineData enumerateObjectsUsingBlock:^(EWLineChartPoint *point, NSUInteger idx, BOOL *stop) {
-           if (idx == 0)
-           {
+        [lineData enumerateObjectsUsingBlock:^(EWLineChartPoint *point, NSUInteger idx, BOOL *stop) {
+            if (idx == 0)
+            {
                 CGContextMoveToPoint(ctx, point.position.x, point.position.y);
-           }else
-           {
-               CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
-           }
-           
-           NSLog(@"%f--%f",point.position.x,point.position.y);
-       }];
+            }else
+            {
+                CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
+            }
+        }];
         CGContextSetLineWidth(ctx, [self widthForLineAtLineIndex:index]);
         CGContextSetLineJoin(ctx, kCGLineJoinRound);
         CGContextSetLineCap(ctx, kCGLineCapRound);
@@ -270,9 +292,47 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
         index++;
         CGContextRestoreGState(ctx);
     }
+}
+
+/**
+ *  画xy轴上的坐标值
+ *
+ *  @param ctx 上下文
+ */
+-(void)drawXYLabelText:(CGContextRef)ctx
+{
+    //draw y axis labels
+    [self drawYAxisLabelsWithMaxValue:[self maximumValue] minValue:[self minimumValue] context:ctx showGrid:self.showGrid];
     
+    //draw x axis labels
+    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5)/ self.dataNumber;
     
-    
+    for (int index = 0; index < self.dataNumber; index++) {
+        NSString *title = nil;
+        if([self.dataSource respondsToSelector:@selector(lineChartView:horizontalTitlseForHorizontalIndex:)])
+        {
+            title = [self.dataSource lineChartView:self horizontalTitlseForHorizontalIndex:index];
+        }
+        CGContextSaveGState(ctx);
+        {
+            if (!self.showGrid) {
+                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index , self.bounds.size.height - kEWChartViewXAxisHeight);
+                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisPadding);
+                [[super coordinateColor] set];
+                CGContextStrokePath(ctx);
+            }
+            
+            CGSize valueSize = [title sizeWithAttributes:@{NSFontAttributeName:[super xLabelFont]}];
+            CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
+            CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
+            
+            CGPoint point = (CGPoint){pointX,pointY};
+            [title drawAtPoint:point withAttributes:@{NSFontAttributeName:[super xLabelFont],NSForegroundColorAttributeName:[super coordinateLabelColor]}];
+        }
+        CGContextRestoreGState(ctx);
+
+    }
+   
 }
 
 #pragma mark - Getter And Setter
@@ -297,7 +357,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 
 -(CGFloat)cachedMinHeight
 {
-    if (!_cachedMinHeight) {
+    if (_cachedMinHeight == kEWChartViewcachedHeight) {
         CGFloat minHeight = 0;
         NSUInteger numberOfLines = [self numberOfLineInLineChart];
         for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
@@ -319,7 +379,7 @@ NSInteger static const kEWPieChartViewLineNumber = 1;
 
 -(CGFloat)cachedMaxHeight
 {
-    if (!_cachedMaxHeight) {
+    if (_cachedMaxHeight == kEWChartViewcachedHeight) {
         CGFloat maxHeight = 0;
         NSUInteger numberOfLines = [self numberOfLineInLineChart];
         for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)

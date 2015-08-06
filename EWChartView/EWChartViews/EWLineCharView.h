@@ -76,6 +76,16 @@
  */
 - (BOOL)lineChartView:(EWLineCharView *)lineChartView smoothLineAtLineIndex:(NSUInteger)lineIndex;
 
+/**
+ *  水平坐标上的坐标值
+ *
+ *  @param lineChartView   当前折线图
+ *  @param horizontalIndex x轴的索引
+ *
+ *  @return 返回坐标值的text
+ */
+- (NSString *)lineChartView:(EWLineCharView *)lineChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex;
+
 @end
 
 @protocol EWLineChartViewDelegate <EWChartViewDelegate>

@@ -59,6 +59,12 @@ CGFloat static const kEWChartViewXAxisHeight = 20.0f;
 /** 坐标上字体的颜色 */
 @property (nonatomic, strong) UIColor *coordinateLabelColor; //default lightGrayColor
 
+/** x坐标上文字的样式 */
+@property (nonatomic, strong) NSDictionary *xLabelAttributes; //default
+
+/** y坐标上文字的样式 */
+@property (nonatomic, strong) NSDictionary *yLabelAttributes; //default
+
 -(void)reloadData;
 
 // 将最大值和最小值reset为默认值
