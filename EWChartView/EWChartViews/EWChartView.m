@@ -62,6 +62,9 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
     self.yLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
                               NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
                               };
+    self.valueAttributes =@{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+                            NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                            };
 }
 
 - (void)resetMinimumValue

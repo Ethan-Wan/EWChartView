@@ -173,6 +173,22 @@
     return self.arrayTitle[horizontalIndex];
 }
 
+-(BOOL)lineChartView:(EWLineCharView *)lineChartView isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+{
+    if (lineIndex == 0) {
+        return YES;
+    }
+    else if(lineIndex == 2){
+        if (horizontalIndex == 1) {
+            return YES;
+        }
+        return NO;
+        
+    }else{
+        return NO;
+    }
+}
+
 //---------------------pie---------------------
 //#pragma mark - EWPieChartViewDataSource
 //

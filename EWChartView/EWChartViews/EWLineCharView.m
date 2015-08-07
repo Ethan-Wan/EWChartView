@@ -9,11 +9,16 @@
 #import "EWLineCharView.h"
 
 //default parameter
-BOOL static const      kEWLineChartViewShowGrid   = NO;
-CGFloat static const   kEWLineChartViewLineWidth  = 2.0f;
-NSInteger static const kEWLineChartViewLineNumber = 1;
-CGFloat static const   kEWChartViewXYAxisPadding = 3.0f;
-CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
+BOOL      static const kEWLineChartViewShowGrid        = NO;
+BOOL      static const kEWLineChartViewShowLineValues  = NO;
+BOOL      static const kEWLineChartViewShowLineCircle  = YES;
+BOOL      static const kEWLineChartViewisHollowCircle  = NO;
+CGFloat   static const kEWLineChartViewLineWidth       = 2.0f;
+NSInteger static const kEWLineChartViewLineNumber      = 1;
+CGFloat   static const kEWChartViewXYAxisPadding       = 3.0f;
+CGFloat   static const kEWChartViewCachedHeight        = -1.0f;
+CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
+
 
 //macro
 #define EWPieChartViewLineDefalutColor [UIColor blackColor];
@@ -21,6 +26,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 @interface EWLineChartPoint : NSObject
 
 @property (nonatomic, assign) CGPoint position;
+@property (nonatomic, assign) CGFloat value;
 @property (nonatomic, assign) BOOL hidden;
 
 @end
@@ -110,6 +116,50 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
     }
 }
 
+-(CGFloat)isShowCircleForLineAtLineIndex:(NSInteger)lineIndex
+{
+    if ([self.dataSource respondsToSelector:@selector(lineChartView:showsCircleForLineAtLineIndex:)])
+    {
+        return [self.dataSource lineChartView:self showsCircleForLineAtLineIndex:lineIndex];
+    }else
+    {
+        return kEWLineChartViewShowLineCircle;
+    }
+}
+
+-(CGFloat)isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartView:isHollowCircleForHorizontalIndex:atLineIndex:)])
+    {
+        return [self.delegate lineChartView:self isHollowCircleForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+    }else
+    {
+        return kEWLineChartViewisHollowCircle;
+    }
+}
+
+- (CGFloat)circleRadiustAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartView:circleRadiustAtHorizontalIndex:atLineIndex:)])
+    {
+        return [self.delegate lineChartView:self circleRadiustAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+    }else
+    {
+        return kEWChartViewCricleRadius;
+    }
+}
+
+- (BOOL)showLineValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartView:showLineValuesAtHorizontalIndex:atLineIndex:)])
+    {
+        return [self.delegate lineChartView:self showLineValuesAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+    }else
+    {
+        return kEWLineChartViewShowLineValues;
+    }
+}
+
 /**
  *  水平方向上数据个数
  *
@@ -154,8 +204,8 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 -(void)reloadData
 {
     // Reset
-    self.cachedMinHeight = kEWChartViewcachedHeight;
-    self.cachedMaxHeight = kEWChartViewcachedHeight;
+    self.cachedMinHeight = kEWChartViewCachedHeight;
+    self.cachedMaxHeight = kEWChartViewCachedHeight;
     
     //
     self.dataNumber = [self dataCount];
@@ -186,7 +236,8 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
             yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
 
             chartPoint.position = CGPointMake(xOffset, yOffset);
-
+            chartPoint.value = valueHeight;
+            
             [chartPointData addObject:chartPoint];
             xOffset += pointSpace;
         }
@@ -248,7 +299,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
             CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, self.bounds.size.height - kEWChartViewXAxisHeight);
             [[super coordinateColor] set];
             //            可设置虚线
-            //            CGContextSetLineDash(ctx, <#CGFloat phase#>, <#const CGFloat *lengths#>, <#size_t count#>)
+            //            CGContextSetLineDash(ctx, CGFloat phase, const CGFloat *lengths, size_t count)
             CGContextStrokePath(ctx);
         }
         CGContextRestoreGState(ctx);
@@ -273,6 +324,17 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
             continue;
         }
         
+        UIColor *color = [self colorForLineAtLineIndex:index];
+        CGFloat lineWidth = [self widthForLineAtLineIndex:index];
+        BOOL isShowCircle = [self isShowCircleForLineAtLineIndex:index];
+        __block CGFloat radius = 0;
+        
+        [color set];
+        CGContextSetLineWidth(ctx, lineWidth);
+        CGContextSetLineJoin(ctx, kCGLineJoinRound);
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+        
+        //画线
         [lineData enumerateObjectsUsingBlock:^(EWLineChartPoint *point, NSUInteger idx, BOOL *stop) {
             if (idx == 0)
             {
@@ -281,11 +343,19 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
             {
                 CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
             }
+            //画圆
+            if (isShowCircle) {
+                BOOL isHollow = [self isHollowCircleForHorizontalIndex:idx atLineIndex:index];
+                radius = [self circleRadiustAtHorizontalIndex:idx atLineIndex:index];
+                
+                [self drawCircleAtPoint:point.position isHollow:isHollow radius:radius context:ctx lineWidth:lineWidth color:color];
+            }
+            
+            //画数值
+            if ([self showLineValuesAtHorizontalIndex:idx atLineIndex:index]) {
+                [self drawValueAtPoint:point.position value:point.value radius:radius context:ctx];
+            }
         }];
-        CGContextSetLineWidth(ctx, [self widthForLineAtLineIndex:index]);
-        CGContextSetLineJoin(ctx, kCGLineJoinRound);
-        CGContextSetLineCap(ctx, kCGLineCapRound);
-        [[self colorForLineAtLineIndex:index] set];
         
         CGContextStrokePath(ctx);
         
@@ -322,7 +392,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
                 CGContextStrokePath(ctx);
             }
             
-            CGSize valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
+            CGSize  valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
             CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
             CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
             
@@ -333,6 +403,60 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 
     }
    
+}
+
+/**
+ *  画折线上的圆
+ *
+ *  @param point    坐标
+ *  @param isHollow 是否是空心圆
+ *  @param ctx      上下文
+ */
+-(void)drawCircleAtPoint:(CGPoint)center isHollow:(BOOL)isHollow radius:(CGFloat)radius context:(CGContextRef)ctx lineWidth:(CGFloat)lineWidth color:(UIColor *)color
+{
+    UIView *cricle = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius*2, radius*2)];
+    cricle.center = center;
+    cricle.layer.masksToBounds = YES;
+    cricle.layer.cornerRadius = radius;
+    cricle.layer.borderWidth = lineWidth;
+    cricle.layer.borderColor = color.CGColor;
+    
+    if (isHollow) {
+        cricle.backgroundColor = self.backgroundColor;
+    }else{
+        cricle.backgroundColor = color;
+    }
+    
+    [self addSubview:cricle];
+
+//    CGContextAddArc(ctx, center.x, center.y, radius, 0, 2 * M_PI, NO);
+////    CGContextAddEllipseInRect(ctx, CGRectMake(center.x - radius, center.y - radius, radius*2, radius*2));
+//    if (isHollow) {
+//        CGContextStrokePath(ctx);
+//    }else
+//    {
+//        CGContextFillPath(ctx);
+//    }
+}
+
+/**
+ *  在折线上画数值
+ *
+ *  @param value 要画的数值
+ *  @param ctx   上下文
+ */
+-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value radius:(CGFloat)radius context:(CGContextRef)ctx
+{
+    CGContextSaveGState(ctx);
+    NSString *lineValue = [NSString stringWithFormat:@"%.1f",value];
+    
+    CGSize valueSize = [lineValue sizeWithAttributes:[super valueAttributes]];
+    
+    CGPoint valuePoint = CGPointMake(point.x - valueSize.width * 0.5, point.y - valueSize.height - radius - 2);
+    
+    [lineValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+    
+    CGContextRestoreGState(ctx);
 }
 
 #pragma mark - Getter And Setter
@@ -357,7 +481,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 
 -(CGFloat)cachedMinHeight
 {
-    if (_cachedMinHeight == kEWChartViewcachedHeight) {
+    if (_cachedMinHeight == kEWChartViewCachedHeight) {
         CGFloat minHeight = FLT_MAX;
         NSUInteger numberOfLines = [self numberOfLineInLineChart];
         for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
@@ -379,7 +503,7 @@ CGFloat static const   kEWChartViewcachedHeight  = -1.0f;
 
 -(CGFloat)cachedMaxHeight
 {
-    if (_cachedMaxHeight == kEWChartViewcachedHeight) {
+    if (_cachedMaxHeight == kEWChartViewCachedHeight) {
         CGFloat maxHeight = 0;
         NSUInteger numberOfLines = [self numberOfLineInLineChart];
         for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)

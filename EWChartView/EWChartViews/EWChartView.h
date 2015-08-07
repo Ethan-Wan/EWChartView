@@ -55,6 +55,9 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 /** y坐标上文字的样式 */
 @property (nonatomic, strong) NSDictionary *yLabelAttributes; //default
 
+/** 具体的数据值的样式 */
+@property (nonatomic, strong) NSDictionary *valueAttributes; //default
+
 -(void)reloadData;
 
 // 将最大值和最小值reset为默认值

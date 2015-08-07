@@ -37,11 +37,11 @@
 @optional
 
 /**
- *  折线图的个数
+ *  折线图的个数（默认是1条折线图）
  *
  *  @param lineChartView 当前折线图
  *
- *  @return 返回折线图数量 （默认是1条折线图）
+ *  @return 返回折线图数量
  */
 - (NSUInteger)numberOfLinesInLineChartView:(EWLineCharView *)lineChartView;
 
@@ -56,18 +56,7 @@
 - (BOOL)lineChartView:(EWLineCharView *)lineChartView showsCircleForLineAtLineIndex:(NSUInteger)lineIndex;
 
 /**
- *  是否显示折线图上的空心圆
- *
- *  @param lineChartView   当前折线图
- *  @param horizontalIndex x轴的索引
- *  @param lineIndex       第几条折线的索引
- *
- *  @return YES／NO （默认为NO）
- */
-- (BOOL)lineChartView:(EWLineCharView *)lineChartView showsAnnulusForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
-
-/**
- *  是否是光滑的险段
+ *  是否是光滑的线段（默认是折线）
  *
  *  @param lineChartView 当前折线图
  *  @param lineIndex     第几条折线的索引
@@ -148,8 +137,29 @@
  *
  *  @return 返回圆或圆环的半径
  */
-- (CGFloat)lineChartView:(EWLineCharView *)lineChartView circleRadiusForDotAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+- (CGFloat)lineChartView:(EWLineCharView *)lineChartView circleRadiustAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
 
+/**
+ *  显示每个点的具体数据值
+ *
+ *  @param lineChartView   当前折线图
+ *  @param horizontalIndex x轴的索引
+ *  @param lineIndex       第几条折线的索引
+ *
+ *  @return YES/NO
+ */
+- (BOOL)lineChartView:(EWLineCharView *)lineChartView showLineValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+
+/**
+ *  是否显示折线图上的空心圆（前提要先显示折线图上的圆点）
+ *
+ *  @param lineChartView   当前折线图
+ *  @param horizontalIndex x轴的索引
+ *  @param lineIndex       第几条折线的索引
+ *
+ *  @return YES／NO （默认为NO）
+ */
+- (BOOL)lineChartView:(EWLineCharView *)lineChartView isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
 
 @end
 
