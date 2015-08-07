@@ -37,7 +37,6 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
 
 @property (nonatomic, assign) CGFloat y;
 @property (nonatomic, assign) CGFloat height;
-
 @property (nonatomic, assign) CGFloat value;
 
 @end
@@ -389,5 +388,19 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
 @end
 
 @implementation EWBarChartInfo
+
+#pragma mark - Alloc/Init
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        _y = 0;
+        _height = 0;
+        _value = 0;
+    }
+    return self;
+}
 
 @end

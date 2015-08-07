@@ -17,11 +17,16 @@
 #define EWRandomColor EWColor(arc4random_uniform(256),arc4random_uniform(256),arc4random_uniform(256))
 
 
-@interface ViewController ()<EWBarChartViewDataSource,EWBarChartViewDelegate>
-//                            EWPieChartViewDataSource,EWPieChartViewDelegate>
-//                            EWLineChartViewDataSource,EWLineChartViewDelegate>
+@interface ViewController () <EWPieChartViewDataSource,EWPieChartViewDelegate>
+//                           <EWBarChartViewDataSource,EWBarChartViewDelegate>
+//                           <EWPieChartViewDataSource,EWPieChartViewDelegate>
+//                           <EWLineChartViewDataSource,EWLineChartViewDelegate>
 
 @property(nonatomic,strong) NSMutableArray *array;
+@property(nonatomic,strong) NSArray *array1;
+@property(nonatomic,strong) NSArray *array2;
+@property(nonatomic,strong) NSArray *array3;
+
 @property(nonatomic,strong) NSArray *arrayTitle;
 @end
 
@@ -30,31 +35,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSArray *array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
-    NSArray *array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
-    NSArray *array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
+    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
     self.array = [NSMutableArray array];
-    [self.array addObject:array1];
-    [self.array addObject:array2];
-    [self.array addObject:array3];
+    [self.array addObject:self.array1];
+    [self.array addObject:self.array2];
+    [self.array addObject:self.array3];
     
     self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
     
-    
-//    EWPieChartView *pie = [[EWPieChartView alloc] init];
-//    pie.frame = self.view.bounds;
-//    pie.dataSource = self;
-//    pie.delegate = self;
-//    pie.minRadius = 30.0;
-//    pie.showTitleType = EWPieChartShowTitleOutItem;
-//    pie.showItemPercent = YES;
-//    [pie reloadData];
-//    [self.view addSubview:pie];
-    
-//    EWChartView *chartView = [[EWChartView alloc] init];
-//    
-//    chartView.frame = self.view.bounds;
-//    [self.view addSubview:chartView];
+//-------------------pie-----------------
+    EWPieChartView *pie = [[EWPieChartView alloc] init];
+    pie.frame = self.view.bounds;
+    pie.dataSource = self;
+    pie.delegate = self;
+    pie.minRadius = 30.0;
+    pie.showTitleType = EWPieChartShowTitleOutItem;
+    pie.showItemPercent = YES;
+    [pie reloadData];
+    [self.view addSubview:pie];
     
 //-------------------line-----------------
 //    EWLineCharView *lineChart = [[EWLineCharView alloc] init];
@@ -69,77 +69,77 @@
 //    [self.view addSubview:lineChart];
     
     //-------------------bar-----------------
-    EWBarChartView *barChart = [[EWBarChartView alloc] init];
-    barChart.dataSource = self;
-    barChart.delegate =self;
-    barChart.maximumValue = 3.0;
-    barChart.minimumValue = 0.0;
-    barChart.sectionCount = 4;
-    
-    barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
-    barChart.coordinateColor = [UIColor redColor];
-    barChart.frame = CGRectMake(10, 50, 300, 200);
-    [barChart reloadData];
-    [self.view addSubview:barChart];
+//    EWBarChartView *barChart = [[EWBarChartView alloc] init];
+//    barChart.dataSource = self;
+//    barChart.delegate =self;
+//    barChart.maximumValue = 3.0;
+//    barChart.minimumValue = 0.0;
+//    barChart.sectionCount = 4;
+//    
+//    barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
+//    barChart.coordinateColor = [UIColor redColor];
+//    barChart.frame = CGRectMake(10, 50, 300, 200);
+//    [barChart reloadData];
+//    [self.view addSubview:barChart];
 
 }
 
 //---------------------bar---------------
--(NSUInteger)numberOfBarInBarChartView:(EWBarChartView *)barChartView
-{
-    return self.array.count;
-}
-
--(NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex
-{
-    return [self.array[barIndex] count];
-}
-
--(CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
-{
-    return [self.array[barIndex][horizontalIndex] floatValue];
-}
-
--(NSString *)barChartView:(EWBarChartView *)barChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex
-{
-    return self.arrayTitle[horizontalIndex];
-}
-
--(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtBarIndex:(NSUInteger)barIndex
-{
-    if (barIndex == 0) {
-        return [UIColor redColor];
-    }
-    else if(barIndex == 1)
-    {
-        return [UIColor yellowColor];
-    }
-    return nil;
-}
-
--(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex
-{
-    switch (horizontalIndex) {
-        case 0:
-            return [UIColor redColor];
-            break;
-        case 1:
-            return [UIColor blackColor];
-            break;
-        case 2:
-            return [UIColor greenColor];
-            break;
-        case 3:
-            return [UIColor yellowColor];
-            break;
-        case 4:
-            return [UIColor grayColor];
-            break;
-            
-        default:
-            break;
-    }return nil;
-}
+//-(NSUInteger)numberOfBarInBarChartView:(EWBarChartView *)barChartView
+//{
+//    return self.array.count;
+//}
+//
+//-(NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex
+//{
+//    return [self.array[barIndex] count];
+//}
+//
+//-(CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+//{
+//    return [self.array[barIndex][horizontalIndex] floatValue];
+//}
+//
+//-(NSString *)barChartView:(EWBarChartView *)barChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex
+//{
+//    return self.arrayTitle[horizontalIndex];
+//}
+//
+//-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtBarIndex:(NSUInteger)barIndex
+//{
+//    if (barIndex == 0) {
+//        return [UIColor redColor];
+//    }
+//    else if(barIndex == 1)
+//    {
+//        return [UIColor yellowColor];
+//    }
+//    return nil;
+//}
+//
+//-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex
+//{
+//    switch (horizontalIndex) {
+//        case 0:
+//            return [UIColor redColor];
+//            break;
+//        case 1:
+//            return [UIColor blackColor];
+//            break;
+//        case 2:
+//            return [UIColor greenColor];
+//            break;
+//        case 3:
+//            return [UIColor yellowColor];
+//            break;
+//        case 4:
+//            return [UIColor grayColor];
+//            break;
+//            
+//        default:
+//            break;
+//    }return nil;
+//}
 
 //-----------------------line-----------------
 //-(NSUInteger)numberOfLinesInLineChartView:(EWLineCharView *)lineChartView
@@ -194,17 +194,17 @@
 //---------------------pie---------------------
 //#pragma mark - EWPieChartViewDataSource
 //
-//-(NSUInteger)numberOfItemInPieChartView
-//{
-//    return self.array.count;
-//}
-//
-//-(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
-//{
-//    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
-//    cell.value = [self.array[itemIndex] floatValue];
-//    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
-//    return cell;
-//}
+-(NSUInteger)numberOfItemInPieChartView
+{
+    return self.array1.count;
+}
+
+-(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
+{
+    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
+    cell.value = [self.array1[itemIndex] floatValue];
+    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
+    return cell;
+}
 
 @end

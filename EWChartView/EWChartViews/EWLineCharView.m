@@ -23,7 +23,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
 //macro
 #define EWPieChartViewLineDefalutColor [UIColor blackColor];
 
-@interface EWLineChartPoint : NSObject
+@interface EWLineChartInfo : NSObject
 
 @property (nonatomic, assign) CGPoint position;
 @property (nonatomic, assign) CGFloat value;
@@ -229,16 +229,16 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
             NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:verticalValueForHorizontalIndex:atLineIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex");
             CGFloat valueHeight =  [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
                 
-            EWLineChartPoint *chartPoint = [[EWLineChartPoint alloc] init];
+            EWLineChartInfo *lineinfo = [[EWLineChartInfo alloc] init];
                 
             CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
             
             yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
 
-            chartPoint.position = CGPointMake(xOffset, yOffset);
-            chartPoint.value = valueHeight;
+            lineinfo.position = CGPointMake(xOffset, yOffset);
+            lineinfo.value = valueHeight;
             
-            [chartPointData addObject:chartPoint];
+            [chartPointData addObject:lineinfo];
             xOffset += pointSpace;
         }
         [mutableChartData addObject:chartPointData];
@@ -335,7 +335,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
         CGContextSetLineCap(ctx, kCGLineCapRound);
         
         //画线
-        [lineData enumerateObjectsUsingBlock:^(EWLineChartPoint *point, NSUInteger idx, BOOL *stop) {
+        [lineData enumerateObjectsUsingBlock:^(EWLineChartInfo *point, NSUInteger idx, BOOL *stop) {
             if (idx == 0)
             {
                 CGContextMoveToPoint(ctx, point.position.x, point.position.y);
@@ -532,7 +532,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
 }
 
 @end
-@implementation EWLineChartPoint
+@implementation EWLineChartInfo
 
 #pragma mark - Alloc/Init
 
@@ -542,15 +542,9 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
     if (self)
     {
         _position = CGPointZero;
+        _value = 0;
     }
     return self;
-}
-
-#pragma mark - Compare
-
-- (NSComparisonResult)compare:(EWLineChartPoint *)otherObject
-{
-    return self.position.x > otherObject.position.x;
 }
 
 @end
