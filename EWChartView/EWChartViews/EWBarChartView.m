@@ -9,14 +9,17 @@
 #import "EWBarChartView.h"
 
 //default parameter
-NSInteger static const kEWBarChartViewBarNumber  = 1;
-CGFloat static const   kEWChartViewDefalutCachedHeight  = -1.0f;
-CGFloat static const   kEWChartViewXYAxisPadding = 3.0f;
+NSInteger static const   kEWBarChartViewBarNumber         = 1;
+CGFloat   static const   kEWChartViewDefalutCachedHeight  = -1.0f;
+CGFloat   static const   kEWChartViewXYAxisPadding        = 3.0f;
+BOOL      static const   kEWChartViewShowBarValue         = YES;
 
 //一个表的柱状图之间的距离 *0.5
-CGFloat static const   kEWBarChartViewBarMargin  = 3.0f;
+CGFloat   static const   kEWBarChartViewBarMargin          = 3.0f;
 //多个柱状图的柱之间的距离
-CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
+CGFloat   static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
+
+CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
 
 //macro
 #define kEWBarChartViewBarColor nil
@@ -34,6 +37,8 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
 
 @property (nonatomic, assign) CGFloat y;
 @property (nonatomic, assign) CGFloat height;
+
+@property (nonatomic, assign) CGFloat value;
 
 @end
 
@@ -106,6 +111,17 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
     }
 }
 
+-(BOOL)showBarValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+{
+    if ([self.delegate respondsToSelector:@selector(barChartView:showBarValuesAtHorizontalIndex:atBarIndex:)])
+    {
+        return [self.delegate barChartView:self showBarValuesAtHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+    }else
+    {
+        return kEWChartViewShowBarValue;
+    }
+
+}
 
 /**
  *  水平方向上数据个数
@@ -187,6 +203,7 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
             
             barInfo.y = yOffset;
             barInfo.height = standardizedHeight;
+            barInfo.value = valueHeight;
             
             [barInfoData addObject:barInfo];
         }
@@ -236,13 +253,18 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
             
             CGContextAddRect(ctx, CGRectMake(barX, barInfo.y, barWidth, barInfo.height));
             
-            barX += xstepLength;
-            
             [[self colorForBarAtBarIndex:index] set];
             [[self colorForBarAtHorizontalIndex:idx] set];
             
             CGContextFillPath(ctx);
             
+            //画数值
+            if ([self showBarValuesAtHorizontalIndex:idx atBarIndex:index]) {
+                CGPoint point = CGPointMake(barX , barInfo.y);
+                [self drawValueAtPoint:point value:barInfo.value];
+            }
+            
+            barX += xstepLength;
             CGContextRestoreGState(ctx);
         }];
 
@@ -251,6 +273,11 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
     }
 }
 
+/**
+ *  画坐标值
+ *
+ *  @param ctx 上下文
+ */
 -(void)drawXYLabelText:(CGContextRef)ctx
 {
     //draw y axis labels
@@ -278,6 +305,21 @@ CGFloat static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
     }
 }
 
+/**
+ *  画具体数据值
+ *
+ *  @param point 需要处理的坐标点
+ */
+-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value
+{
+    NSString *barValue = [NSString stringWithFormat:@"%.1f",value];
+    
+    CGSize valueSize = [barValue sizeWithAttributes:[super valueAttributes]];
+    
+    CGPoint valuePoint = CGPointMake(point.x , point.y - valueSize.height  - kEWBarChartViewValueMargin);
+    
+    [barValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+}
 
 #pragma mark - Getter And Setter
 

@@ -109,6 +109,17 @@
  */
 - (UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex;
 
+/**
+ *  显示柱子上的数据值
+ *
+ *  @param barChartView    当前柱状图
+ *  @param horizontalIndex x轴的索引
+ *  @param barIndex        柱状图索引
+ *
+ *  @return YES／NO
+ */
+- (BOOL)barChartView:(EWBarChartView *)barChartView showBarValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex;
+
 @end
 
 @interface EWBarChartView : EWChartView
@@ -116,6 +127,7 @@
 @property (nonatomic, weak) id<EWBarChartViewDataSource> dataSource;
 @property (nonatomic, weak) id<EWBarChartViewDelegate> delegate;
 
+/** 柱子的颜色 */
 @property (nonatomic ,strong) UIColor *barColor;  //defalut nil
 
 -(void)reloadData;

@@ -348,12 +348,20 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
                 BOOL isHollow = [self isHollowCircleForHorizontalIndex:idx atLineIndex:index];
                 radius = [self circleRadiustAtHorizontalIndex:idx atLineIndex:index];
                 
-                [self drawCircleAtPoint:point.position isHollow:isHollow radius:radius context:ctx lineWidth:lineWidth color:color];
+                [self drawCircleAtPoint:point.position
+                               isHollow:isHollow
+                                 radius:radius
+                                context:ctx
+                              lineWidth:lineWidth
+                                  color:color];
             }
             
             //画数值
             if ([self showLineValuesAtHorizontalIndex:idx atLineIndex:index]) {
-                [self drawValueAtPoint:point.position value:point.value radius:radius context:ctx];
+                [self drawValueAtPoint:point.position
+                                 value:point.value
+                                radius:radius
+                               context:ctx];
             }
         }];
         
