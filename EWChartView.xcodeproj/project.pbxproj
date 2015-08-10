@@ -11,6 +11,9 @@
 		AA119A841B71D1F60096432F /* EWChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A831B71D1F60096432F /* EWChartView.m */; };
 		AA119A871B71D20D0096432F /* EWLineCharView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A861B71D20D0096432F /* EWLineCharView.m */; };
 		AA119A8A1B71D21E0096432F /* EWBarChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA119A891B71D21E0096432F /* EWBarChartView.m */; };
+		AA27D9B11B78A9A000023AFC /* EWSegmentHeadButton.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27D9AC1B78A9A000023AFC /* EWSegmentHeadButton.m */; };
+		AA27D9B21B78A9A000023AFC /* EWSegmentHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27D9AE1B78A9A000023AFC /* EWSegmentHeadView.m */; };
+		AA27D9B31B78A9A000023AFC /* EWSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27D9B01B78A9A000023AFC /* EWSegmentView.m */; };
 		AA5A1BFD1B70E314000B37C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1BFC1B70E314000B37C3 /* main.m */; };
 		AA5A1C001B70E314000B37C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1BFF1B70E314000B37C3 /* AppDelegate.m */; };
 		AA5A1C031B70E314000B37C3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C021B70E314000B37C3 /* ViewController.m */; };
@@ -40,6 +43,12 @@
 		AA119A861B71D20D0096432F /* EWLineCharView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWLineCharView.m; sourceTree = "<group>"; };
 		AA119A881B71D21E0096432F /* EWBarChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWBarChartView.h; sourceTree = "<group>"; };
 		AA119A891B71D21E0096432F /* EWBarChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWBarChartView.m; sourceTree = "<group>"; };
+		AA27D9AB1B78A9A000023AFC /* EWSegmentHeadButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWSegmentHeadButton.h; sourceTree = "<group>"; };
+		AA27D9AC1B78A9A000023AFC /* EWSegmentHeadButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWSegmentHeadButton.m; sourceTree = "<group>"; };
+		AA27D9AD1B78A9A000023AFC /* EWSegmentHeadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWSegmentHeadView.h; sourceTree = "<group>"; };
+		AA27D9AE1B78A9A000023AFC /* EWSegmentHeadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWSegmentHeadView.m; sourceTree = "<group>"; };
+		AA27D9AF1B78A9A000023AFC /* EWSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWSegmentView.h; sourceTree = "<group>"; };
+		AA27D9B01B78A9A000023AFC /* EWSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWSegmentView.m; sourceTree = "<group>"; };
 		AA5A1BF71B70E313000B37C3 /* EWChartView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EWChartView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA5A1BFB1B70E314000B37C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA5A1BFC1B70E314000B37C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -75,6 +84,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AA27D9AA1B78A9A000023AFC /* SegmentView */ = {
+			isa = PBXGroup;
+			children = (
+				AA27D9AB1B78A9A000023AFC /* EWSegmentHeadButton.h */,
+				AA27D9AC1B78A9A000023AFC /* EWSegmentHeadButton.m */,
+				AA27D9AD1B78A9A000023AFC /* EWSegmentHeadView.h */,
+				AA27D9AE1B78A9A000023AFC /* EWSegmentHeadView.m */,
+				AA27D9AF1B78A9A000023AFC /* EWSegmentView.h */,
+				AA27D9B01B78A9A000023AFC /* EWSegmentView.m */,
+			);
+			path = SegmentView;
+			sourceTree = "<group>";
+		};
 		AA5A1BEE1B70E313000B37C3 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +118,7 @@
 		AA5A1BF91B70E313000B37C3 /* EWChartView */ = {
 			isa = PBXGroup;
 			children = (
+				AA27D9AA1B78A9A000023AFC /* SegmentView */,
 				AA5A1C211B70E4FF000B37C3 /* EWChartViews */,
 				AA5A1BFE1B70E314000B37C3 /* AppDelegate.h */,
 				AA5A1BFF1B70E314000B37C3 /* AppDelegate.m */,
@@ -252,6 +275,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA27D9B11B78A9A000023AFC /* EWSegmentHeadButton.m in Sources */,
 				AA5A1C031B70E314000B37C3 /* ViewController.m in Sources */,
 				AA119A8A1B71D21E0096432F /* EWBarChartView.m in Sources */,
 				AA5A1C001B70E314000B37C3 /* AppDelegate.m in Sources */,
@@ -259,6 +283,8 @@
 				AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */,
 				AA5A1BFD1B70E314000B37C3 /* main.m in Sources */,
 				AA119A811B71A6880096432F /* EWPieChartViewCell.m in Sources */,
+				AA27D9B21B78A9A000023AFC /* EWSegmentHeadView.m in Sources */,
+				AA27D9B31B78A9A000023AFC /* EWSegmentView.m in Sources */,
 				AA119A841B71D1F60096432F /* EWChartView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,6 +14,7 @@ CGFloat static const kEWPieChartViewMinRadius = 0.0f;
 CGFloat static const kEWPieChartViewStartAngle = 0.0f;
 CGFloat static const kEWPieChartViewEndAngle = 360.0f;
 //CGFloat static const kEWPieChartViewAnimationDuration = 0.6f;
+
 EWPieChartShowTitleType static const kEWPieChartViewShowTitleType = EWPieChartShowTitleDefault;
 BOOL static const kEWPieChartViewShowItemPercent = NO;
 
@@ -40,6 +41,12 @@ static inline float easeInOut(float x){
 
 @property (nonatomic, strong) NSMutableArray *values;
 
+@property (nonatomic, assign) float endAngle;
+
+@property (nonatomic, assign) CGPoint touchPoint;
+
+//点击扇形的时候的偏移量
+@property (nonatomic, assign) CGFloat centerOffset;
 @end
 
 @implementation EWPieChartView
@@ -104,66 +111,72 @@ static inline float easeInOut(float x){
 
 -(void)drawItemTitles:(CGContextRef)ctx sumValues:(CGFloat)sum
 {
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0,1), 3, [UIColor blackColor].CGColor);
-    
     float angleStart = radians(self.startAngle);
     float angleInterval = radians(self.endAngle - self.startAngle);
     
     for (int index = 0; index < self.chartData.count; index++) {
         EWPieChartViewCell *cell = self.chartData[index];
         float angleEnd = angleStart + angleInterval * cell.value / sum;
+        float angle = (angleStart + angleEnd) / 2.0;
         
         EWPieChartShowTitleType showTitleType = [self showItemTitleTypeAtItemIndex:index];
-        if(showTitleType == EWPieChartShowTitleDefault){
-            angleStart = angleEnd;
-            continue;
-        }
-        UIColor *color = cell.color?: [UIColor blackColor];
-        CGContextSetFillColorWithColor(ctx, color.CGColor);
-        
-        float angle = (angleStart + angleEnd) / 2.0;
-        
-        NSString *title = cell.title?cell.title:[NSString stringWithFormat:@"%.2f", cell.value];
-        float radius = self.maxRadius;
-        [self drawText:title angle:angle - M_PI radius:radius context:ctx font:self.font];
-        
-        angleStart = angleEnd;
-    }
-}
-
--(void)drawItemPercent:(CGContextRef)ctx sumValues:(CGFloat)sum
-{
-    float angleStart = radians(self.startAngle);
-    float angleInterval = radians(self.endAngle - self.startAngle);
-    
-    for (int index = 0; index < self.chartData.count; index++) {
-        EWPieChartViewCell *cell = self.chartData[index];
-        float angleEnd = angleStart + angleInterval * cell.value / sum;
-        
         BOOL showPercent = [self showItemPercentAtItemIndex:index];
-        if(!showPercent){
+
+        if(showTitleType == EWPieChartShowTitleDefault && !showPercent){
             angleStart = angleEnd;
             continue;
+        }else if (showTitleType != EWPieChartShowTitleDefault && showPercent)
+        {
+            [self drawTitle:cell angle:angle context:ctx];
+            [self drawPercent:cell angle:angle context:ctx sum:sum];
+
+        }else if(showTitleType != EWPieChartShowTitleDefault )
+        {
+           [self drawTitle:cell angle:angle context:ctx];
+        }else if(showPercent)
+        {
+           [self drawPercent:cell angle:angle context:ctx sum:sum];
         }
-        [[UIColor whiteColor] set];
-        
-        float angle = (angleStart + angleEnd) / 2.0;
-        
-        NSString *percent = [NSString stringWithFormat:@"%.1f%%",(cell.value / sum)*100];
-        float radius = (self.maxRadius - self.minRadius) * 0.5;
-        [self drawText:percent angle:angle - M_PI radius:radius context:ctx font:[UIFont systemFontOfSize:12]];
         
         angleStart = angleEnd;
     }
 }
 
+-(void)drawTitle:(EWPieChartViewCell *)cell angle:(CGFloat)angle context:(CGContextRef)ctx
+{
+    UIColor *color = cell.color?: [UIColor blackColor];
+    
+    NSString *title = cell.title?cell.title:[NSString stringWithFormat:@"%.2f", cell.value];
+    float radius = self.maxRadius;
+    [self drawTitle:title angle:M_PI*2 - angle radius:radius context:ctx font:self.font color:color];
+}
 
-- (void)drawText:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font
+-(void)drawPercent:(EWPieChartViewCell *)cell angle:(CGFloat)angle context:(CGContextRef)ctx sum:(CGFloat)sum
+{
+    [[UIColor whiteColor] set];
+    
+    NSString *percent = [NSString stringWithFormat:@"%.1f%%",(cell.value / sum)*100];
+    float radius = (self.maxRadius + self.minRadius) * 0.5;
+    [self drawPercent:percent angle:M_PI*2 - angle radius:radius context:ctx font:[UIFont systemFontOfSize:12]];
+}
+
+
+/**
+ *  画标题
+ *
+ *  @param text   标题内容
+ *  @param angle  当前扇形的中间角度
+ *  @param radius 半径
+ *  @param ctx    上下文
+ *  @param font   标题样式
+ */
+- (void)drawTitle:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font color:(UIColor *)color
 {
     
     CGSize textSize = [text sizeWithAttributes:@{NSFontAttributeName:font}];
     CGPoint anchorPoint;
     
+    //closewise
     if(angle >= -M_PI_4 && angle < M_PI_4){
         anchorPoint = CGPointMake(0, easeInOut((M_PI_4-angle) / M_PI_2));
     } else if(angle >= M_PI_4 && angle < M_PI_2+M_PI_4){
@@ -182,10 +195,34 @@ static inline float easeInOut(float x){
                               textSize.width,
                               textSize.height);
     UIGraphicsPushContext(ctx);
-    [text drawInRect:frame withAttributes:@{NSFontAttributeName:font}];
+    [text drawInRect:frame withAttributes:@{NSFontAttributeName:font,NSForegroundColorAttributeName:color}];
     UIGraphicsPopContext();
 }
+
+/**
+ *  画百分比
+ *
+ *  @param text   标题内容
+ *  @param angle  当前扇形的中间角度
+ *  @param radius 半径
+ *  @param ctx    上下文
+ *  @param font   标题样式
+ */
+- (void)drawPercent:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font
+{
+    CGSize textSize = [text sizeWithAttributes:@{NSFontAttributeName:font}];
     
+    CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+    CGPoint textCenter = CGPointMake(center.x + radius*cosf(angle), center.y + radius*sinf(angle));
+    CGPoint drawPoint = CGPointMake(textCenter.x - textSize.width * 0.5 ,textCenter.y - textSize.height * 0.5);
+    
+    UIGraphicsPushContext(ctx);
+    [text drawAtPoint:drawPoint withAttributes:@{NSFontAttributeName:font,NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    UIGraphicsPopContext();
+
+    
+    
+}
 #pragma mark - Public Method
 
 -(void)reloadData
@@ -227,8 +264,8 @@ static inline float easeInOut(float x){
     CGContextSaveGState(ctx);
     
     //翻转
-    CGContextTranslateCTM(ctx, self.bounds.size.width, self.bounds.size.height);
-    CGContextScaleCTM(ctx, -1, -1);
+    CGContextTranslateCTM(ctx, 0, self.bounds.size.height);
+    CGContextScaleCTM(ctx, 1, -1);
     
     __block float angleStart = radians(self.startAngle);
     float angleInterval = radians(self.endAngle - self.startAngle);
@@ -238,45 +275,53 @@ static inline float easeInOut(float x){
 //        float centrAngle = (angleEnd + angleStart) * 0.5;
         
         UIColor *itemColor = cell.color?cell.color:EWRandomColor;
+        cell.color = itemColor;
         
         CGPoint minRadiusStart = CGPointMake(center.x + self.minRadius*cosf(angleStart), center.y + self.minRadius*sinf(angleStart));
         CGPoint maxRadiusEnd = CGPointMake(center.x + self.maxRadius*cosf(angleEnd), center.y + self.maxRadius*sinf(angleEnd));
         
-        //保存上下文
         CGContextSaveGState(ctx);
-        
+
         //画扇形
         CGContextMoveToPoint(ctx, minRadiusStart.x, minRadiusStart.y);
         CGContextAddArc(ctx, center.x, center.y, self.minRadius, angleStart, angleEnd, NO);
         CGContextAddLineToPoint(ctx, maxRadiusEnd.x, maxRadiusEnd.y);
         CGContextAddArc(ctx, center.x, center.y, self.maxRadius, angleEnd, angleStart, YES);
         CGContextClosePath(ctx);
-//        CGContextClip(ctx);
-        
-        //填充颜色，然后绘制渲染 （用set 设置颜色，不用区分实心和空心）
         [itemColor set];
-//        CGContextFillRect(ctx, self.bounds);
-        CGContextDrawPath(ctx, kCGPathFillStroke);
-        
-        //还原上下文，会先将当前上下文delete，然后拿到之前save的上下文
-        CGContextRestoreGState(ctx);
-        
+    
+        //选择的扇形
+        CGPoint transPoint = CGPointMake(self.touchPoint.x, self.frame.size.height - self.touchPoint.y);
+        BOOL containsPoint = CGContextPathContainsPoint(ctx, transPoint, kCGPathFill);
+        if (containsPoint) {
+            if ([self.delegate respondsToSelector:@selector(pieChartView:didSelectItemAtIndex:)]) {
+                [self.delegate pieChartView:self didSelectItemAtIndex:idx];
+            }
+        }
+            CGContextFillPath(ctx);
+            CGContextRestoreGState(ctx);
         angleStart = angleEnd;
     }];
     
     CGContextRestoreGState(ctx);
-    CGContextSaveGState(ctx);
     
-    if (self.showTitleType != EWPieChartShowTitleDefault || [self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)]) {
+    if (self.showTitleType != EWPieChartShowTitleDefault
+        || [self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)]
+        || self.showItemPercent
+        || [self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)]) {
+        
         [self drawItemTitles:ctx sumValues:sum];
     }
-    
-    CGContextRestoreGState(ctx);
-    
-    if (self.showItemPercent || [self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)]) {
-        [self drawItemPercent:ctx sumValues:sum];
-    }
+}
 
+#pragma mark - Touch
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+    self.touchPoint = touchPoint;
+    [self setNeedsDisplay];
 }
 
 #pragma mark - getter and setter

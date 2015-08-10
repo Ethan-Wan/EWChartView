@@ -89,11 +89,17 @@ typedef enum {
 @property (nonatomic, assign) float maxRadius;   //default 100
 @property (nonatomic, assign) float minRadius;   //default 0
 @property (nonatomic, assign) float startAngle;  //default 0
-@property (nonatomic, assign) float endAngle;    //default 360
+//@property (nonatomic, assign) float endAngle;    //default 360 
 //@property (nonatomic, assign) float animationDuration;   //default 0.6s
+
+/** 标题的样式*/
+@property (nonatomic, strong) NSDictionary *titleAttributes;
+/** 百分比的样式*/
+@property (nonatomic, strong) NSDictionary *percentAttributes;
 
 @property (nonatomic, assign) EWPieChartShowTitleType showTitleType;   //default not show
 @property (nonatomic, assign) BOOL showItemPercent;   //default NO
+
 
 -(void)reloadData;
 

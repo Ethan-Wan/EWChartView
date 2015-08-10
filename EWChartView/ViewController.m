@@ -10,6 +10,7 @@
 #import "EWPieChartView.h"
 #import "EWLineCharView.h"
 #import "EWBarChartView.h"
+#import "EWSegmentView.h"
 
 //颜色
 #define EWColor(r,g,b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
@@ -17,7 +18,7 @@
 #define EWRandomColor EWColor(arc4random_uniform(256),arc4random_uniform(256),arc4random_uniform(256))
 
 
-@interface ViewController () <EWPieChartViewDataSource,EWPieChartViewDelegate>
+@interface ViewController () //<EWPieChartViewDataSource,EWPieChartViewDelegate>
 //                           <EWBarChartViewDataSource,EWBarChartViewDelegate>
 //                           <EWPieChartViewDataSource,EWPieChartViewDelegate>
 //                           <EWLineChartViewDataSource,EWLineChartViewDelegate>
@@ -35,26 +36,28 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
-    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
-    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
-    self.array = [NSMutableArray array];
-    [self.array addObject:self.array1];
-    [self.array addObject:self.array2];
-    [self.array addObject:self.array3];
     
-    self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
+    
+//    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+//    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+//    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
+//    self.array = [NSMutableArray array];
+//    [self.array addObject:self.array1];
+//    [self.array addObject:self.array2];
+//    [self.array addObject:self.array3];
+//    
+//    self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
     
 //-------------------pie-----------------
-    EWPieChartView *pie = [[EWPieChartView alloc] init];
-    pie.frame = self.view.bounds;
-    pie.dataSource = self;
-    pie.delegate = self;
-    pie.minRadius = 30.0;
-    pie.showTitleType = EWPieChartShowTitleOutItem;
-    pie.showItemPercent = YES;
-    [pie reloadData];
-    [self.view addSubview:pie];
+//    EWPieChartView *pie = [[EWPieChartView alloc] init];
+//    pie.frame = self.view.bounds;
+//    pie.dataSource = self;
+//    pie.delegate = self;
+//    pie.minRadius = 30.0;
+//    pie.showTitleType = EWPieChartShowTitleOutItem;
+//    pie.showItemPercent = YES;
+//    [pie reloadData];
+//    [self.view addSubview:pie];
     
 //-------------------line-----------------
 //    EWLineCharView *lineChart = [[EWLineCharView alloc] init];
@@ -194,17 +197,17 @@
 //---------------------pie---------------------
 //#pragma mark - EWPieChartViewDataSource
 //
--(NSUInteger)numberOfItemInPieChartView
-{
-    return self.array1.count;
-}
-
--(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
-{
-    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
-    cell.value = [self.array1[itemIndex] floatValue];
-    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
-    return cell;
-}
+//-(NSUInteger)numberOfItemInPieChartView
+//{
+//    return self.array1.count;
+//}
+//
+//-(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
+//{
+//    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
+//    cell.value = [self.array1[itemIndex] floatValue];
+//    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
+//    return cell;
+//}
 
 @end
