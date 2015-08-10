@@ -22,6 +22,9 @@
 		AA5A1C0B1B70E314000B37C3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA5A1C091B70E314000B37C3 /* LaunchScreen.xib */; };
 		AA5A1C171B70E314000B37C3 /* EWChartViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C161B70E314000B37C3 /* EWChartViewTests.m */; };
 		AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5A1C231B70E512000B37C3 /* EWPieChartView.m */; };
+		AA7A37E01B78D20100AED878 /* PieChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7A37DF1B78D20100AED878 /* PieChartViewController.m */; };
+		AA7A37E31B78D21000AED878 /* LineChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7A37E21B78D21000AED878 /* LineChartViewController.m */; };
+		AA7A37E61B78D22500AED878 /* BarChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7A37E51B78D22500AED878 /* BarChartViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,12 @@
 		AA5A1C161B70E314000B37C3 /* EWChartViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EWChartViewTests.m; sourceTree = "<group>"; };
 		AA5A1C221B70E512000B37C3 /* EWPieChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EWPieChartView.h; sourceTree = "<group>"; };
 		AA5A1C231B70E512000B37C3 /* EWPieChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EWPieChartView.m; sourceTree = "<group>"; };
+		AA7A37DE1B78D20100AED878 /* PieChartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PieChartViewController.h; sourceTree = "<group>"; };
+		AA7A37DF1B78D20100AED878 /* PieChartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PieChartViewController.m; sourceTree = "<group>"; };
+		AA7A37E11B78D21000AED878 /* LineChartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineChartViewController.h; sourceTree = "<group>"; };
+		AA7A37E21B78D21000AED878 /* LineChartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineChartViewController.m; sourceTree = "<group>"; };
+		AA7A37E41B78D22500AED878 /* BarChartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarChartViewController.h; sourceTree = "<group>"; };
+		AA7A37E51B78D22500AED878 /* BarChartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarChartViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,8 +127,14 @@
 		AA5A1BF91B70E313000B37C3 /* EWChartView */ = {
 			isa = PBXGroup;
 			children = (
-				AA27D9AA1B78A9A000023AFC /* SegmentView */,
 				AA5A1C211B70E4FF000B37C3 /* EWChartViews */,
+				AA27D9AA1B78A9A000023AFC /* SegmentView */,
+				AA7A37DE1B78D20100AED878 /* PieChartViewController.h */,
+				AA7A37DF1B78D20100AED878 /* PieChartViewController.m */,
+				AA7A37E11B78D21000AED878 /* LineChartViewController.h */,
+				AA7A37E21B78D21000AED878 /* LineChartViewController.m */,
+				AA7A37E41B78D22500AED878 /* BarChartViewController.h */,
+				AA7A37E51B78D22500AED878 /* BarChartViewController.m */,
 				AA5A1BFE1B70E314000B37C3 /* AppDelegate.h */,
 				AA5A1BFF1B70E314000B37C3 /* AppDelegate.m */,
 				AA5A1C011B70E314000B37C3 /* ViewController.h */,
@@ -282,9 +297,12 @@
 				AA119A871B71D20D0096432F /* EWLineCharView.m in Sources */,
 				AA5A1C241B70E512000B37C3 /* EWPieChartView.m in Sources */,
 				AA5A1BFD1B70E314000B37C3 /* main.m in Sources */,
+				AA7A37E31B78D21000AED878 /* LineChartViewController.m in Sources */,
 				AA119A811B71A6880096432F /* EWPieChartViewCell.m in Sources */,
 				AA27D9B21B78A9A000023AFC /* EWSegmentHeadView.m in Sources */,
 				AA27D9B31B78A9A000023AFC /* EWSegmentView.m in Sources */,
+				AA7A37E61B78D22500AED878 /* BarChartViewController.m in Sources */,
+				AA7A37E01B78D20100AED878 /* PieChartViewController.m in Sources */,
 				AA119A841B71D1F60096432F /* EWChartView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
