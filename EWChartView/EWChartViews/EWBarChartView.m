@@ -12,7 +12,7 @@
 NSInteger static const   kEWBarChartViewBarNumber         = 1;
 CGFloat   static const   kEWChartViewDefalutCachedHeight  = -1.0f;
 CGFloat   static const   kEWChartViewXYAxisPadding        = 3.0f;
-BOOL      static const   kEWChartViewShowBarValue         = YES;
+BOOL      static const   kEWChartViewShowBarValues         = NO;
 
 //一个表的柱状图之间的距离 *0.5
 CGFloat   static const   kEWBarChartViewBarMargin          = 3.0f;
@@ -75,6 +75,7 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
 - (void)setup
 {
     self.barColor = kEWBarChartViewBarColor;
+    self.showBarValues = kEWChartViewShowBarValues;
 }
 
 -(NSInteger)numberOfBarInLineChart
@@ -117,7 +118,7 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
         return [self.delegate barChartView:self showBarValuesAtHorizontalIndex:horizontalIndex atBarIndex:barIndex];
     }else
     {
-        return kEWChartViewShowBarValue;
+        return self.showBarValues;
     }
 
 }
@@ -179,7 +180,7 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
     
     self.dataNumber = [self dataCount];
     
-    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding - kEWChartViewXYAxisWidth);
+    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
     
     CGFloat yOffset = 0;
     

@@ -35,13 +35,9 @@ static inline float easeInOut(float x){
 
 @interface EWPieChartView()
 
-@property (nonatomic, strong) UIFont* font;
-
 @property (nonatomic, strong) NSArray *chartData;
 
 @property (nonatomic, strong) NSMutableArray *values;
-
-@property (nonatomic, assign) float endAngle;
 
 @property (nonatomic, assign) CGPoint touchPoint;
 
@@ -80,10 +76,15 @@ static inline float easeInOut(float x){
     self.minRadius = kEWPieChartViewMinRadius;
     self.startAngle = kEWPieChartViewStartAngle;
     self.endAngle = kEWPieChartViewEndAngle;
+    
+    self.titleAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:15]};
+    
+    self.percentAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],
+                               NSForegroundColorAttributeName:[UIColor whiteColor]};
+    
 //    self.animationDuration = kEWPieChartViewAnimationDuration;
     self.showTitleType = kEWPieChartViewShowTitleType;
     self.showItemPercent = kEWPieChartViewShowItemPercent;
-    self.font = [UIFont systemFontOfSize:15];
 }
 
 -(EWPieChartShowTitleType)showItemTitleTypeAtItemIndex:(NSInteger)index
@@ -148,7 +149,7 @@ static inline float easeInOut(float x){
     
     NSString *title = cell.title?cell.title:[NSString stringWithFormat:@"%.2f", cell.value];
     float radius = self.maxRadius;
-    [self drawTitle:title angle:M_PI*2 - angle radius:radius context:ctx font:self.font color:color];
+    [self drawTitle:title angle:M_PI*2 - angle radius:radius context:ctx color:color];
 }
 
 -(void)drawPercent:(EWPieChartViewCell *)cell angle:(CGFloat)angle context:(CGContextRef)ctx sum:(CGFloat)sum
@@ -157,7 +158,7 @@ static inline float easeInOut(float x){
     
     NSString *percent = [NSString stringWithFormat:@"%.1f%%",(cell.value / sum)*100];
     float radius = (self.maxRadius + self.minRadius) * 0.5;
-    [self drawPercent:percent angle:M_PI*2 - angle radius:radius context:ctx font:[UIFont systemFontOfSize:12]];
+    [self drawPercent:percent angle:M_PI*2 - angle radius:radius context:ctx];
 }
 
 
@@ -170,10 +171,13 @@ static inline float easeInOut(float x){
  *  @param ctx    上下文
  *  @param font   标题样式
  */
-- (void)drawTitle:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font color:(UIColor *)color
+- (void)drawTitle:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx color:(UIColor *)color
 {
+    NSDictionary *dic = @{NSFontAttributeName:self.titleAttributes[NSFontAttributeName],
+                          NSForegroundColorAttributeName:color};
+    self.titleAttributes = dic;
     
-    CGSize textSize = [text sizeWithAttributes:@{NSFontAttributeName:font}];
+    CGSize textSize = [text sizeWithAttributes:self.titleAttributes];
     CGPoint anchorPoint;
     
     //closewise
@@ -195,7 +199,7 @@ static inline float easeInOut(float x){
                               textSize.width,
                               textSize.height);
     UIGraphicsPushContext(ctx);
-    [text drawInRect:frame withAttributes:@{NSFontAttributeName:font,NSForegroundColorAttributeName:color}];
+    [text drawInRect:frame withAttributes:self.titleAttributes];
     UIGraphicsPopContext();
 }
 
@@ -208,16 +212,16 @@ static inline float easeInOut(float x){
  *  @param ctx    上下文
  *  @param font   标题样式
  */
-- (void)drawPercent:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx font:(UIFont *)font
+- (void)drawPercent:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx
 {
-    CGSize textSize = [text sizeWithAttributes:@{NSFontAttributeName:font}];
+    CGSize textSize = [text sizeWithAttributes:self.percentAttributes];
     
     CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
     CGPoint textCenter = CGPointMake(center.x + radius*cosf(angle), center.y + radius*sinf(angle));
     CGPoint drawPoint = CGPointMake(textCenter.x - textSize.width * 0.5 ,textCenter.y - textSize.height * 0.5);
     
     UIGraphicsPushContext(ctx);
-    [text drawAtPoint:drawPoint withAttributes:@{NSFontAttributeName:font,NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    [text drawAtPoint:drawPoint withAttributes:self.percentAttributes];
     UIGraphicsPopContext();
 
     

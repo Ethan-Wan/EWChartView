@@ -130,6 +130,9 @@
 /** 柱子的颜色 */
 @property (nonatomic ,strong) UIColor *barColor;  //defalut nil
 
+/** 是否显示柱子上的具体数值 */
+@property (nonatomic ,assign) BOOL showBarValues; //defalut NO
+
 -(void)reloadData;
 
 @end

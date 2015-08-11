@@ -80,6 +80,8 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
 {
     self.backgroundColor = [UIColor whiteColor];
     self.showGrid = kEWLineChartViewShowGrid;
+    self.showLineValues = kEWLineChartViewShowLineValues;
+    self.isHollowCircle = kEWLineChartViewisHollowCircle;
 }
 
 
@@ -134,7 +136,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
         return [self.delegate lineChartView:self isHollowCircleForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
     }else
     {
-        return kEWLineChartViewisHollowCircle;
+        return self.isHollowCircle;
     }
 }
 
@@ -156,7 +158,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
         return [self.delegate lineChartView:self showLineValuesAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
     }else
     {
-        return kEWLineChartViewShowLineValues;
+        return self.showLineValues;
     }
 }
 
@@ -210,7 +212,7 @@ CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
     //
     self.dataNumber = [self dataCount];
     
-    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding - kEWChartViewXYAxisWidth);
+    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
     
     CGFloat pointSpace = mainViewRect.size.width / self.dataNumber; // Space in between points
     

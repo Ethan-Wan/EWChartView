@@ -40,7 +40,7 @@
     lineChart.delegate =self;
     lineChart.maximumValue = 3.0;
     lineChart.minimumValue = 0.0;
-    lineChart.sectionCount = 3;
+    lineChart.sectionCount = 4;
     lineChart.showGrid = YES;
     lineChart.frame = CGRectMake(10, 50, 300, 200);
     [lineChart reloadData];
@@ -72,7 +72,7 @@
     }
     else if(lineIndex == 1)
     {
-        return [UIColor yellowColor];
+        return [UIColor greenColor];
     }
     else
         return [UIColor blueColor];

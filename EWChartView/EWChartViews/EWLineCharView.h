@@ -63,7 +63,7 @@
  *
  *  @return YES／NO （默认为NO）
  */
-- (BOOL)lineChartView:(EWLineCharView *)lineChartView smoothLineAtLineIndex:(NSUInteger)lineIndex;
+//- (BOOL)lineChartView:(EWLineCharView *)lineChartView smoothLineAtLineIndex:(NSUInteger)lineIndex;
 
 /**
  *  水平坐标上的坐标值
@@ -89,7 +89,7 @@
  *  @param lineIndex       第几条折线的索引
  *  @param touchPoint      触摸点的坐标
  */
-- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex touchPoint:(CGPoint)touchPoint;
+//- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex touchPoint:(CGPoint)touchPoint;
 
 /**
  *  选择折线图
@@ -98,7 +98,7 @@
  *  @param horizontalIndex x轴的索引
  *  @param lineIndex       第几条折线的索引
  */
-- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex;
+//- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex;
 
 /**
  *  取消选择
@@ -170,6 +170,12 @@
 
 /** 是否显示坐标网格 */
 @property (nonatomic, assign) BOOL showGrid  ; //default NO
+
+/** 是否显示折线图上的具体数值 */
+@property (nonatomic, assign) BOOL showLineValues; //default NO
+
+/** 折线上的点是否是空心圆 */
+@property (nonatomic, assign) BOOL isHollowCircle; //default NO
 
 -(void)reloadData;
 @end

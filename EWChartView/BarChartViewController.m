@@ -41,6 +41,7 @@
     barChart.maximumValue = 3.0;
     barChart.minimumValue = 0.0;
     barChart.sectionCount = 4;
+    barChart.showBarValues = YES;
 
     barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
     barChart.coordinateColor = [UIColor redColor];
@@ -108,4 +109,5 @@
             break;
     }return nil;
 }
+
 @end

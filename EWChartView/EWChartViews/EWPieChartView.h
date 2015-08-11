@@ -56,7 +56,7 @@ typedef enum {
  *
  *  @param pieChartView 当前饼图
  */
-- (void)pieChartView:(EWPieChartView *)pieChartView didDeselectItemInPieChartView:(EWPieChartView *)pieChartView;
+//- (void)pieChartView:(EWPieChartView *)pieChartView didDeselectItemInPieChartView:(EWPieChartView *)pieChartView;
 
 /**
  *  显示标题类型 （实现这个代理方法就不需要设置showTitleType属性，设置了也无效）
@@ -89,7 +89,7 @@ typedef enum {
 @property (nonatomic, assign) float maxRadius;   //default 100
 @property (nonatomic, assign) float minRadius;   //default 0
 @property (nonatomic, assign) float startAngle;  //default 0
-//@property (nonatomic, assign) float endAngle;    //default 360 
+@property (nonatomic, assign) float endAngle;    //default 360 
 //@property (nonatomic, assign) float animationDuration;   //default 0.6s
 
 /** 标题的样式*/
