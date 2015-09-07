@@ -18,4 +18,6 @@
 /** 值 */
 @property (nonatomic, assign) CGFloat value;
 
++(instancetype)cellWithTitle:(NSString *)title color:(UIColor *)color value:(CGFloat)value;
+
 @end

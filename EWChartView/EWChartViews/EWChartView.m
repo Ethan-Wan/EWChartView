@@ -57,14 +57,14 @@ CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
     self.sectionCount = kEWChartViewSectionCount;
     self.coordinateColor = kEWChartViewcoordinateColor;
     self.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
-                              NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                   NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
                               };
     self.yLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
-                              NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                   NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
                               };
-    self.valueAttributes =@{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
-                            NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
-                            };
+    self.valueAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+                  NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+                             };
 }
 
 - (void)resetMinimumValue

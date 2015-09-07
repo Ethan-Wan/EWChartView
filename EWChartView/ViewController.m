@@ -32,9 +32,9 @@
     BarChartViewController *barChartVC = [[BarChartViewController alloc] init];
     barChartVC.title =@"柱状图";
     NSMutableArray *array = [NSMutableArray array];
-    [array addObject:pieChartVC];
     [array addObject:lineChartVC];
     [array addObject:barChartVC];
+    [array addObject:pieChartVC];
     
     self.segmentView.subViewControllers = array;
     
