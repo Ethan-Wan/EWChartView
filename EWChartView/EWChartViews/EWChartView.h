@@ -35,10 +35,10 @@ CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
 @property (nonatomic, weak) id<EWChartViewDelegate> delegate;
 
 /** y坐标的最小值 */
-@property (nonatomic, assign) CGFloat minimumValue; //default 数据源数组中的最小值
+@property (nonatomic, assign) CGFloat minimumValue; //default the minValue in dataSource
 
 /** y坐标的最大值 */
-@property (nonatomic, assign) CGFloat maximumValue; //default 数据源数据中的最大值
+@property (nonatomic, assign) CGFloat maximumValue; //default the maxValue in dataSource
 
 /** y坐标上的分段数 */
 @property (nonatomic, assign) NSInteger sectionCount; //default one

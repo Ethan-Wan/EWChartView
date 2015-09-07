@@ -51,6 +51,10 @@ CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
 @end
 
 @implementation EWBarChartView
+@dynamic dataSource;
+@dynamic delegate;
+
+#pragma mark - alloc/init
 
 - (id)initWithFrame:(CGRect)frame
 {
