@@ -1,0 +1,26 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/UnitTest/UnitTest/AppDelegate.h
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/UnitTest-evyuvxyaefsknghjzpsbitflmpho/Build/Intermediates/CodeCoverage/Intermediates/UnitTest.build/Debug-iphonesimulator/UnitTest.build/Objects-normal/x86_64/AppDelegate.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/UnitTest-evyuvxyaefsknghjzpsbitflmpho/Build/Intermediates/CodeCoverage/Intermediates/UnitTest.build/Debug-iphonesimulator/UnitTest.build/Objects-normal/x86_64/AppDelegate.gcda
+        -:    0:Runs:8
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  AppDelegate.h
+        -:    3://  UnitTest
+        -:    4://
+        -:    5://  Created by wansy on 16/10/13.
+        -:    6://  Copyright © 2016年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import <UIKit/UIKit.h>
+        -:   10:
+        -:   11:@interface AppDelegate : UIResponder <UIApplicationDelegate>
+        -:   12:
+function -[AppDelegate window] called 288 returned 100% blocks executed 100%
+function -[AppDelegate setWindow:] called 72 returned 100% blocks executed 100%
+      360:   13:@property (strong, nonatomic) UIWindow *window;
+unconditional  0 taken 288
+unconditional  1 taken 72
+        -:   14:
+        -:   15:
+        -:   16:@end
+        -:   17:

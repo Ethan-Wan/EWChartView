@@ -1,0 +1,827 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWLineCharView.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWLineCharView.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWLineCharView.gcda
+        -:    0:Runs:12
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  EWLineCharView.m
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/5.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "EWLineCharView.h"
+        -:   10:
+        -:   11://default parameter
+        -:   12:BOOL      static const kEWLineChartViewShowGrid        = NO;
+        -:   13:BOOL      static const kEWLineChartViewShowLineValues  = NO;
+        -:   14:BOOL      static const kEWLineChartViewShowLineCircle  = YES;
+        -:   15:BOOL      static const kEWLineChartViewisHollowCircle  = NO;
+        -:   16:CGFloat   static const kEWLineChartViewLineWidth       = 2.0f;
+        -:   17:NSInteger static const kEWLineChartViewLineNumber      = 1;
+        -:   18:CGFloat   static const kEWChartViewXYAxisPadding       = 3.0f;
+        -:   19:CGFloat   static const kEWChartViewCachedHeight        = -1.0f;
+        -:   20:CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
+        -:   21:
+        -:   22:
+        -:   23://macro
+        -:   24:#define EWPieChartViewLineDefalutColor [UIColor blackColor];
+        -:   25:
+        -:   26:@interface EWLineChartInfo : NSObject
+        -:   27:
+function -[EWLineChartInfo position] called 47520 returned 100% blocks executed 100%
+function -[EWLineChartInfo setPosition:] called 15840 returned 100% blocks executed 100%
+    63360:   28:@property (nonatomic, assign) CGPoint position;
+unconditional  0 taken 47520
+unconditional  1 taken 15840
+function -[EWLineChartInfo value] called 0 returned 0% blocks executed 0%
+function -[EWLineChartInfo setValue:] called 15840 returned 100% blocks executed 100%
+    15840:   29:@property (nonatomic, assign) CGFloat value;
+unconditional  0 never executed
+unconditional  1 taken 15840
+function -[EWLineChartInfo hidden] called 0 returned 0% blocks executed 0%
+function -[EWLineChartInfo setHidden:] called 0 returned 0% blocks executed 0%
+    #####:   30:@property (nonatomic, assign) BOOL hidden;
+unconditional  0 never executed
+unconditional  1 never executed
+        -:   31:
+        -:   32:@end
+        -:   33:
+        -:   34:@interface EWChartView (Private)
+        -:   35:
+        -:   36:- (BOOL)hasMaximumValue;
+        -:   37:- (BOOL)hasMinimumValue;
+        -:   38:
+        -:   39:-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+        -:   40:
+        -:   41:@end
+        -:   42:
+        -:   43:
+        -:   44:@interface EWLineCharView()
+        -:   45:
+function -[EWLineCharView chartData] called 2112 returned 100% blocks executed 100%
+function -[EWLineCharView setChartData:] called 1056 returned 100% blocks executed 100%
+     3168:   46:@property (nonatomic, strong) NSArray *chartData;
+unconditional  0 taken 2112
+unconditional  1 taken 1056
+function -[EWLineCharView setCachedMinHeight:] called 1056 returned 100% blocks executed 100%
+     1056:   47:@property (nonatomic, assign) CGFloat cachedMinHeight;
+unconditional  0 taken 1056
+function -[EWLineCharView setCachedMaxHeight:] called 1056 returned 100% blocks executed 100%
+     1056:   48:@property (nonatomic, assign) CGFloat cachedMaxHeight;
+unconditional  0 taken 1056
+function -[EWLineCharView dataNumber] called 15840 returned 100% blocks executed 100%
+function -[EWLineCharView setDataNumber:] called 1056 returned 100% blocks executed 100%
+    16896:   49:@property (nonatomic, assign) NSInteger dataNumber;
+unconditional  0 taken 15840
+unconditional  1 taken 1056
+        -:   50:
+        -:   51:@end
+        -:   52:
+function -[EWLineCharView .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   53:@implementation EWLineCharView
+unconditional  0 never executed
+        -:   54:@dynamic dataSource;
+        -:   55:@dynamic delegate;
+        -:   56:
+        -:   57:#pragma mark - init
+        -:   58:
+function -[EWLineCharView initWithFrame:] called 1056 returned 100% blocks executed 100%
+        -:   59:- (id)initWithFrame:(CGRect)frame
+        -:   60:{
+     1056:   61:    self = [super initWithFrame:frame];
+     1056:   62:    if(self){
+branch  0 taken 1056
+branch  1 taken 0
+     1056:   63:        [self setup];
+     1056:   64:    }
+unconditional  0 taken 1056
+     1056:   65:    return self;
+     1056:   66:}
+unconditional  0 taken 1056
+        -:   67:
+function -[EWLineCharView initWithCoder:] called 0 returned 0% blocks executed 0%
+        -:   68:- (id)initWithCoder:(NSCoder *)aDecoder
+        -:   69:{
+    #####:   70:    self = [super initWithCoder:aDecoder];
+    #####:   71:    if(self){
+branch  0 never executed
+branch  1 never executed
+    #####:   72:        [self setup];
+    #####:   73:    }
+unconditional  0 never executed
+    #####:   74:    return self;
+    #####:   75:}
+unconditional  0 never executed
+        -:   76:
+        -:   77:#pragma mark - Private Method
+        -:   78:
+function -[EWLineCharView setup] called 1056 returned 100% blocks executed 100%
+        -:   79:- (void)setup
+        -:   80:{
+     1056:   81:    self.backgroundColor = [UIColor whiteColor];
+     1056:   82:    self.showGrid = kEWLineChartViewShowGrid;
+     1056:   83:    self.showLineValues = kEWLineChartViewShowLineValues;
+     1056:   84:    self.isHollowCircle = kEWLineChartViewisHollowCircle;
+     1056:   85:}
+unconditional  0 taken 1056
+        -:   86:
+        -:   87:
+function -[EWLineCharView numberOfLineInLineChart] called 4224 returned 100% blocks executed 80%
+        -:   88:-(NSInteger)numberOfLineInLineChart
+        -:   89:{
+     4224:   90:    if ([self.dataSource respondsToSelector:@selector(numberOfLinesInLineChartView:)])
+branch  0 taken 4224
+branch  1 taken 0
+        -:   91:    {
+     4224:   92:        return [self.dataSource numberOfLinesInLineChartView:self];
+unconditional  0 taken 4224
+        -:   93:    }else
+        -:   94:    {
+    #####:   95:        return kEWLineChartViewLineNumber;
+unconditional  0 never executed
+        -:   96:    }
+     4224:   97:}
+unconditional  0 taken 4224
+        -:   98:
+function -[EWLineCharView colorForLineAtLineIndex:] called 3168 returned 100% blocks executed 80%
+        -:   99:-(UIColor *)colorForLineAtLineIndex:(NSInteger)lineIndex
+        -:  100:{
+     3168:  101:    if ([self.delegate respondsToSelector:@selector(lineChartView:colorForLineAtLineIndex:)])
+branch  0 taken 3168
+branch  1 taken 0
+        -:  102:    {
+     3168:  103:        return [self.delegate lineChartView:self colorForLineAtLineIndex:lineIndex];
+unconditional  0 taken 3168
+        -:  104:    }else
+        -:  105:    {
+    #####:  106:        return EWPieChartViewLineDefalutColor;
+unconditional  0 never executed
+        -:  107:    }
+     3168:  108:}
+unconditional  0 taken 3168
+        -:  109:
+function -[EWLineCharView widthForLineAtLineIndex:] called 3168 returned 100% blocks executed 80%
+        -:  110:-(CGFloat)widthForLineAtLineIndex:(NSInteger)lineIndex
+        -:  111:{
+     3168:  112:    if ([self.delegate respondsToSelector:@selector(lineChartView:widthForLineAtLineIndex:)])
+branch  0 taken 0
+branch  1 taken 3168
+        -:  113:    {
+    #####:  114:        return [self.delegate lineChartView:self widthForLineAtLineIndex:lineIndex];
+unconditional  0 never executed
+        -:  115:    }else
+        -:  116:    {
+     3168:  117:        return kEWLineChartViewLineWidth;
+unconditional  0 taken 3168
+        -:  118:    }
+     3168:  119:}
+unconditional  0 taken 3168
+        -:  120:
+function -[EWLineCharView isShowCircleForLineAtLineIndex:] called 3168 returned 100% blocks executed 80%
+        -:  121:-(CGFloat)isShowCircleForLineAtLineIndex:(NSInteger)lineIndex
+        -:  122:{
+     3168:  123:    if ([self.dataSource respondsToSelector:@selector(lineChartView:showsCircleForLineAtLineIndex:)])
+branch  0 taken 0
+branch  1 taken 3168
+        -:  124:    {
+    #####:  125:        return [self.dataSource lineChartView:self showsCircleForLineAtLineIndex:lineIndex];
+unconditional  0 never executed
+        -:  126:    }else
+        -:  127:    {
+     3168:  128:        return kEWLineChartViewShowLineCircle;
+unconditional  0 taken 3168
+        -:  129:    }
+     3168:  130:}
+unconditional  0 taken 3168
+        -:  131:
+function -[EWLineCharView isHollowCircleForHorizontalIndex:atLineIndex:] called 15840 returned 100% blocks executed 80%
+        -:  132:-(CGFloat)isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+        -:  133:{
+    15840:  134:    if ([self.delegate respondsToSelector:@selector(lineChartView:isHollowCircleForHorizontalIndex:atLineIndex:)])
+branch  0 taken 15840
+branch  1 taken 0
+        -:  135:    {
+    15840:  136:        return [self.delegate lineChartView:self isHollowCircleForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+unconditional  0 taken 15840
+        -:  137:    }else
+        -:  138:    {
+    #####:  139:        return self.isHollowCircle;
+unconditional  0 never executed
+        -:  140:    }
+    15840:  141:}
+unconditional  0 taken 15840
+        -:  142:
+function -[EWLineCharView circleRadiustAtHorizontalIndex:atLineIndex:] called 15840 returned 100% blocks executed 80%
+        -:  143:- (CGFloat)circleRadiustAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+        -:  144:{
+    15840:  145:    if ([self.delegate respondsToSelector:@selector(lineChartView:circleRadiustAtHorizontalIndex:atLineIndex:)])
+branch  0 taken 0
+branch  1 taken 15840
+        -:  146:    {
+    #####:  147:        return [self.delegate lineChartView:self circleRadiustAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+unconditional  0 never executed
+        -:  148:    }else
+        -:  149:    {
+    15840:  150:        return kEWChartViewCricleRadius;
+unconditional  0 taken 15840
+        -:  151:    }
+    15840:  152:}
+unconditional  0 taken 15840
+        -:  153:
+function -[EWLineCharView showLineValuesAtHorizontalIndex:atLineIndex:] called 15840 returned 100% blocks executed 80%
+        -:  154:- (BOOL)showLineValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+        -:  155:{
+    15840:  156:    if ([self.delegate respondsToSelector:@selector(lineChartView:showLineValuesAtHorizontalIndex:atLineIndex:)])
+branch  0 taken 0
+branch  1 taken 15840
+        -:  157:    {
+    #####:  158:        return [self.delegate lineChartView:self showLineValuesAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+unconditional  0 never executed
+        -:  159:    }else
+        -:  160:    {
+    15840:  161:        return self.showLineValues;
+unconditional  0 taken 15840
+        -:  162:    }
+    15840:  163:}
+unconditional  0 taken 15840
+        -:  164:
+        -:  165:/**
+        -:  166: *  水平方向上数据个数
+        -:  167: *
+        -:  168: *  @return 数据个数
+        -:  169: */
+function -[EWLineCharView dataCount] called 1056 returned 100% blocks executed 73%
+        -:  170:- (NSUInteger)dataCount
+        -:  171:{
+     1056:  172:    NSUInteger dataCount = 0;
+     1056:  173:    NSInteger numberOfLines = [self numberOfLineInLineChart];
+     8448:  174:    for (NSInteger lineIndex = 0; lineIndex < numberOfLines; lineIndex++)
+unconditional  0 taken 1056
+branch  1 taken 3168
+branch  2 taken 1056
+unconditional  3 taken 3168
+        -:  175:    {
+     9504:  176:        NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:numberOfLinesAtLineIndex:)], @"EWLineChartView // dataSource must implement - (NSUInteger)lineChartView:(EWLineChartView *)lineChartView numberOfVerticalValuesAtLineIndex:(NSUInteger)lineIndex");
+unconditional  0 taken 3168
+branch  1 taken 0
+branch  2 taken 3168
+branch  3 never executed
+branch  4 never executed
+unconditional  5 never executed
+unconditional  6 never executed
+unconditional  7 never executed
+unconditional  8 taken 3168
+     3168:  177:        NSUInteger lineDataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+     3168:  178:        if (lineDataCount > dataCount)
+branch  0 taken 1056
+branch  1 taken 2112
+        -:  179:        {
+     1056:  180:            dataCount = lineDataCount;
+     1056:  181:        }
+unconditional  0 taken 1056
+     3168:  182:    }
+unconditional  0 taken 3168
+     1056:  183:    return dataCount;
+unconditional  0 taken 1056
+        -:  184:}
+        -:  185:
+        -:  186:/**
+        -:  187: *  将数据转化成图表中的高度
+        -:  188: *
+        -:  189: *  @param valueHeight 水平方向上数据的值
+        -:  190: */
+function -[EWLineCharView standardizedHeightForvalueHeight:] called 15840 returned 100% blocks executed 80%
+        -:  191:-(CGFloat)standardizedHeightForvalueHeight:(CGFloat)valueHeight
+        -:  192:{
+    15840:  193:    CGFloat minHeight = [self minimumValue];
+    15840:  194:    CGFloat maxHeight = [self maximumValue];
+        -:  195:    
+    15840:  196:    if ((maxHeight - minHeight) <= 0)
+branch  0 taken 0
+branch  1 taken 15840
+        -:  197:    {
+    #####:  198:        return 0;
+unconditional  0 never executed
+        -:  199:    }
+        -:  200:    
+    15840:  201:    return ((valueHeight - minHeight) / (maxHeight - minHeight)) * (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight);
+unconditional  0 taken 15840
+    15840:  202:}
+unconditional  0 taken 15840
+        -:  203:
+        -:  204:#pragma mark - Public Method
+        -:  205:
+function -[EWLineCharView reloadData] called 1056 returned 100% blocks executed 77%
+        -:  206:-(void)reloadData
+        -:  207:{
+        -:  208:    // Reset
+     1056:  209:    self.cachedMinHeight = kEWChartViewCachedHeight;
+     1056:  210:    self.cachedMaxHeight = kEWChartViewCachedHeight;
+        -:  211:    
+        -:  212:    //
+     1056:  213:    self.dataNumber = [self dataCount];
+        -:  214:    
+     1056:  215:    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+        -:  216:    
+     1056:  217:    CGFloat pointSpace = mainViewRect.size.width / self.dataNumber; // Space in between points
+        -:  218:    
+     1056:  219:    CGFloat xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+     1056:  220:    CGFloat yOffset = 0;
+        -:  221:    
+     1056:  222:    NSMutableArray *mutableChartData = [NSMutableArray array];
+     1056:  223:    NSUInteger numberOfLines = [self numberOfLineInLineChart];
+        -:  224:    
+     8448:  225:    for (NSUInteger lineIndex=0; lineIndex<numberOfLines; lineIndex++)
+unconditional  0 taken 1056
+branch  1 taken 3168
+branch  2 taken 1056
+unconditional  3 taken 3168
+        -:  226:    {
+     3168:  227:        NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+     3168:  228:        NSMutableArray *chartPointData = [NSMutableArray array];
+    38016:  229:        for (NSUInteger horizontalIndex=0; horizontalIndex<dataCount; horizontalIndex++)
+unconditional  0 taken 3168
+branch  1 taken 15840
+branch  2 taken 3168
+unconditional  3 taken 15840
+        -:  230:        {
+    63360:  231:            NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:verticalValueForHorizontalIndex:atLineIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex");
+unconditional  0 taken 15840
+branch  1 taken 0
+branch  2 taken 15840
+branch  3 never executed
+branch  4 never executed
+unconditional  5 never executed
+unconditional  6 never executed
+unconditional  7 never executed
+unconditional  8 taken 15840
+unconditional  9 taken 15840
+    15840:  232:            CGFloat valueHeight =  [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+        -:  233:                
+    15840:  234:            EWLineChartInfo *lineinfo = [[EWLineChartInfo alloc] init];
+        -:  235:                
+    15840:  236:            CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
+        -:  237:            
+    15840:  238:            yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
+        -:  239:
+    15840:  240:            lineinfo.position = CGPointMake(xOffset, yOffset);
+    15840:  241:            lineinfo.value = valueHeight;
+        -:  242:            
+    15840:  243:            [chartPointData addObject:lineinfo];
+    15840:  244:            xOffset += pointSpace;
+    15840:  245:        }
+unconditional  0 taken 15840
+     3168:  246:        [mutableChartData addObject:chartPointData];
+     3168:  247:        xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+     3168:  248:    }
+unconditional  0 taken 3168
+     1056:  249:    self.chartData = [NSArray arrayWithArray:mutableChartData];
+        -:  250:    
+     1056:  251:    [self setNeedsDisplay];
+     1056:  252:}
+unconditional  0 taken 1056
+        -:  253:
+        -:  254:#pragma mark - drawRect
+        -:  255:
+function -[EWLineCharView drawRect:] called 1056 returned 100% blocks executed 85%
+        -:  256:- (void)drawRect:(CGRect)rect {
+     1056:  257:    [super drawRect:rect];
+        -:  258:    
+     1056:  259:    if (self.chartData.count <= 0) {
+branch  0 taken 0
+branch  1 taken 1056
+    #####:  260:        return;
+unconditional  0 never executed
+        -:  261:    }
+        -:  262:    
+     1056:  263:    CGContextRef ctx = UIGraphicsGetCurrentContext();
+        -:  264:    
+     1056:  265:    if (self.showGrid) {
+branch  0 taken 1056
+branch  1 taken 0
+     1056:  266:        CGContextSaveGState(ctx);
+     1056:  267:        [self drawGrid:ctx];
+     1056:  268:        CGContextRestoreGState(ctx);
+     1056:  269:    }
+unconditional  0 taken 1056
+        -:  270:    
+     1056:  271:    [self drawLineChart:ctx];
+        -:  272:    
+     1056:  273:    [self drawXYLabelText:ctx];
+     2112:  274:}
+unconditional  0 taken 1056
+unconditional  1 taken 1056
+        -:  275:
+        -:  276:/**
+        -:  277: *  画网格
+        -:  278: *
+        -:  279: *  @param ctx 上下文
+        -:  280: */
+function -[EWLineCharView drawGrid:] called 1056 returned 100% blocks executed 100%
+        -:  281:-(void)drawGrid:(CGContextRef)ctx
+        -:  282:{
+     1056:  283:    CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/[super sectionCount];
+    10560:  284:    for (int index = 0; index < self.sectionCount ; index++) {
+unconditional  0 taken 1056
+branch  1 taken 4224
+branch  2 taken 1056
+unconditional  3 taken 4224
+     4224:  285:        CGContextSaveGState(ctx);
+        -:  286:        {
+     4224:  287:            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
+     4224:  288:            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
+     4224:  289:            [[super coordinateColor] set];
+     4224:  290:            CGContextStrokePath(ctx);
+        -:  291:        }
+     4224:  292:        CGContextRestoreGState(ctx);
+     4224:  293:    }
+unconditional  0 taken 4224
+        -:  294:    
+     1056:  295:    CGFloat horizontalSpace = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / self.dataNumber;
+        -:  296:    
+    12672:  297:    for (int index = 1; index < self.dataNumber + 1 ; index++) {
+unconditional  0 taken 1056
+branch  1 taken 5280
+branch  2 taken 1056
+unconditional  3 taken 5280
+     5280:  298:        CGContextSaveGState(ctx);
+        -:  299:        {
+     5280:  300:            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, kEWChartViewHeaderPadding);
+     5280:  301:            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, self.bounds.size.height - kEWChartViewXAxisHeight);
+     5280:  302:            [[super coordinateColor] set];
+        -:  303:            //            可设置虚线
+        -:  304:            //            CGContextSetLineDash(ctx, CGFloat phase, const CGFloat *lengths, size_t count)
+     5280:  305:            CGContextStrokePath(ctx);
+        -:  306:        }
+     5280:  307:        CGContextRestoreGState(ctx);
+     5280:  308:    }
+unconditional  0 taken 5280
+        -:  309:    
+     1056:  310:}
+unconditional  0 taken 1056
+        -:  311:
+        -:  312:/**
+        -:  313: *  画折线图
+        -:  314: *
+        -:  315: *  @param ctx 上下文
+        -:  316: */
+function -[EWLineCharView drawLineChart:] called 1056 returned 100% blocks executed 80%
+        -:  317:-(void)drawLineChart:(CGContextRef)ctx
+        -:  318:{
+     1056:  319:    int index = 0;
+        -:  320:    
+     8448:  321:    for (NSArray *lineData in self.chartData)
+branch  0 taken 1056
+branch  1 taken 0
+unconditional  2 taken 1056
+branch  3 taken 0
+branch  4 taken 3168
+unconditional  5 never executed
+        -:  322:    {
+     3168:  323:        CGContextSaveGState(ctx);
+     3168:  324:        if (lineData.count == 0)
+branch  0 taken 0
+branch  1 taken 3168
+        -:  325:        {
+    #####:  326:            continue;
+unconditional  0 never executed
+        -:  327:        }
+        -:  328:        
+     3168:  329:        UIColor *color = [self colorForLineAtLineIndex:index];
+     3168:  330:        CGFloat lineWidth = [self widthForLineAtLineIndex:index];
+     3168:  331:        BOOL isShowCircle = [self isShowCircleForLineAtLineIndex:index];
+     3168:  332:        __block CGFloat radius = 0;
+        -:  333:        
+     3168:  334:        [color set];
+branch  0 taken 3168
+branch  1 taken 0
+     3168:  335:        CGContextSetLineWidth(ctx, lineWidth);
+branch  0 taken 3168
+branch  1 taken 0
+     3168:  336:        CGContextSetLineJoin(ctx, kCGLineJoinRound);
+branch  0 taken 3168
+branch  1 taken 0
+     3168:  337:        CGContextSetLineCap(ctx, kCGLineCapRound);
+branch  0 taken 3168
+branch  1 taken 0
+        -:  338:        
+        -:  339:        //画线
+function __32-[EWLineCharView drawLineChart:]_block_invoke called 15840 returned 100% blocks executed 88%
+    19008:  340:        [lineData enumerateObjectsUsingBlock:^(EWLineChartInfo *point, NSUInteger idx, BOOL *stop) {
+branch  0 taken 3168
+branch  1 taken 0
+    15840:  341:            if (idx == 0)
+branch  0 taken 3168
+branch  1 taken 12672
+        -:  342:            {
+     3168:  343:                CGContextMoveToPoint(ctx, point.position.x, point.position.y);
+     3168:  344:            }else
+unconditional  0 taken 3168
+        -:  345:            {
+    12672:  346:                CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
+unconditional  0 taken 12672
+        -:  347:            }
+        -:  348:            //画圆
+    15840:  349:            if (isShowCircle) {
+branch  0 taken 15840
+branch  1 taken 0
+    15840:  350:                BOOL isHollow = [self isHollowCircleForHorizontalIndex:idx atLineIndex:index];
+    15840:  351:                radius = [self circleRadiustAtHorizontalIndex:idx atLineIndex:index];
+        -:  352:                
+    31680:  353:                [self drawCircleAtPoint:point.position
+    15840:  354:                               isHollow:isHollow
+    15840:  355:                                 radius:radius
+    15840:  356:                                context:ctx
+    15840:  357:                              lineWidth:lineWidth
+    15840:  358:                                  color:color];
+    15840:  359:            }
+unconditional  0 taken 15840
+        -:  360:            
+        -:  361:            //画数值
+    15840:  362:            if ([self showLineValuesAtHorizontalIndex:idx atLineIndex:index]) {
+branch  0 taken 0
+branch  1 taken 15840
+    #####:  363:                [self drawValueAtPoint:point.position
+    #####:  364:                                 value:point.value
+    #####:  365:                                radius:radius
+    #####:  366:                               context:ctx];
+    #####:  367:            }
+unconditional  0 never executed
+function __copy_helper_block_ called 0 returned 0% blocks executed 0%
+function __destroy_helper_block_ called 0 returned 0% blocks executed 0%
+    15840:  368:        }];
+unconditional  0 taken 15840
+unconditional  1 never executed
+unconditional  2 never executed
+        -:  369:        
+     3168:  370:        CGContextStrokePath(ctx);
+branch  0 taken 3168
+branch  1 taken 0
+        -:  371:        
+     3168:  372:        index++;
+     3168:  373:        CGContextRestoreGState(ctx);
+branch  0 taken 3168
+branch  1 taken 0
+     8448:  374:    }
+unconditional  0 taken 3168
+branch  1 taken 2112
+branch  2 taken 1056
+branch  3 taken 0
+branch  4 taken 1056
+unconditional  5 taken 1056
+unconditional  6 never executed
+     1056:  375:}
+unconditional  0 taken 1056
+        -:  376:
+        -:  377:/**
+        -:  378: *  画xy轴上的坐标值
+        -:  379: *
+        -:  380: *  @param ctx 上下文
+        -:  381: */
+function -[EWLineCharView drawXYLabelText:] called 1056 returned 100% blocks executed 90%
+        -:  382:-(void)drawXYLabelText:(CGContextRef)ctx
+        -:  383:{
+        -:  384:    //draw y axis labels
+     1056:  385:    [self drawYAxisLabelsWithMaxValue:[self maximumValue] minValue:[self minimumValue] context:ctx showGrid:self.showGrid];
+        -:  386:    
+        -:  387:    //draw x axis labels
+     1056:  388:    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5)/ self.dataNumber;
+        -:  389:    
+    12672:  390:    for (int index = 0; index < self.dataNumber; index++) {
+unconditional  0 taken 1056
+branch  1 taken 5280
+branch  2 taken 1056
+unconditional  3 taken 5280
+     5280:  391:        NSString *title = nil;
+     5280:  392:        if([self.dataSource respondsToSelector:@selector(lineChartView:horizontalTitlseForHorizontalIndex:)])
+branch  0 taken 5280
+branch  1 taken 0
+        -:  393:        {
+     5280:  394:            title = [self.dataSource lineChartView:self horizontalTitlseForHorizontalIndex:index];
+     5280:  395:        }
+unconditional  0 taken 5280
+     5280:  396:        CGContextSaveGState(ctx);
+        -:  397:        {
+     5280:  398:            if (!self.showGrid) {
+branch  0 taken 0
+branch  1 taken 5280
+    #####:  399:                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index , self.bounds.size.height - kEWChartViewXAxisHeight);
+    #####:  400:                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisPadding);
+    #####:  401:                [[super coordinateColor] set];
+    #####:  402:                CGContextStrokePath(ctx);
+    #####:  403:            }
+unconditional  0 never executed
+        -:  404:            
+     5280:  405:            CGSize  valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
+     5280:  406:            CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
+     5280:  407:            CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
+        -:  408:            
+     5280:  409:            CGPoint point = (CGPoint){pointX,pointY};
+     5280:  410:            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
+        -:  411:        }
+     5280:  412:        CGContextRestoreGState(ctx);
+        -:  413:
+     5280:  414:    }
+unconditional  0 taken 5280
+        -:  415:   
+     1056:  416:}
+unconditional  0 taken 1056
+        -:  417:
+        -:  418:/**
+        -:  419: *  画折线上的圆
+        -:  420: *
+        -:  421: *  @param point    坐标
+        -:  422: *  @param isHollow 是否是空心圆
+        -:  423: *  @param ctx      上下文
+        -:  424: */
+function -[EWLineCharView drawCircleAtPoint:isHollow:radius:context:lineWidth:color:] called 15840 returned 100% blocks executed 100%
+        -:  425:-(void)drawCircleAtPoint:(CGPoint)center isHollow:(BOOL)isHollow radius:(CGFloat)radius context:(CGContextRef)ctx lineWidth:(CGFloat)lineWidth color:(UIColor *)color
+        -:  426:{
+    15840:  427:    UIView *cricle = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius*2, radius*2)];
+    15840:  428:    cricle.center = center;
+    15840:  429:    cricle.layer.masksToBounds = YES;
+    15840:  430:    cricle.layer.cornerRadius = radius;
+    15840:  431:    cricle.layer.borderWidth = lineWidth;
+    15840:  432:    cricle.layer.borderColor = color.CGColor;
+        -:  433:    
+    15840:  434:    if (isHollow) {
+branch  0 taken 6336
+branch  1 taken 9504
+     6336:  435:        cricle.backgroundColor = self.backgroundColor;
+     6336:  436:    }else{
+unconditional  0 taken 6336
+     9504:  437:        cricle.backgroundColor = color;
+unconditional  0 taken 9504
+        -:  438:    }
+        -:  439:    
+    15840:  440:    [self addSubview:cricle];
+        -:  441:
+        -:  442://    CGContextAddArc(ctx, center.x, center.y, radius, 0, 2 * M_PI, NO);
+        -:  443:////    CGContextAddEllipseInRect(ctx, CGRectMake(center.x - radius, center.y - radius, radius*2, radius*2));
+        -:  444://    if (isHollow) {
+        -:  445://        CGContextStrokePath(ctx);
+        -:  446://    }else
+        -:  447://    {
+        -:  448://        CGContextFillPath(ctx);
+        -:  449://    }
+    15840:  450:}
+unconditional  0 taken 15840
+        -:  451:
+        -:  452:/**
+        -:  453: *  在折线上画数值
+        -:  454: *
+        -:  455: *  @param value 要画的数值
+        -:  456: *  @param ctx   上下文
+        -:  457: */
+function -[EWLineCharView drawValueAtPoint:value:radius:context:] called 0 returned 0% blocks executed 0%
+        -:  458:-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value radius:(CGFloat)radius context:(CGContextRef)ctx
+        -:  459:{
+    #####:  460:    CGContextSaveGState(ctx);
+    #####:  461:    NSString *lineValue = [NSString stringWithFormat:@"%.1f",value];
+        -:  462:    
+    #####:  463:    CGSize valueSize = [lineValue sizeWithAttributes:[super valueAttributes]];
+        -:  464:    
+    #####:  465:    CGPoint valuePoint = CGPointMake(point.x - valueSize.width * 0.5, point.y - valueSize.height - radius - 2);
+        -:  466:    
+    #####:  467:    [lineValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+        -:  468:    
+    #####:  469:    CGContextRestoreGState(ctx);
+    #####:  470:}
+unconditional  0 never executed
+        -:  471:
+        -:  472:#pragma mark - Getter And Setter
+        -:  473:
+function -[EWLineCharView minimumValue] called 17952 returned 100% blocks executed 80%
+        -:  474:- (CGFloat)minimumValue
+        -:  475:{
+    17952:  476:    if ([self hasMinimumValue])
+branch  0 taken 17952
+branch  1 taken 0
+        -:  477:    {
+    17952:  478:        return fminf(self.cachedMinHeight, [super minimumValue]);
+unconditional  0 taken 17952
+        -:  479:    }
+    #####:  480:    return self.cachedMinHeight;
+unconditional  0 never executed
+    17952:  481:}
+unconditional  0 taken 17952
+        -:  482:
+function -[EWLineCharView maximumValue] called 23232 returned 100% blocks executed 80%
+        -:  483:- (CGFloat)maximumValue
+        -:  484:{
+    23232:  485:    if ([self hasMaximumValue])
+branch  0 taken 23232
+branch  1 taken 0
+        -:  486:    {
+    23232:  487:        return fmaxf(self.cachedMaxHeight, [super maximumValue]);
+unconditional  0 taken 23232
+        -:  488:    }
+    #####:  489:    return self.cachedMaxHeight;
+unconditional  0 never executed
+    23232:  490:}
+unconditional  0 taken 23232
+        -:  491:
+function -[EWLineCharView cachedMinHeight] called 17952 returned 100% blocks executed 100%
+        -:  492:-(CGFloat)cachedMinHeight
+        -:  493:{
+    17952:  494:    if (_cachedMinHeight == kEWChartViewCachedHeight) {
+branch  0 taken 1056
+branch  1 taken 16896
+     1056:  495:        CGFloat minHeight = FLT_MAX;
+     1056:  496:        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+     8448:  497:        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+unconditional  0 taken 1056
+branch  1 taken 3168
+branch  2 taken 1056
+unconditional  3 taken 3168
+        -:  498:        {
+     3168:  499:            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+    38016:  500:            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+unconditional  0 taken 3168
+branch  1 taken 15840
+branch  2 taken 3168
+unconditional  3 taken 15840
+        -:  501:            {
+    15840:  502:                CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+    15840:  503:                if (height < minHeight)
+branch  0 taken 6336
+branch  1 taken 9504
+        -:  504:                {
+     6336:  505:                    minHeight = height;
+     6336:  506:                }
+unconditional  0 taken 6336
+    15840:  507:            }
+unconditional  0 taken 15840
+     3168:  508:        }
+unconditional  0 taken 3168
+     1056:  509:        _cachedMinHeight = minHeight;
+     1056:  510:    }
+unconditional  0 taken 1056
+    17952:  511:    return _cachedMinHeight;
+unconditional  0 taken 17952
+        -:  512:}
+        -:  513:
+function -[EWLineCharView cachedMaxHeight] called 23232 returned 100% blocks executed 100%
+        -:  514:-(CGFloat)cachedMaxHeight
+        -:  515:{
+    23232:  516:    if (_cachedMaxHeight == kEWChartViewCachedHeight) {
+branch  0 taken 1056
+branch  1 taken 22176
+     1056:  517:        CGFloat maxHeight = 0;
+     1056:  518:        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+     8448:  519:        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+unconditional  0 taken 1056
+branch  1 taken 3168
+branch  2 taken 1056
+unconditional  3 taken 3168
+        -:  520:        {
+     3168:  521:            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+    38016:  522:            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+unconditional  0 taken 3168
+branch  1 taken 15840
+branch  2 taken 3168
+unconditional  3 taken 15840
+        -:  523:            {
+    15840:  524:                 CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+    15840:  525:                if (height > maxHeight)
+branch  0 taken 2112
+branch  1 taken 13728
+        -:  526:                {
+     2112:  527:                    maxHeight = height;
+     2112:  528:                }
+unconditional  0 taken 2112
+    15840:  529:            }
+unconditional  0 taken 15840
+     3168:  530:        }
+unconditional  0 taken 3168
+     1056:  531:        _cachedMaxHeight = maxHeight;
+     1056:  532:    }
+unconditional  0 taken 1056
+    23232:  533:    return _cachedMaxHeight;
+unconditional  0 taken 23232
+        -:  534:}
+        -:  535:
+        -:  536:@end
+        -:  537:@implementation EWLineChartInfo
+        -:  538:
+        -:  539:#pragma mark - Alloc/Init
+        -:  540:
+function -[EWLineChartInfo init] called 15840 returned 100% blocks executed 100%
+        -:  541:- (id)init
+        -:  542:{
+    15840:  543:    self = [super init];
+    15840:  544:    if (self)
+branch  0 taken 15840
+branch  1 taken 0
+        -:  545:    {
+    15840:  546:        _position = CGPointZero;
+    15840:  547:        _value = 0;
+    15840:  548:    }
+unconditional  0 taken 15840
+    15840:  549:    return self;
+    15840:  550:}
+unconditional  0 taken 15840
+        -:  551:
+        -:  552:@end

@@ -1,0 +1,3948 @@
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSException.h:
+       |    1|/*	NSException.h
+       |    2|	Copyright (c) 1994-2016, Apple Inc. All rights reserved.
+       |    3|*/
+       |    4|
+       |    5|#import <Foundation/NSObject.h>
+       |    6|#import <Foundation/NSString.h>
+       |    7|#import <stdarg.h>
+       |    8|#import <setjmp.h>
+       |    9|
+       |   10|@class NSString, NSDictionary, NSArray<ObjectType>, NSNumber;
+       |   11|
+       |   12|NS_ASSUME_NONNULL_BEGIN
+       |   13|
+       |   14|/***************	Generic Exception names		***************/
+       |   15|
+       |   16|FOUNDATION_EXPORT NSExceptionName const NSGenericException;
+       |   17|FOUNDATION_EXPORT NSExceptionName const NSRangeException;
+       |   18|FOUNDATION_EXPORT NSExceptionName const NSInvalidArgumentException;
+       |   19|FOUNDATION_EXPORT NSExceptionName const NSInternalInconsistencyException;
+       |   20|
+       |   21|FOUNDATION_EXPORT NSExceptionName const NSMallocException;
+       |   22|
+       |   23|FOUNDATION_EXPORT NSExceptionName const NSObjectInaccessibleException;
+       |   24|FOUNDATION_EXPORT NSExceptionName const NSObjectNotAvailableException;
+       |   25|FOUNDATION_EXPORT NSExceptionName const NSDestinationInvalidException;
+       |   26|    
+       |   27|FOUNDATION_EXPORT NSExceptionName const NSPortTimeoutException;
+       |   28|FOUNDATION_EXPORT NSExceptionName const NSInvalidSendPortException;
+       |   29|FOUNDATION_EXPORT NSExceptionName const NSInvalidReceivePortException;
+       |   30|FOUNDATION_EXPORT NSExceptionName const NSPortSendException;
+       |   31|FOUNDATION_EXPORT NSExceptionName const NSPortReceiveException;
+       |   32|
+       |   33|FOUNDATION_EXPORT NSExceptionName const NSOldStyleException;
+       |   34|
+       |   35|/***************	Exception object	***************/
+       |   36|
+       |   37|#if __OBJC2__
+       |   38|__attribute__((__objc_exception__))
+       |   39|#endif
+       |   40|@interface NSException : NSObject <NSCopying, NSCoding> {
+       |   41|    @private
+       |   42|    NSString		*name;
+       |   43|    NSString		*reason;
+       |   44|    NSDictionary	*userInfo;
+       |   45|    id			reserved;
+       |   46|}
+       |   47|
+       |   48|+ (NSException *)exceptionWithName:(NSExceptionName)name reason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo;
+       |   49|- (instancetype)initWithName:(NSExceptionName)aName reason:(nullable NSString *)aReason userInfo:(nullable NSDictionary *)aUserInfo NS_DESIGNATED_INITIALIZER;
+       |   50|
+       |   51|@property (readonly, copy) NSExceptionName name;
+       |   52|@property (nullable, readonly, copy) NSString *reason;
+       |   53|@property (nullable, readonly, copy) NSDictionary *userInfo;
+       |   54|
+       |   55|@property (readonly, copy) NSArray<NSNumber *> *callStackReturnAddresses NS_AVAILABLE(10_5, 2_0);
+       |   56|@property (readonly, copy) NSArray<NSString *> *callStackSymbols NS_AVAILABLE(10_6, 4_0);
+       |   57|
+       |   58|- (void)raise;
+       |   59|
+       |   60|@end
+       |   61|
+       |   62|@interface NSException (NSExceptionRaisingConveniences)
+       |   63|
+       |   64|+ (void)raise:(NSExceptionName)name format:(NSString *)format, ... NS_FORMAT_FUNCTION(2,3);
+       |   65|+ (void)raise:(NSExceptionName)name format:(NSString *)format arguments:(va_list)argList NS_FORMAT_FUNCTION(2,0);
+       |   66|
+       |   67|@end
+       |   68|
+       |   69|
+       |   70|#define NS_DURING		@try {
+       |   71|#define NS_HANDLER		} @catch (NSException *localException) {
+       |   72|#define NS_ENDHANDLER		}
+       |   73|#define NS_VALUERETURN(v,t)	return (v)
+       |   74|#define NS_VOIDRETURN		return
+       |   75|
+       |   76|
+       |   77|typedef void NSUncaughtExceptionHandler(NSException *exception);
+       |   78|
+       |   79|FOUNDATION_EXPORT NSUncaughtExceptionHandler * _Nullable NSGetUncaughtExceptionHandler(void);
+       |   80|FOUNDATION_EXPORT void NSSetUncaughtExceptionHandler(NSUncaughtExceptionHandler * _Nullable);
+       |   81|
+       |   82|
+       |   83|#if __clang__
+       |   84|#define __PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |   85|    _Pragma("clang diagnostic push") \
+       |   86|    _Pragma("clang diagnostic ignored \"-Wformat-extra-args\"")
+       |   87|
+       |   88|#define __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS _Pragma("clang diagnostic pop")
+       |   89|#else
+       |   90|#define __PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS
+       |   91|#define __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |   92|#endif
+       |   93|
+       |   94|@class NSAssertionHandler;
+       |   95|
+       |   96|#if (defined(__STDC_VERSION__) && (199901L <= __STDC_VERSION__)) || (defined(__cplusplus) && (201103L <= __cplusplus))
+       |   97|
+       |   98|#if !defined(NS_BLOCK_ASSERTIONS)
+       |   99|
+       |  100|#if !defined(_NSAssertBody)
+       |  101|#define NSAssert(condition, desc, ...)	\
+     20|  102|    do {				\
+     20|  103|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+     20|  104|	if (!(condition)) {		\
+      0|  105|            NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+      0|  106|            __assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
+      0|  107|	    [[NSAssertionHandler currentHandler] handleFailureInMethod:_cmd \
+      0|  108|		object:self file:__assert_file__ \
+      0|  109|	    	lineNumber:__LINE__ description:(desc), ##__VA_ARGS__]; \
+      0|  110|	}				\
+     20|  111|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+     20|  112|    } while(0)
+       |  113|#endif
+       |  114|
+       |  115|#if !defined(_NSCAssertBody)
+       |  116|#define NSCAssert(condition, desc, ...) \
+       |  117|    do {				\
+       |  118|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  119|	if (!(condition)) {		\
+       |  120|            NSString *__assert_fn__ = [NSString stringWithUTF8String:__PRETTY_FUNCTION__]; \
+       |  121|            __assert_fn__ = __assert_fn__ ? __assert_fn__ : @"<Unknown Function>"; \
+       |  122|            NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+       |  123|            __assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
+       |  124|	    [[NSAssertionHandler currentHandler] handleFailureInFunction:__assert_fn__ \
+       |  125|		file:__assert_file__ \
+       |  126|	    	lineNumber:__LINE__ description:(desc), ##__VA_ARGS__]; \
+       |  127|	}				\
+       |  128|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+       |  129|    } while(0)
+       |  130|#endif
+       |  131|
+       |  132|#else // NS_BLOCK_ASSERTIONS defined
+       |  133|
+       |  134|#if !defined(_NSAssertBody)
+       |  135|#define NSAssert(condition, desc, ...) do {} while (0)
+       |  136|#endif
+       |  137|
+       |  138|#if !defined(_NSCAssertBody)
+       |  139|#define NSCAssert(condition, desc, ...) do {} while (0)
+       |  140|#endif
+       |  141|
+       |  142|#endif
+       |  143|
+       |  144|#if !defined(_NSAssertBody)
+       |  145|#define NSAssert1(condition, desc, arg1) NSAssert((condition), (desc), (arg1))
+       |  146|#define NSAssert2(condition, desc, arg1, arg2) NSAssert((condition), (desc), (arg1), (arg2))
+       |  147|#define NSAssert3(condition, desc, arg1, arg2, arg3) NSAssert((condition), (desc), (arg1), (arg2), (arg3))
+       |  148|#define NSAssert4(condition, desc, arg1, arg2, arg3, arg4) NSAssert((condition), (desc), (arg1), (arg2), (arg3), (arg4))
+       |  149|#define NSAssert5(condition, desc, arg1, arg2, arg3, arg4, arg5) NSAssert((condition), (desc), (arg1), (arg2), (arg3), (arg4), (arg5))
+       |  150|#define NSParameterAssert(condition) NSAssert((condition), @"Invalid parameter not satisfying: %@", @#condition)
+       |  151|#endif
+       |  152|
+       |  153|#if !defined(_NSCAssertBody)
+       |  154|#define NSCAssert1(condition, desc, arg1) NSCAssert((condition), (desc), (arg1))
+       |  155|#define NSCAssert2(condition, desc, arg1, arg2) NSCAssert((condition), (desc), (arg1), (arg2))
+       |  156|#define NSCAssert3(condition, desc, arg1, arg2, arg3) NSCAssert((condition), (desc), (arg1), (arg2), (arg3))
+       |  157|#define NSCAssert4(condition, desc, arg1, arg2, arg3, arg4) NSCAssert((condition), (desc), (arg1), (arg2), (arg3), (arg4))
+       |  158|#define NSCAssert5(condition, desc, arg1, arg2, arg3, arg4, arg5) NSCAssert((condition), (desc), (arg1), (arg2), (arg3), (arg4), (arg5))
+       |  159|#define NSCParameterAssert(condition) NSCAssert((condition), @"Invalid parameter not satisfying: %@", @#condition)
+       |  160|#endif
+       |  161|
+       |  162|#endif
+       |  163|
+       |  164|
+       |  165|/* Non-vararg implementation of asserts (ignore) */
+       |  166|#if !defined(NS_BLOCK_ASSERTIONS)
+       |  167|#if !defined(_NSAssertBody)
+       |  168|#define _NSAssertBody(condition, desc, arg1, arg2, arg3, arg4, arg5)	\
+       |  169|    do {						\
+       |  170|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  171|	if (!(condition)) {				\
+       |  172|            NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+       |  173|            __assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
+       |  174|	    [[NSAssertionHandler currentHandler] handleFailureInMethod:_cmd object:self file:__assert_file__ \
+       |  175|	    	lineNumber:__LINE__ description:(desc), (arg1), (arg2), (arg3), (arg4), (arg5)];	\
+       |  176|	}						\
+       |  177|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+       |  178|    } while(0)
+       |  179|#endif
+       |  180|#if !defined(_NSCAssertBody)
+       |  181|#define _NSCAssertBody(condition, desc, arg1, arg2, arg3, arg4, arg5)	\
+       |  182|    do {						\
+       |  183|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  184|	if (!(condition)) {				\
+       |  185|            NSString *__assert_fn__ = [NSString stringWithUTF8String:__PRETTY_FUNCTION__]; \
+       |  186|            __assert_fn__ = __assert_fn__ ? __assert_fn__ : @"<Unknown Function>"; \
+       |  187|            NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+       |  188|            __assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
+       |  189|	    [[NSAssertionHandler currentHandler] handleFailureInFunction:__assert_fn__ file:__assert_file__ \
+       |  190|	    	lineNumber:__LINE__ description:(desc), (arg1), (arg2), (arg3), (arg4), (arg5)];	\
+       |  191|	}						\
+       |  192|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+       |  193|    } while(0)
+       |  194|#endif
+       |  195|#else
+       |  196|#if !defined(_NSAssertBody)
+       |  197|#define _NSAssertBody(condition, desc, arg1, arg2, arg3, arg4, arg5)
+       |  198|#endif
+       |  199|#if !defined(_NSCAssertBody)
+       |  200|#define _NSCAssertBody(condition, desc, arg1, arg2, arg3, arg4, arg5)
+       |  201|#endif
+       |  202|#endif
+       |  203|
+       |  204|
+       |  205|/*
+       |  206| * Asserts to use in Objective-C method bodies
+       |  207| */
+       |  208| 
+       |  209|#if !defined(NSAssert)
+       |  210|#define NSAssert5(condition, desc, arg1, arg2, arg3, arg4, arg5)	\
+       |  211|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  212|    _NSAssertBody((condition), (desc), (arg1), (arg2), (arg3), (arg4), (arg5)) \
+       |  213|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  214|
+       |  215|#define NSAssert4(condition, desc, arg1, arg2, arg3, arg4)	\
+       |  216|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  217|    _NSAssertBody((condition), (desc), (arg1), (arg2), (arg3), (arg4), 0) \
+       |  218|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  219|
+       |  220|#define NSAssert3(condition, desc, arg1, arg2, arg3)	\
+       |  221|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  222|    _NSAssertBody((condition), (desc), (arg1), (arg2), (arg3), 0, 0) \
+       |  223|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  224|
+       |  225|#define NSAssert2(condition, desc, arg1, arg2)		\
+       |  226|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  227|    _NSAssertBody((condition), (desc), (arg1), (arg2), 0, 0, 0) \
+       |  228|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  229|
+       |  230|#define NSAssert1(condition, desc, arg1)		\
+       |  231|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  232|    _NSAssertBody((condition), (desc), (arg1), 0, 0, 0, 0) \
+       |  233|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  234|
+       |  235|#define NSAssert(condition, desc)			\
+       |  236|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  237|    _NSAssertBody((condition), (desc), 0, 0, 0, 0, 0) \
+       |  238|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  239|#endif
+       |  240|
+       |  241|#if !defined(NSParameterAssert)
+       |  242|#define NSParameterAssert(condition)			\
+       |  243|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  244|    _NSAssertBody((condition), @"Invalid parameter not satisfying: %s", #condition, 0, 0, 0, 0) \
+       |  245|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  246|#endif
+       |  247|
+       |  248|
+       |  249|#if !defined(NSCAssert)
+       |  250|#define NSCAssert5(condition, desc, arg1, arg2, arg3, arg4, arg5)	\
+       |  251|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  252|    _NSCAssertBody((condition), (desc), (arg1), (arg2), (arg3), (arg4), (arg5)) \
+       |  253|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  254|
+       |  255|#define NSCAssert4(condition, desc, arg1, arg2, arg3, arg4)	\
+       |  256|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  257|    _NSCAssertBody((condition), (desc), (arg1), (arg2), (arg3), (arg4), 0) \
+       |  258|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  259|
+       |  260|#define NSCAssert3(condition, desc, arg1, arg2, arg3)	\
+       |  261|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  262|    _NSCAssertBody((condition), (desc), (arg1), (arg2), (arg3), 0, 0) \
+       |  263|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  264|
+       |  265|#define NSCAssert2(condition, desc, arg1, arg2)	\
+       |  266|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  267|    _NSCAssertBody((condition), (desc), (arg1), (arg2), 0, 0, 0) \
+       |  268|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  269|
+       |  270|#define NSCAssert1(condition, desc, arg1)		\
+       |  271|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  272|    _NSCAssertBody((condition), (desc), (arg1), 0, 0, 0, 0) \
+       |  273|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  274|
+       |  275|#define NSCAssert(condition, desc)			\
+       |  276|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  277|    _NSCAssertBody((condition), (desc), 0, 0, 0, 0, 0) \
+       |  278|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  279|#endif
+       |  280|
+       |  281|#if !defined(NSCParameterAssert)
+       |  282|#define NSCParameterAssert(condition)			\
+       |  283|	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+       |  284|    _NSCAssertBody((condition), @"Invalid parameter not satisfying: %s", #condition, 0, 0, 0, 0) \
+       |  285|        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS
+       |  286|#endif
+       |  287|
+       |  288|
+       |  289|FOUNDATION_EXPORT NSString * const NSAssertionHandlerKey NS_AVAILABLE(10_6, 4_0);
+       |  290|
+       |  291|@interface NSAssertionHandler : NSObject {
+       |  292|    @private
+       |  293|    void *_reserved;
+       |  294|}
+       |  295|
+       |  296|#if FOUNDATION_SWIFT_SDK_EPOCH_AT_LEAST(8)
+       |  297|@property (class, readonly, strong) NSAssertionHandler *currentHandler;
+       |  298|#endif
+       |  299|
+       |  300|- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(nullable NSString *)format,... NS_FORMAT_FUNCTION(5,6);
+       |  301|
+       |  302|- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(nullable NSString *)format,... NS_FORMAT_FUNCTION(4,5);
+       |  303|
+       |  304|@end
+       |  305|
+       |  306|NS_ASSUME_NONNULL_END
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/math.h:
+       |    1|/*
+       |    2| * Copyright (c) 2002-2015 Apple Inc. All rights reserved.
+       |    3| *
+       |    4| * @APPLE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * The contents of this file constitute Original Code as defined in and
+       |    7| * are subject to the Apple Public Source License Version 1.1 (the
+       |    8| * "License").  You may not use this file except in compliance with the
+       |    9| * License.  Please obtain a copy of the License at
+       |   10| * http://www.apple.com/publicsource and read it before using this file.
+       |   11| * 
+       |   12| * This Original Code and all software distributed under the License are
+       |   13| * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   14| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   15| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   16| * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
+       |   17| * License for the specific language governing rights and limitations
+       |   18| * under the License.
+       |   19| * 
+       |   20| * @APPLE_LICENSE_HEADER_END@
+       |   21| */
+       |   22|
+       |   23|#ifndef __MATH_H__
+       |   24|#define __MATH_H__
+       |   25|
+       |   26|#ifndef __MATH__
+       |   27|#define __MATH__
+       |   28|#endif
+       |   29|
+       |   30|#include <sys/cdefs.h>
+       |   31|#include <Availability.h>
+       |   32|
+       |   33|__BEGIN_DECLS
+       |   34|
+       |   35|/******************************************************************************
+       |   36| * Floating point data types                                                  *
+       |   37| ******************************************************************************/
+       |   38|
+       |   39|/*  Define float_t and double_t per C standard, ISO/IEC 9899:2011 7.12 2,
+       |   40|    taking advantage of GCC's __FLT_EVAL_METHOD__ (which a compiler may
+       |   41|    define anytime and GCC does) that shadows FLT_EVAL_METHOD (which a
+       |   42|    compiler must define only in float.h).                                    */
+       |   43|#if __FLT_EVAL_METHOD__ == 0
+       |   44|    typedef float float_t;
+       |   45|    typedef double double_t;
+       |   46|#elif __FLT_EVAL_METHOD__ == 1
+       |   47|    typedef double float_t;
+       |   48|    typedef double double_t;
+       |   49|#elif __FLT_EVAL_METHOD__ == 2 || __FLT_EVAL_METHOD__ == -1
+       |   50|    typedef long double float_t;
+       |   51|    typedef long double double_t;
+       |   52|#else /* __FLT_EVAL_METHOD__ */
+       |   53|#   error "Unsupported value of __FLT_EVAL_METHOD__."
+       |   54|#endif /* __FLT_EVAL_METHOD__ */
+       |   55|
+       |   56|#if defined(__GNUC__)
+       |   57|#   define    HUGE_VAL     __builtin_huge_val()
+       |   58|#   define    HUGE_VALF    __builtin_huge_valf()
+       |   59|#   define    HUGE_VALL    __builtin_huge_vall()
+       |   60|#   define    NAN          __builtin_nanf("0x7fc00000")
+       |   61|#else
+       |   62|#   define    HUGE_VAL     1e500
+       |   63|#   define    HUGE_VALF    1e50f
+       |   64|#   define    HUGE_VALL    1e5000L
+       |   65|#   define    NAN          __nan()
+       |   66|#endif
+       |   67|
+       |   68|#define INFINITY    HUGE_VALF
+       |   69|
+       |   70|/******************************************************************************
+       |   71| *      Taxonomy of floating point data types                                 *
+       |   72| ******************************************************************************/
+       |   73|
+       |   74|#define FP_NAN          1
+       |   75|#define FP_INFINITE     2
+       |   76|#define FP_ZERO         3
+       |   77|#define FP_NORMAL       4
+       |   78|#define FP_SUBNORMAL    5
+       |   79|#define FP_SUPERNORMAL  6 /* legacy PowerPC support; this is otherwise unused */
+       |   80|
+       |   81|#if defined __arm64__ || defined __ARM_VFPV4__
+       |   82|/*  On these architectures, fma(), fmaf( ), and fmal( ) are generally about as
+       |   83|    fast as (or faster than) separate multiply and add of the same operands.  */
+       |   84|#   define FP_FAST_FMA     1
+       |   85|#   define FP_FAST_FMAF    1
+       |   86|#   define FP_FAST_FMAL    1
+       |   87|#elif (defined __i386__ || defined __x86_64__) && (defined __FMA__)
+       |   88|/*  When targeting the FMA ISA extension, fma() and fmaf( ) are generally
+       |   89|    about as fast as (or faster than) separate multiply and add of the same
+       |   90|    operands, but fmal( ) may be more costly.                                 */
+       |   91|#   define FP_FAST_FMA     1
+       |   92|#   define FP_FAST_FMAF    1
+       |   93|#   undef  FP_FAST_FMAL
+       |   94|#else
+       |   95|/*  On these architectures, fma( ), fmaf( ), and fmal( ) function calls are
+       |   96|    significantly more costly than separate multiply and add operations.      */
+       |   97|#   undef  FP_FAST_FMA
+       |   98|#   undef  FP_FAST_FMAF
+       |   99|#   undef  FP_FAST_FMAL
+       |  100|#endif
+       |  101|
+       |  102|/* The values returned by `ilogb' for 0 and NaN respectively. */
+       |  103|#define FP_ILOGB0      (-2147483647 - 1)
+       |  104|#define FP_ILOGBNAN    (-2147483647 - 1)
+       |  105|
+       |  106|/* Bitmasks for the math_errhandling macro.  */
+       |  107|#define MATH_ERRNO        1    /* errno set by math functions.  */
+       |  108|#define MATH_ERREXCEPT    2    /* Exceptions raised by math functions.  */
+       |  109|
+       |  110|#define math_errhandling (__math_errhandling())
+       |  111|extern int __math_errhandling(void);
+       |  112|
+       |  113|/******************************************************************************
+       |  114| *                                                                            *
+       |  115| *                              Inquiry macros                                *
+       |  116| *                                                                            *
+       |  117| *  fpclassify      Returns one of the FP_* values.                           *
+       |  118| *  isnormal        Non-zero if and only if the argument x is normalized.     *
+       |  119| *  isfinite        Non-zero if and only if the argument x is finite.         *
+       |  120| *  isnan           Non-zero if and only if the argument x is a NaN.          *
+       |  121| *  signbit         Non-zero if and only if the sign of the argument x is     *
+       |  122| *                  negative.  This includes, NaNs, infinities and zeros.     *
+       |  123| *                                                                            *
+       |  124| ******************************************************************************/
+       |  125|
+       |  126|#if (defined __MAC_OS_X_VERSION_MIN_REQUIRED && __MAC_OS_X_VERSION_MIN_REQUIRED < 1080) || \
+       |  127|    (defined __IPHONE_OS_VERSION_MIN_REQUIRED && __IPHONE_OS_VERSION_MIN_REQUIRED < 60000)
+       |  128|#   if defined __i386__ || defined __x86_64__
+       |  129|#       define __fpclassifyl __fpclassify
+       |  130|#       define __isnormall   __isnormal
+       |  131|#       define __isfinitel   __isfinite
+       |  132|#       define __isinfl      __isinf
+       |  133|#       define __isnanl      __isnan
+       |  134|#   elif defined __arm__
+       |  135|#       define __fpclassifyd __fpclassify
+       |  136|#   endif
+       |  137|#endif
+       |  138|
+       |  139|#define fpclassify(x)                                                    \
+       |  140|    ( sizeof(x) == sizeof(float)  ? __fpclassifyf((float)(x))            \
+       |  141|    : sizeof(x) == sizeof(double) ? __fpclassifyd((double)(x))           \
+       |  142|                                  : __fpclassifyl((long double)(x)))
+       |  143|
+       |  144|extern int __fpclassifyf(float);
+       |  145|extern int __fpclassifyd(double);
+       |  146|extern int __fpclassifyl(long double);
+       |  147|
+       |  148|#if (defined(__GNUC__) && 0 == __FINITE_MATH_ONLY__) || \
+       |  149|    (defined __IPHONE_OS_VERSION_MIN_REQUIRED && __IPHONE_OS_VERSION_MIN_REQUIRED < 60000 && defined __arm__)
+       |  150|/*  These inline functions may fail to return expected results if unsafe
+       |  151|    math optimizations like those enabled by -ffast-math are turned on.
+       |  152|    Thus, (somewhat surprisingly) you only get the fast inline
+       |  153|    implementations if such compiler options are NOT enabled.  This is
+       |  154|    because the inline functions require the compiler to be adhering to
+       |  155|    the standard in order to work properly; -ffast-math, among other
+       |  156|    things, implies that NaNs don't happen, which allows the compiler to
+       |  157|    optimize away checks like x != x, which might lead to things like
+       |  158|    isnan(NaN) returning false.                                               
+       |  159| 
+       |  160|    Thus, if you compile with -ffast-math, actual function calls are
+       |  161|    generated for these utilities.                                            */
+       |  162|    
+       |  163|#define isnormal(x)                                                      \
+       |  164|    ( sizeof(x) == sizeof(float)  ? __inline_isnormalf((float)(x))       \
+       |  165|    : sizeof(x) == sizeof(double) ? __inline_isnormald((double)(x))      \
+       |  166|                                  : __inline_isnormall((long double)(x)))
+       |  167|
+       |  168|#define isfinite(x)                                                      \
+       |  169|    ( sizeof(x) == sizeof(float)  ? __inline_isfinitef((float)(x))       \
+       |  170|    : sizeof(x) == sizeof(double) ? __inline_isfinited((double)(x))      \
+       |  171|                                  : __inline_isfinitel((long double)(x)))
+       |  172|
+       |  173|#define isinf(x)                                                         \
+       |  174|    ( sizeof(x) == sizeof(float)  ? __inline_isinff((float)(x))          \
+       |  175|    : sizeof(x) == sizeof(double) ? __inline_isinfd((double)(x))         \
+       |  176|                                  : __inline_isinfl((long double)(x)))
+       |  177|
+       |  178|#define isnan(x)                                                         \
+       |  179|    ( sizeof(x) == sizeof(float)  ? __inline_isnanf((float)(x))          \
+       |  180|    : sizeof(x) == sizeof(double) ? __inline_isnand((double)(x))         \
+       |  181|                                  : __inline_isnanl((long double)(x)))
+       |  182|
+       |  183|#define signbit(x)                                                       \
+       |  184|    ( sizeof(x) == sizeof(float)  ? __inline_signbitf((float)(x))        \
+       |  185|    : sizeof(x) == sizeof(double) ? __inline_signbitd((double)(x))       \
+       |  186|                                  : __inline_signbitl((long double)(x)))
+       |  187|
+       |  188|__header_always_inline int __inline_isfinitef(float);
+       |  189|__header_always_inline int __inline_isfinited(double);
+       |  190|__header_always_inline int __inline_isfinitel(long double);
+       |  191|__header_always_inline int __inline_isinff(float);
+       |  192|__header_always_inline int __inline_isinfd(double);
+       |  193|__header_always_inline int __inline_isinfl(long double);
+       |  194|__header_always_inline int __inline_isnanf(float);
+       |  195|__header_always_inline int __inline_isnand(double);
+       |  196|__header_always_inline int __inline_isnanl(long double);
+       |  197|__header_always_inline int __inline_isnormalf(float);
+       |  198|__header_always_inline int __inline_isnormald(double);
+       |  199|__header_always_inline int __inline_isnormall(long double);
+       |  200|__header_always_inline int __inline_signbitf(float);
+       |  201|__header_always_inline int __inline_signbitd(double);
+       |  202|__header_always_inline int __inline_signbitl(long double);
+       |  203|    
+       |  204|__header_always_inline int __inline_isfinitef(float __x) {
+       |  205|    return __x == __x && __builtin_fabsf(__x) != __builtin_inff();
+       |  206|}
+       |  207|__header_always_inline int __inline_isfinited(double __x) {
+       |  208|    return __x == __x && __builtin_fabs(__x) != __builtin_inf();
+       |  209|}
+       |  210|__header_always_inline int __inline_isfinitel(long double __x) {
+       |  211|    return __x == __x && __builtin_fabsl(__x) != __builtin_infl();
+       |  212|}
+       |  213|__header_always_inline int __inline_isinff(float __x) {
+       |  214|    return __builtin_fabsf(__x) == __builtin_inff();
+       |  215|}
+       |  216|__header_always_inline int __inline_isinfd(double __x) {
+       |  217|    return __builtin_fabs(__x) == __builtin_inf();
+       |  218|}
+       |  219|__header_always_inline int __inline_isinfl(long double __x) {
+       |  220|    return __builtin_fabsl(__x) == __builtin_infl();
+       |  221|}
+       |  222|__header_always_inline int __inline_isnanf(float __x) {
+       |  223|    return __x != __x;
+       |  224|}
+       |  225|__header_always_inline int __inline_isnand(double __x) {
+       |  226|    return __x != __x;
+       |  227|}
+       |  228|__header_always_inline int __inline_isnanl(long double __x) {
+       |  229|    return __x != __x;
+       |  230|}
+       |  231|__header_always_inline int __inline_signbitf(float __x) {
+       |  232|    union { float __f; unsigned int __u; } __u;
+       |  233|    __u.__f = __x;
+       |  234|    return (int)(__u.__u >> 31);
+       |  235|}
+       |  236|__header_always_inline int __inline_signbitd(double __x) {
+       |  237|    union { double __f; unsigned long long __u; } __u;
+       |  238|    __u.__f = __x;
+       |  239|    return (int)(__u.__u >> 63);
+       |  240|}
+       |  241|#if defined __i386__ || defined __x86_64__
+       |  242|__header_always_inline int __inline_signbitl(long double __x) {
+       |  243|    union {
+       |  244|        long double __ld;
+       |  245|        struct{ unsigned long long __m; unsigned short __sexp; } __p;
+       |  246|    } __u;
+       |  247|    __u.__ld = __x;
+       |  248|    return (int)(__u.__p.__sexp >> 15);
+       |  249|}
+       |  250|#else
+       |  251|__header_always_inline int __inline_signbitl(long double __x) {
+       |  252|    union { long double __f; unsigned long long __u;} __u;
+       |  253|    __u.__f = __x;
+       |  254|    return (int)(__u.__u >> 63);
+       |  255|}
+       |  256|#endif
+       |  257|__header_always_inline int __inline_isnormalf(float __x) {
+       |  258|    return __inline_isfinitef(__x) && __builtin_fabsf(__x) >= __FLT_MIN__;
+       |  259|}
+       |  260|__header_always_inline int __inline_isnormald(double __x) {
+       |  261|    return __inline_isfinited(__x) && __builtin_fabs(__x) >= __DBL_MIN__;
+       |  262|}
+       |  263|__header_always_inline int __inline_isnormall(long double __x) {
+       |  264|    return __inline_isfinitel(__x) && __builtin_fabsl(__x) >= __LDBL_MIN__;
+       |  265|}
+       |  266|    
+       |  267|#else /* defined(__GNUC__) && 0 == __FINITE_MATH_ONLY__ */
+       |  268|
+       |  269|/*  Implementations making function calls to fall back on when -ffast-math
+       |  270|    or similar is specified.  These are not available in iOS versions prior
+       |  271|    to 6.0.  If you need them, you must target that version or later.         */
+       |  272|    
+       |  273|#define isnormal(x)                                               \
+       |  274|    ( sizeof(x) == sizeof(float)  ? __isnormalf((float)(x))       \
+       |  275|    : sizeof(x) == sizeof(double) ? __isnormald((double)(x))      \
+       |  276|                                  : __isnormall((long double)(x)))
+       |  277|    
+       |  278|#define isfinite(x)                                               \
+       |  279|    ( sizeof(x) == sizeof(float)  ? __isfinitef((float)(x))       \
+       |  280|    : sizeof(x) == sizeof(double) ? __isfinited((double)(x))      \
+       |  281|                                  : __isfinitel((long double)(x)))
+       |  282|    
+       |  283|#define isinf(x)                                                  \
+       |  284|    ( sizeof(x) == sizeof(float)  ? __isinff((float)(x))          \
+       |  285|    : sizeof(x) == sizeof(double) ? __isinfd((double)(x))         \
+       |  286|                                  : __isinfl((long double)(x)))
+       |  287|    
+       |  288|#define isnan(x)                                                  \
+       |  289|    ( sizeof(x) == sizeof(float)  ? __isnanf((float)(x))          \
+       |  290|    : sizeof(x) == sizeof(double) ? __isnand((double)(x))         \
+       |  291|                                  : __isnanl((long double)(x)))
+       |  292|    
+       |  293|#define signbit(x)                                                \
+       |  294|    ( sizeof(x) == sizeof(float)  ? __signbitf((float)(x))        \
+       |  295|    : sizeof(x) == sizeof(double) ? __signbitd((double)(x))       \
+       |  296|                                  : __signbitl((long double)(x)))
+       |  297|    
+       |  298|extern int __isnormalf(float);
+       |  299|extern int __isnormald(double);
+       |  300|extern int __isnormall(long double);
+       |  301|extern int __isfinitef(float);
+       |  302|extern int __isfinited(double);
+       |  303|extern int __isfinitel(long double);
+       |  304|extern int __isinff(float);
+       |  305|extern int __isinfd(double);
+       |  306|extern int __isinfl(long double);
+       |  307|extern int __isnanf(float);
+       |  308|extern int __isnand(double);
+       |  309|extern int __isnanl(long double);
+       |  310|extern int __signbitf(float);
+       |  311|extern int __signbitd(double);
+       |  312|extern int __signbitl(long double);
+       |  313|
+       |  314|#endif /* defined(__GNUC__) && 0 == __FINITE_MATH_ONLY__ */
+       |  315|
+       |  316|/******************************************************************************
+       |  317| *                                                                            *
+       |  318| *                              Math Functions                                *
+       |  319| *                                                                            *
+       |  320| ******************************************************************************/
+       |  321|    
+       |  322|extern float acosf(float);
+       |  323|extern double acos(double);
+       |  324|extern long double acosl(long double);
+       |  325|    
+       |  326|extern float asinf(float);
+       |  327|extern double asin(double);
+       |  328|extern long double asinl(long double);
+       |  329|    
+       |  330|extern float atanf(float);
+       |  331|extern double atan(double);
+       |  332|extern long double atanl(long double);
+       |  333|    
+       |  334|extern float atan2f(float, float);
+       |  335|extern double atan2(double, double);
+       |  336|extern long double atan2l(long double, long double);
+       |  337|    
+       |  338|extern float cosf(float);
+       |  339|extern double cos(double);
+       |  340|extern long double cosl(long double);
+       |  341|    
+       |  342|extern float sinf(float);
+       |  343|extern double sin(double);
+       |  344|extern long double sinl(long double);
+       |  345|    
+       |  346|extern float tanf(float);
+       |  347|extern double tan(double);
+       |  348|extern long double tanl(long double);
+       |  349|    
+       |  350|extern float acoshf(float);
+       |  351|extern double acosh(double);
+       |  352|extern long double acoshl(long double);
+       |  353|    
+       |  354|extern float asinhf(float);
+       |  355|extern double asinh(double);
+       |  356|extern long double asinhl(long double);
+       |  357|    
+       |  358|extern float atanhf(float);
+       |  359|extern double atanh(double);
+       |  360|extern long double atanhl(long double);
+       |  361|    
+       |  362|extern float coshf(float);
+       |  363|extern double cosh(double);
+       |  364|extern long double coshl(long double);
+       |  365|    
+       |  366|extern float sinhf(float);
+       |  367|extern double sinh(double);
+       |  368|extern long double sinhl(long double);
+       |  369|    
+       |  370|extern float tanhf(float);
+       |  371|extern double tanh(double);
+       |  372|extern long double tanhl(long double);
+       |  373|    
+       |  374|extern float expf(float);
+       |  375|extern double exp(double);
+       |  376|extern long double expl(long double);
+       |  377|
+       |  378|extern float exp2f(float);
+       |  379|extern double exp2(double); 
+       |  380|extern long double exp2l(long double); 
+       |  381|
+       |  382|extern float expm1f(float);
+       |  383|extern double expm1(double); 
+       |  384|extern long double expm1l(long double); 
+       |  385|
+       |  386|extern float logf(float);
+       |  387|extern double log(double);
+       |  388|extern long double logl(long double);
+       |  389|
+       |  390|extern float log10f(float);
+       |  391|extern double log10(double);
+       |  392|extern long double log10l(long double);
+       |  393|
+       |  394|extern float log2f(float);
+       |  395|extern double log2(double);
+       |  396|extern long double log2l(long double);
+       |  397|
+       |  398|extern float log1pf(float);
+       |  399|extern double log1p(double);
+       |  400|extern long double log1pl(long double);
+       |  401|
+       |  402|extern float logbf(float);
+       |  403|extern double logb(double);
+       |  404|extern long double logbl(long double);
+       |  405|
+       |  406|extern float modff(float, float *);
+       |  407|extern double modf(double, double *);
+       |  408|extern long double modfl(long double, long double *);
+       |  409|
+       |  410|extern float ldexpf(float, int);
+       |  411|extern double ldexp(double, int);
+       |  412|extern long double ldexpl(long double, int);
+       |  413|
+       |  414|extern float frexpf(float, int *);
+       |  415|extern double frexp(double, int *);
+       |  416|extern long double frexpl(long double, int *);
+       |  417|
+       |  418|extern int ilogbf(float);
+       |  419|extern int ilogb(double);
+       |  420|extern int ilogbl(long double);
+       |  421|
+       |  422|extern float scalbnf(float, int);
+       |  423|extern double scalbn(double, int);
+       |  424|extern long double scalbnl(long double, int);
+       |  425|
+       |  426|extern float scalblnf(float, long int);
+       |  427|extern double scalbln(double, long int);
+       |  428|extern long double scalblnl(long double, long int);
+       |  429|
+       |  430|extern float fabsf(float);
+       |  431|extern double fabs(double);
+       |  432|extern long double fabsl(long double);
+       |  433|
+       |  434|extern float cbrtf(float);
+       |  435|extern double cbrt(double);
+       |  436|extern long double cbrtl(long double);
+       |  437|
+       |  438|extern float hypotf(float, float);
+       |  439|extern double hypot(double, double);
+       |  440|extern long double hypotl(long double, long double);
+       |  441|
+       |  442|extern float powf(float, float);
+       |  443|extern double pow(double, double);
+       |  444|extern long double powl(long double, long double);
+       |  445|
+       |  446|extern float sqrtf(float);
+       |  447|extern double sqrt(double);
+       |  448|extern long double sqrtl(long double);
+       |  449|
+       |  450|extern float erff(float);
+       |  451|extern double erf(double);
+       |  452|extern long double erfl(long double);
+       |  453|
+       |  454|extern float erfcf(float);
+       |  455|extern double erfc(double);
+       |  456|extern long double erfcl(long double);
+       |  457|
+       |  458|/*	lgammaf, lgamma, and lgammal are not thread-safe. The thread-safe
+       |  459|    variants lgammaf_r, lgamma_r, and lgammal_r are made available if
+       |  460|    you define the _REENTRANT symbol before including <math.h>                */
+       |  461|extern float lgammaf(float);
+       |  462|extern double lgamma(double);
+       |  463|extern long double lgammal(long double);
+       |  464|
+       |  465|extern float tgammaf(float);
+       |  466|extern double tgamma(double);
+       |  467|extern long double tgammal(long double);
+       |  468|
+       |  469|extern float ceilf(float);
+       |  470|extern double ceil(double);
+       |  471|extern long double ceill(long double);
+       |  472|
+       |  473|extern float floorf(float);
+       |  474|extern double floor(double);
+       |  475|extern long double floorl(long double);
+       |  476|
+       |  477|extern float nearbyintf(float);
+       |  478|extern double nearbyint(double);
+       |  479|extern long double nearbyintl(long double);
+       |  480|
+       |  481|extern float rintf(float);
+       |  482|extern double rint(double);
+       |  483|extern long double rintl(long double);
+       |  484|
+       |  485|extern long int lrintf(float);
+       |  486|extern long int lrint(double);
+       |  487|extern long int lrintl(long double);
+       |  488|
+       |  489|extern float roundf(float);
+       |  490|extern double round(double);
+       |  491|extern long double roundl(long double);
+       |  492|
+       |  493|extern long int lroundf(float);
+       |  494|extern long int lround(double);
+       |  495|extern long int lroundl(long double);
+       |  496|    
+       |  497|/*  long long is not part of C90. Make sure you are passing -std=c99 or
+       |  498|    -std=gnu99 or higher if you need these functions returning long longs     */
+       |  499|#if !(__DARWIN_NO_LONG_LONG)
+       |  500|extern long long int llrintf(float);
+       |  501|extern long long int llrint(double);
+       |  502|extern long long int llrintl(long double);
+       |  503|
+       |  504|extern long long int llroundf(float);
+       |  505|extern long long int llround(double);
+       |  506|extern long long int llroundl(long double);
+       |  507|#endif /* !(__DARWIN_NO_LONG_LONG) */
+       |  508|
+       |  509|extern float truncf(float);
+       |  510|extern double trunc(double);
+       |  511|extern long double truncl(long double);
+       |  512|
+       |  513|extern float fmodf(float, float);
+       |  514|extern double fmod(double, double);
+       |  515|extern long double fmodl(long double, long double);
+       |  516|
+       |  517|extern float remainderf(float, float);
+       |  518|extern double remainder(double, double);
+       |  519|extern long double remainderl(long double, long double);
+       |  520|
+       |  521|extern float remquof(float, float, int *);
+       |  522|extern double remquo(double, double, int *);
+       |  523|extern long double remquol(long double, long double, int *);
+       |  524|
+       |  525|extern float copysignf(float, float);
+       |  526|extern double copysign(double, double);
+       |  527|extern long double copysignl(long double, long double);
+       |  528|
+       |  529|extern float nanf(const char *);
+       |  530|extern double nan(const char *);
+       |  531|extern long double nanl(const char *);
+       |  532|
+       |  533|extern float nextafterf(float, float);
+       |  534|extern double nextafter(double, double);
+       |  535|extern long double nextafterl(long double, long double);
+       |  536|
+       |  537|extern double nexttoward(double, long double);
+       |  538|extern float nexttowardf(float, long double);
+       |  539|extern long double nexttowardl(long double, long double);
+       |  540|
+       |  541|extern float fdimf(float, float);
+       |  542|extern double fdim(double, double);
+       |  543|extern long double fdiml(long double, long double);
+       |  544|
+       |  545|extern float fmaxf(float, float);
+       |  546|extern double fmax(double, double);
+       |  547|extern long double fmaxl(long double, long double);
+       |  548|
+       |  549|extern float fminf(float, float);
+       |  550|extern double fmin(double, double);
+       |  551|extern long double fminl(long double, long double);
+       |  552|
+       |  553|extern float fmaf(float, float, float);
+       |  554|extern double fma(double, double, double);
+       |  555|extern long double fmal(long double, long double, long double);
+       |  556|
+       |  557|#define isgreater(x, y) __builtin_isgreater((x),(y))
+       |  558|#define isgreaterequal(x, y) __builtin_isgreaterequal((x),(y))
+       |  559|#define isless(x, y) __builtin_isless((x),(y))
+       |  560|#define islessequal(x, y) __builtin_islessequal((x),(y))
+       |  561|#define islessgreater(x, y) __builtin_islessgreater((x),(y))
+       |  562|#define isunordered(x, y) __builtin_isunordered((x),(y))
+       |  563|
+       |  564|/* Legacy BSD API: please use C99 INFINITY macro instead.                     */
+       |  565|extern float __inff(void) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  566|extern double __inf(void) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  567|extern long double __infl(void) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  568|/* Implementation detail; please use the standard C NAN macro instead.        */
+       |  569|extern float __nan(void) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_NA);
+       |  570|
+       |  571|/******************************************************************************
+       |  572| *  Reentrant variants of lgamma[fl]                                          *
+       |  573| ******************************************************************************/
+       |  574|
+       |  575|#ifdef _REENTRANT
+       |  576|/*  Reentrant variants of the lgamma[fl] functions.                           */
+       |  577|extern float lgammaf_r(float, int *) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_1);
+       |  578|extern double lgamma_r(double, int *) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_1);
+       |  579|extern long double lgammal_r(long double, int *) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_1);
+       |  580|#endif /* _REENTRANT */
+       |  581|
+       |  582|/******************************************************************************
+       |  583| *  Apple extensions to the C standard                                        *
+       |  584| ******************************************************************************/
+       |  585|
+       |  586|/*  Because these functions are not specified by any relevant standard, they
+       |  587|    are prefixed with __, which places them in the implementor's namespace, so
+       |  588|    they should not conflict with any developer or third-party code.  If they
+       |  589|    are added to a relevant standard in the future, un-prefixed names may be
+       |  590|    added to the library and they may be moved out of this section of the
+       |  591|    header.                                                                   
+       |  592| 
+       |  593|    Because these functions are non-standard, they may not be available on non-
+       |  594|    Apple platforms.                                                          */
+       |  595|
+       |  596|/*  __exp10(x) returns 10**x.  Edge cases match those of exp( ) and exp2( ).  */
+       |  597|extern float __exp10f(float) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  598|extern double __exp10(double) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  599|
+       |  600|/*  __sincos(x,sinp,cosp) computes the sine and cosine of x with a single
+       |  601|    function call, storing the sine in the memory pointed to by sinp, and
+       |  602|    the cosine in the memory pointed to by cosp. Edge cases match those of
+       |  603|    separate calls to sin( ) and cos( ).                                      */
+       |  604|__header_always_inline void __sincosf(float __x, float *__sinp, float *__cosp);
+       |  605|__header_always_inline void __sincos(double __x, double *__sinp, double *__cosp);
+       |  606|
+       |  607|/*  __sinpi(x) returns the sine of pi times x; __cospi(x) and __tanpi(x) return
+       |  608|    the cosine and tangent, respectively.  These functions can produce a more
+       |  609|    accurate answer than expressions of the form sin(M_PI * x) because they
+       |  610|    avoid any loss of precision that results from rounding the result of the
+       |  611|    multiplication M_PI * x.  They may also be significantly more efficient in
+       |  612|    some cases because the argument reduction for these functions is easier
+       |  613|    to compute.  Consult the man pages for edge case details.                 */
+       |  614|extern float __cospif(float) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  615|extern double __cospi(double) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  616|extern float __sinpif(float) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  617|extern double __sinpi(double) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  618|extern float __tanpif(float) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  619|extern double __tanpi(double) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
+       |  620|
+       |  621|#if (defined __MAC_OS_X_VERSION_MIN_REQUIRED && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090) || \
+       |  622|    (defined __IPHONE_OS_VERSION_MIN_REQUIRED && __IPHONE_OS_VERSION_MIN_REQUIRED < 70000)
+       |  623|/*  __sincos and __sincosf were introduced in OSX 10.9 and iOS 7.0.  When
+       |  624|    targeting an older system, we simply split them up into discrete calls
+       |  625|    to sin( ) and cos( ).                                                     */
+       |  626|__header_always_inline void __sincosf(float __x, float *__sinp, float *__cosp) {
+       |  627|  *__sinp = sinf(__x);
+       |  628|  *__cosp = cosf(__x);
+       |  629|}
+       |  630|
+       |  631|__header_always_inline void __sincos(double __x, double *__sinp, double *__cosp) {
+       |  632|  *__sinp = sin(__x);
+       |  633|  *__cosp = cos(__x);
+       |  634|}
+       |  635|#else
+       |  636|/*  __sincospi(x,sinp,cosp) computes the sine and cosine of pi times x with a
+       |  637|    single function call, storing the sine in the memory pointed to by sinp,
+       |  638|    and the cosine in the memory pointed to by cosp.  Edge cases match those
+       |  639|    of separate calls to __sinpi( ) and __cospi( ), and are documented in the
+       |  640|    man pages.
+       |  641| 
+       |  642|    These functions were introduced in OSX 10.9 and iOS 7.0.  Because they are
+       |  643|    implemented as header inlines, weak-linking does not function as normal,
+       |  644|    and they are simply hidden when targeting earlier OS versions.            */
+       |  645|__header_always_inline void __sincospif(float __x, float *__sinp, float *__cosp);
+       |  646|__header_always_inline void __sincospi(double __x, double *__sinp, double *__cosp);
+       |  647|
+       |  648|/*  Implementation details of __sincos and __sincospi allowing them to return
+       |  649|    two results while allowing the compiler to optimize away unnecessary load-
+       |  650|    store traffic.  Although these interfaces are exposed in the math.h header
+       |  651|    to allow compilers to generate better code, users should call __sincos[f]
+       |  652|    and __sincospi[f] instead and allow the compiler to emit these calls.     */
+       |  653|struct __float2 { float __sinval; float __cosval; };
+       |  654|struct __double2 { double __sinval; double __cosval; };
+       |  655|
+       |  656|extern struct __float2 __sincosf_stret(float);
+       |  657|extern struct __double2 __sincos_stret(double);
+       |  658|extern struct __float2 __sincospif_stret(float);
+       |  659|extern struct __double2 __sincospi_stret(double);
+       |  660|
+       |  661|__header_always_inline void __sincosf(float __x, float *__sinp, float *__cosp) {
+       |  662|    const struct __float2 __stret = __sincosf_stret(__x);
+       |  663|    *__sinp = __stret.__sinval; *__cosp = __stret.__cosval;
+       |  664|}
+       |  665|
+       |  666|__header_always_inline void __sincos(double __x, double *__sinp, double *__cosp) {
+       |  667|    const struct __double2 __stret = __sincos_stret(__x);
+       |  668|    *__sinp = __stret.__sinval; *__cosp = __stret.__cosval;
+       |  669|}
+       |  670|
+       |  671|__header_always_inline void __sincospif(float __x, float *__sinp, float *__cosp) {
+       |  672|    const struct __float2 __stret = __sincospif_stret(__x);
+       |  673|    *__sinp = __stret.__sinval; *__cosp = __stret.__cosval;
+       |  674|}
+       |  675|
+       |  676|__header_always_inline void __sincospi(double __x, double *__sinp, double *__cosp) {
+       |  677|    const struct __double2 __stret = __sincospi_stret(__x);
+       |  678|    *__sinp = __stret.__sinval; *__cosp = __stret.__cosval;
+       |  679|}
+       |  680|#endif
+       |  681|
+       |  682|/******************************************************************************
+       |  683| *  POSIX/UNIX extensions to the C standard                                   *
+       |  684| ******************************************************************************/
+       |  685|
+       |  686|#if __DARWIN_C_LEVEL >= 199506L
+       |  687|extern double j0(double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  688|extern double j1(double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  689|extern double jn(int, double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  690|extern double y0(double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  691|extern double y1(double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  692|extern double yn(int, double) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+       |  693|extern double scalb(double, double); 
+       |  694|extern int signgam;
+       |  695|
+       |  696|/*  Even though these might be more useful as long doubles, POSIX requires
+       |  697|    that they be double-precision literals.                                   */
+      0|  698|#define M_E         2.71828182845904523536028747135266250   /* e              */
+       |  699|#define M_LOG2E     1.44269504088896340735992468100189214   /* log2(e)        */
+       |  700|#define M_LOG10E    0.434294481903251827651128918916605082  /* log10(e)       */
+       |  701|#define M_LN2       0.693147180559945309417232121458176568  /* loge(2)        */
+       |  702|#define M_LN10      2.30258509299404568401799145468436421   /* loge(10)       */
+      0|  703|#define M_PI        3.14159265358979323846264338327950288   /* pi             */
+      0|  704|#define M_PI_2      1.57079632679489661923132169163975144   /* pi/2           */
+      0|  705|#define M_PI_4      0.785398163397448309615660845819875721  /* pi/4           */
+       |  706|#define M_1_PI      0.318309886183790671537767526745028724  /* 1/pi           */
+       |  707|#define M_2_PI      0.636619772367581343075535053490057448  /* 2/pi           */
+       |  708|#define M_2_SQRTPI  1.12837916709551257389615890312154517   /* 2/sqrt(pi)     */
+       |  709|#define M_SQRT2     1.41421356237309504880168872420969808   /* sqrt(2)        */
+       |  710|#define M_SQRT1_2   0.707106781186547524400844362104849039  /* 1/sqrt(2)      */
+       |  711|
+       |  712|#define MAXFLOAT    0x1.fffffep+127f
+       |  713|#endif /* __DARWIN_C_LEVEL >= 199506L */
+       |  714|
+       |  715|/*  Long-double versions of M_E, etc for convenience on Intel where long-
+       |  716|    double is not the same as double.  Define __MATH_LONG_DOUBLE_CONSTANTS
+       |  717|    to make these constants available.                                        */
+       |  718|#if defined __MATH_LONG_DOUBLE_CONSTANTS
+       |  719|#define M_El        0xa.df85458a2bb4a9bp-2L
+       |  720|#define M_LOG2El    0xb.8aa3b295c17f0bcp-3L
+       |  721|#define M_LOG10El   0xd.e5bd8a937287195p-5L
+       |  722|#define M_LN2l      0xb.17217f7d1cf79acp-4L
+       |  723|#define M_LN10l     0x9.35d8dddaaa8ac17p-2L
+       |  724|#define M_PIl       0xc.90fdaa22168c235p-2L
+       |  725|#define M_PI_2l     0xc.90fdaa22168c235p-3L
+       |  726|#define M_PI_4l     0xc.90fdaa22168c235p-4L
+       |  727|#define M_1_PIl     0xa.2f9836e4e44152ap-5L
+       |  728|#define M_2_PIl     0xa.2f9836e4e44152ap-4L
+       |  729|#define M_2_SQRTPIl 0x9.06eba8214db688dp-3L
+       |  730|#define M_SQRT2l    0xb.504f333f9de6484p-3L
+       |  731|#define M_SQRT1_2l  0xb.504f333f9de6484p-4L
+       |  732|#endif /* defined __MATH_LONG_DOUBLE_CONSTANTS */
+       |  733|
+       |  734|/******************************************************************************
+       |  735| *  Legacy BSD extensions to the C standard                                   *
+       |  736| ******************************************************************************/
+       |  737|
+       |  738|#if __DARWIN_C_LEVEL >= __DARWIN_C_FULL
+       |  739|#define FP_SNAN		FP_NAN
+       |  740|#define FP_QNAN		FP_NAN
+       |  741|#define	HUGE		MAXFLOAT
+       |  742|#define X_TLOSS		1.41484755040568800000e+16 
+       |  743|#define	DOMAIN		1
+       |  744|#define	SING		2
+       |  745|#define	OVERFLOW	3
+       |  746|#define	UNDERFLOW	4
+       |  747|#define	TLOSS		5
+       |  748|#define	PLOSS		6
+       |  749|
+       |  750|/* Legacy BSD API: please use C99 lrint( ) instead.                           */
+       |  751|extern long int rinttol(double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  752|/* Legacy BSD API: please use C99 lround( ) instead.                          */
+       |  753|extern long int roundtol(double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  754|/* Legacy BSD API: please use C99 remainder( ) instead.                       */
+       |  755|extern double drem(double, double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  756|/* Legacy BSD API: please use C99 isfinite( ) instead.                        */
+       |  757|extern int finite(double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  758|/* Legacy BSD API: please use C99 tgamma( ) instead.                          */
+       |  759|extern double gamma(double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  760|/* Legacy BSD API: please use C99 frexp( ) instead.                           */
+       |  761|extern double significand(double) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  762|
+       |  763|#if !defined __cplusplus
+       |  764|struct exception {
+       |  765|    int type;
+       |  766|    char *name;
+       |  767|    double arg1;
+       |  768|    double arg2;
+       |  769|    double retval;
+       |  770|};
+       |  771|/* Legacy API: does not do anything useful.                                   */
+       |  772|extern int matherr(struct exception *) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_9, __IPHONE_NA, __IPHONE_NA);
+       |  773|#endif /* !defined __cplusplus */
+       |  774|#endif /* __DARWIN_C_LEVEL >= __DARWIN_C_FULL */
+       |  775|
+       |  776|__END_DECLS
+       |  777|#endif /* __MATH_H__ */
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/objc/objc.h:
+       |    1|/*
+       |    2| * Copyright (c) 1999-2007 Apple Inc.  All Rights Reserved.
+       |    3| * 
+       |    4| * @APPLE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * This file contains Original Code and/or Modifications of Original Code
+       |    7| * as defined in and that are subject to the Apple Public Source License
+       |    8| * Version 2.0 (the 'License'). You may not use this file except in
+       |    9| * compliance with the License. Please obtain a copy of the License at
+       |   10| * http://www.opensource.apple.com/apsl/ and read it before using this
+       |   11| * file.
+       |   12| * 
+       |   13| * The Original Code and all software distributed under the License are
+       |   14| * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   15| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   16| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   17| * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+       |   18| * Please see the License for the specific language governing rights and
+       |   19| * limitations under the License.
+       |   20| * 
+       |   21| * @APPLE_LICENSE_HEADER_END@
+       |   22| */
+       |   23|/*
+       |   24| *	objc.h
+       |   25| *	Copyright 1988-1996, NeXT Software, Inc.
+       |   26| */
+       |   27|
+       |   28|#ifndef _OBJC_OBJC_H_
+       |   29|#define _OBJC_OBJC_H_
+       |   30|
+       |   31|#include <sys/types.h>      // for __DARWIN_NULL
+       |   32|#include <Availability.h>
+       |   33|#include <objc/objc-api.h>
+       |   34|#include <stdbool.h>
+       |   35|
+       |   36|#if !OBJC_TYPES_DEFINED
+       |   37|/// An opaque type that represents an Objective-C class.
+       |   38|typedef struct objc_class *Class;
+       |   39|
+       |   40|/// Represents an instance of a class.
+       |   41|struct objc_object {
+       |   42|    Class isa  OBJC_ISA_AVAILABILITY;
+       |   43|};
+       |   44|
+       |   45|/// A pointer to an instance of a class.
+       |   46|typedef struct objc_object *id;
+       |   47|#endif
+       |   48|
+       |   49|/// An opaque type that represents a method selector.
+       |   50|typedef struct objc_selector *SEL;
+       |   51|
+       |   52|/// A pointer to the function of a method implementation. 
+       |   53|#if !OBJC_OLD_DISPATCH_PROTOTYPES
+       |   54|typedef void (*IMP)(void /* id, SEL, ... */ ); 
+       |   55|#else
+       |   56|typedef id (*IMP)(id, SEL, ...); 
+       |   57|#endif
+       |   58|
+       |   59|#define OBJC_BOOL_DEFINED
+       |   60|
+       |   61|/// Type to represent a boolean value.
+       |   62|#if (TARGET_OS_IPHONE && __LP64__)  ||  TARGET_OS_WATCH
+       |   63|#define OBJC_BOOL_IS_BOOL 1
+       |   64|typedef bool BOOL;
+       |   65|#else
+       |   66|#define OBJC_BOOL_IS_CHAR 1
+       |   67|typedef signed char BOOL; 
+       |   68|// BOOL is explicitly signed so @encode(BOOL) == "c" rather than "C" 
+       |   69|// even if -funsigned-char is used.
+       |   70|#endif
+       |   71|
+       |   72|#if __has_feature(objc_bool)
+     77|   73|#define YES __objc_yes
+     14|   74|#define NO  __objc_no
+       |   75|#else
+       |   76|#define YES ((BOOL)1)
+       |   77|#define NO  ((BOOL)0)
+       |   78|#endif
+       |   79|
+       |   80|#ifndef Nil
+       |   81|# if __has_feature(cxx_nullptr)
+       |   82|#   define Nil nullptr
+       |   83|# else
+       |   84|#   define Nil __DARWIN_NULL
+       |   85|# endif
+       |   86|#endif
+       |   87|
+       |   88|#ifndef nil
+       |   89|# if __has_feature(cxx_nullptr)
+       |   90|#   define nil nullptr
+       |   91|# else
+      7|   92|#   define nil __DARWIN_NULL
+       |   93|# endif
+       |   94|#endif
+       |   95|
+       |   96|#ifndef __strong
+       |   97|# if !__has_feature(objc_arc)
+       |   98|#   define __strong /* empty */
+       |   99|# endif
+       |  100|#endif
+       |  101|
+       |  102|#ifndef __unsafe_unretained
+       |  103|# if !__has_feature(objc_arc)
+       |  104|#   define __unsafe_unretained /* empty */
+       |  105|# endif
+       |  106|#endif
+       |  107|
+       |  108|#ifndef __autoreleasing
+       |  109|# if !__has_feature(objc_arc)
+       |  110|#   define __autoreleasing /* empty */
+       |  111|# endif
+       |  112|#endif
+       |  113|
+       |  114|
+       |  115|/** 
+       |  116| * Returns the name of the method specified by a given selector.
+       |  117| * 
+       |  118| * @param sel A pointer of type \c SEL. Pass the selector whose name you wish to determine.
+       |  119| * 
+       |  120| * @return A C string indicating the name of the selector.
+       |  121| */
+       |  122|OBJC_EXPORT const char *sel_getName(SEL sel)
+       |  123|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  124|
+       |  125|/** 
+       |  126| * Registers a method with the Objective-C runtime system, maps the method 
+       |  127| * name to a selector, and returns the selector value.
+       |  128| * 
+       |  129| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  130| * 
+       |  131| * @return A pointer of type SEL specifying the selector for the named method.
+       |  132| * 
+       |  133| * @note You must register a method name with the Objective-C runtime system to obtain the
+       |  134| *  method’s selector before you can add the method to a class definition. If the method name
+       |  135| *  has already been registered, this function simply returns the selector.
+       |  136| */
+       |  137|OBJC_EXPORT SEL sel_registerName(const char *str)
+       |  138|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  139|
+       |  140|/** 
+       |  141| * Returns the class name of a given object.
+       |  142| * 
+       |  143| * @param obj An Objective-C object.
+       |  144| * 
+       |  145| * @return The name of the class of which \e obj is an instance.
+       |  146| */
+       |  147|OBJC_EXPORT const char *object_getClassName(id obj)
+       |  148|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  149|
+       |  150|/** 
+       |  151| * Returns a pointer to any extra bytes allocated with an instance given object.
+       |  152| * 
+       |  153| * @param obj An Objective-C object.
+       |  154| * 
+       |  155| * @return A pointer to any extra bytes allocated with \e obj. If \e obj was
+       |  156| *   not allocated with any extra bytes, then dereferencing the returned pointer is undefined.
+       |  157| * 
+       |  158| * @note This function returns a pointer to any extra bytes allocated with the instance
+       |  159| *  (as specified by \c class_createInstance with extraBytes>0). This memory follows the
+       |  160| *  object's ordinary ivars, but may not be adjacent to the last ivar.
+       |  161| * @note The returned pointer is guaranteed to be pointer-size aligned, even if the area following
+       |  162| *  the object's last ivar is less aligned than that. Alignment greater than pointer-size is never
+       |  163| *  guaranteed, even if the area following the object's last ivar is more aligned than that.
+       |  164| * @note In a garbage-collected environment, the memory is scanned conservatively.
+       |  165| */
+       |  166|OBJC_EXPORT void *object_getIndexedIvars(id obj)
+       |  167|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  168|
+       |  169|/** 
+       |  170| * Identifies a selector as being valid or invalid.
+       |  171| * 
+       |  172| * @param sel The selector you want to identify.
+       |  173| * 
+       |  174| * @return YES if selector is valid and has a function implementation, NO otherwise. 
+       |  175| * 
+       |  176| * @warning On some platforms, an invalid reference (to invalid memory addresses) can cause
+       |  177| *  a crash. 
+       |  178| */
+       |  179|OBJC_EXPORT BOOL sel_isMapped(SEL sel)
+       |  180|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  181|
+       |  182|/** 
+       |  183| * Registers a method name with the Objective-C runtime system.
+       |  184| * 
+       |  185| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  186| * 
+       |  187| * @return A pointer of type SEL specifying the selector for the named method.
+       |  188| * 
+       |  189| * @note The implementation of this method is identical to the implementation of \c sel_registerName.
+       |  190| * @note Prior to OS X version 10.0, this method tried to find the selector mapped to the given name
+       |  191| *  and returned \c NULL if the selector was not found. This was changed for safety, because it was
+       |  192| *  observed that many of the callers of this function did not check the return value for \c NULL.
+       |  193| */
+       |  194|OBJC_EXPORT SEL sel_getUid(const char *str)
+       |  195|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  196|
+       |  197|typedef const void* objc_objectptr_t;
+       |  198|
+       |  199|
+       |  200|// Obsolete ARC conversions.
+       |  201|
+       |  202|OBJC_EXPORT id objc_retainedObject(objc_objectptr_t obj)
+       |  203|    OBJC_UNAVAILABLE("use CFBridgingRelease() or a (__bridge_transfer id) cast instead");
+       |  204|OBJC_EXPORT id objc_unretainedObject(objc_objectptr_t obj)
+       |  205|    OBJC_UNAVAILABLE("use a (__bridge id) cast instead");
+       |  206|OBJC_EXPORT objc_objectptr_t objc_unretainedPointer(id obj)
+       |  207|    OBJC_UNAVAILABLE("use a __bridge cast instead");
+       |  208|
+       |  209|
+       |  210|#if !__OBJC2__
+       |  211|
+       |  212|// The following declarations are provided here for source compatibility.
+       |  213|
+       |  214|#if defined(__LP64__)
+       |  215|    typedef long arith_t;
+       |  216|    typedef unsigned long uarith_t;
+       |  217|#   define ARITH_SHIFT 32
+       |  218|#else
+       |  219|    typedef int arith_t;
+       |  220|    typedef unsigned uarith_t;
+       |  221|#   define ARITH_SHIFT 16
+       |  222|#endif
+       |  223|
+       |  224|typedef char *STR;
+       |  225|
+       |  226|#define ISSELECTOR(sel) sel_isMapped(sel)
+       |  227|#define SELNAME(sel)	sel_getName(sel)
+       |  228|#define SELUID(str)	sel_getUid(str)
+       |  229|#define NAMEOF(obj)     object_getClassName(obj)
+       |  230|#define IV(obj)         object_getIndexedIvars(obj)
+       |  231|
+       |  232|#endif
+       |  233|
+       |  234|#endif  /* _OBJC_OBJC_H_ */
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/sys/_types.h:
+       |    1|/*
+       |    2| * Copyright (c) 2003-2007 Apple Inc. All rights reserved.
+       |    3| *
+       |    4| * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * This file contains Original Code and/or Modifications of Original Code
+       |    7| * as defined in and that are subject to the Apple Public Source License
+       |    8| * Version 2.0 (the 'License'). You may not use this file except in
+       |    9| * compliance with the License. The rights granted to you under the License
+       |   10| * may not be used to create, or enable the creation or redistribution of,
+       |   11| * unlawful or unlicensed copies of an Apple operating system, or to
+       |   12| * circumvent, violate, or enable the circumvention or violation of, any
+       |   13| * terms of an Apple operating system software license agreement.
+       |   14| * 
+       |   15| * Please obtain a copy of the License at
+       |   16| * http://www.opensource.apple.com/apsl/ and read it before using this file.
+       |   17| * 
+       |   18| * The Original Code and all software distributed under the License are
+       |   19| * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   20| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   21| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   22| * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+       |   23| * Please see the License for the specific language governing rights and
+       |   24| * limitations under the License.
+       |   25| * 
+       |   26| * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+       |   27| */
+       |   28|
+       |   29|#ifndef _SYS__TYPES_H_
+       |   30|#define _SYS__TYPES_H_
+       |   31|
+       |   32|#include <sys/cdefs.h>
+       |   33|#include <machine/_types.h>
+       |   34|
+       |   35|/*
+       |   36| * Type definitions; takes common type definitions that must be used
+       |   37| * in multiple header files due to [XSI], removes them from the system
+       |   38| * space, and puts them in the implementation space.
+       |   39| */
+       |   40|
+       |   41|#ifdef __cplusplus
+       |   42|#ifdef __GNUG__
+       |   43|#define __DARWIN_NULL __null
+       |   44|#else /* ! __GNUG__ */
+       |   45|#ifdef __LP64__
+       |   46|#define __DARWIN_NULL (0L)
+       |   47|#else /* !__LP64__ */
+       |   48|#define __DARWIN_NULL 0
+       |   49|#endif /* __LP64__ */
+       |   50|#endif /* __GNUG__ */
+       |   51|#else /* ! __cplusplus */
+      7|   52|#define __DARWIN_NULL ((void *)0)
+       |   53|#endif /* __cplusplus */
+       |   54|
+       |   55|typedef	__int64_t	__darwin_blkcnt_t;	/* total blocks */
+       |   56|typedef	__int32_t	__darwin_blksize_t;	/* preferred block size */
+       |   57|typedef __int32_t	__darwin_dev_t;		/* dev_t */
+       |   58|typedef unsigned int	__darwin_fsblkcnt_t;	/* Used by statvfs and fstatvfs */
+       |   59|typedef unsigned int	__darwin_fsfilcnt_t;	/* Used by statvfs and fstatvfs */
+       |   60|typedef __uint32_t	__darwin_gid_t;		/* [???] process and group IDs */
+       |   61|typedef __uint32_t	__darwin_id_t;		/* [XSI] pid_t, uid_t, or gid_t*/
+       |   62|typedef __uint64_t	__darwin_ino64_t;	/* [???] Used for 64 bit inodes */
+       |   63|#if __DARWIN_64_BIT_INO_T
+       |   64|typedef __darwin_ino64_t __darwin_ino_t;	/* [???] Used for inodes */
+       |   65|#else /* !__DARWIN_64_BIT_INO_T */
+       |   66|typedef __uint32_t	__darwin_ino_t;		/* [???] Used for inodes */
+       |   67|#endif /* __DARWIN_64_BIT_INO_T */
+       |   68|typedef __darwin_natural_t __darwin_mach_port_name_t; /* Used by mach */
+       |   69|typedef __darwin_mach_port_name_t __darwin_mach_port_t; /* Used by mach */
+       |   70|typedef __uint16_t	__darwin_mode_t;	/* [???] Some file attributes */
+       |   71|typedef __int64_t	__darwin_off_t;		/* [???] Used for file sizes */
+       |   72|typedef __int32_t	__darwin_pid_t;		/* [???] process and group IDs */
+       |   73|typedef __uint32_t	__darwin_sigset_t;	/* [???] signal set */
+       |   74|typedef __int32_t	__darwin_suseconds_t;	/* [???] microseconds */
+       |   75|typedef __uint32_t	__darwin_uid_t;		/* [???] user IDs */
+       |   76|typedef __uint32_t	__darwin_useconds_t;	/* [???] microseconds */
+       |   77|typedef	unsigned char	__darwin_uuid_t[16];
+       |   78|typedef	char	__darwin_uuid_string_t[37];
+       |   79|
+       |   80|#include <sys/_pthread/_pthread_types.h>
+       |   81|
+       |   82|#if defined(__GNUC__) && (__GNUC__ == 3 && __GNUC_MINOR__ >= 5 || __GNUC__ > 3)
+       |   83|#define __offsetof(type, field) __builtin_offsetof(type, field)
+       |   84|#else /* !(gcc >= 3.5) */
+       |   85|#define __offsetof(type, field) ((size_t)(&((type *)0)->field))
+       |   86|#endif /* (gcc >= 3.5) */
+       |   87|
+       |   88|
+       |   89|#endif	/* _SYS__TYPES_H_ */
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/float.h:
+       |    1|/*===---- float.h - Characteristics of floating point types ----------------===
+       |    2| *
+       |    3| * Permission is hereby granted, free of charge, to any person obtaining a copy
+       |    4| * of this software and associated documentation files (the "Software"), to deal
+       |    5| * in the Software without restriction, including without limitation the rights
+       |    6| * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+       |    7| * copies of the Software, and to permit persons to whom the Software is
+       |    8| * furnished to do so, subject to the following conditions:
+       |    9| *
+       |   10| * The above copyright notice and this permission notice shall be included in
+       |   11| * all copies or substantial portions of the Software.
+       |   12| *
+       |   13| * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+       |   14| * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+       |   15| * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+       |   16| * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+       |   17| * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+       |   18| * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+       |   19| * THE SOFTWARE.
+       |   20| *
+       |   21| *===-----------------------------------------------------------------------===
+       |   22| */
+       |   23|
+       |   24|#ifndef __FLOAT_H
+       |   25|#define __FLOAT_H
+       |   26|
+       |   27|/* If we're on MinGW, fall back to the system's float.h, which might have
+       |   28| * additional definitions provided for Windows.
+       |   29| * For more details see http://msdn.microsoft.com/en-us/library/y0ybw9fy.aspx
+       |   30| */
+       |   31|#if (defined(__MINGW32__) || defined(_MSC_VER)) && __STDC_HOSTED__ && \
+       |   32|    __has_include_next(<float.h>)
+       |   33|#  include_next <float.h>
+       |   34|
+       |   35|/* Undefine anything that we'll be redefining below. */
+       |   36|#  undef FLT_EVAL_METHOD
+       |   37|#  undef FLT_ROUNDS
+       |   38|#  undef FLT_RADIX
+       |   39|#  undef FLT_MANT_DIG
+       |   40|#  undef DBL_MANT_DIG
+       |   41|#  undef LDBL_MANT_DIG
+       |   42|#  undef DECIMAL_DIG
+       |   43|#  undef FLT_DIG
+       |   44|#  undef DBL_DIG
+       |   45|#  undef LDBL_DIG
+       |   46|#  undef FLT_MIN_EXP
+       |   47|#  undef DBL_MIN_EXP
+       |   48|#  undef LDBL_MIN_EXP
+       |   49|#  undef FLT_MIN_10_EXP
+       |   50|#  undef DBL_MIN_10_EXP
+       |   51|#  undef LDBL_MIN_10_EXP
+       |   52|#  undef FLT_MAX_EXP
+       |   53|#  undef DBL_MAX_EXP
+       |   54|#  undef LDBL_MAX_EXP
+       |   55|#  undef FLT_MAX_10_EXP
+       |   56|#  undef DBL_MAX_10_EXP
+       |   57|#  undef LDBL_MAX_10_EXP
+       |   58|#  undef FLT_MAX
+       |   59|#  undef DBL_MAX
+       |   60|#  undef LDBL_MAX
+       |   61|#  undef FLT_EPSILON
+       |   62|#  undef DBL_EPSILON
+       |   63|#  undef LDBL_EPSILON
+       |   64|#  undef FLT_MIN
+       |   65|#  undef DBL_MIN
+       |   66|#  undef LDBL_MIN
+       |   67|#  if __STDC_VERSION__ >= 201112L || !defined(__STRICT_ANSI__)
+       |   68|#    undef FLT_TRUE_MIN
+       |   69|#    undef DBL_TRUE_MIN
+       |   70|#    undef LDBL_TRUE_MIN
+       |   71|#  endif
+       |   72|#endif
+       |   73|
+       |   74|/* Characteristics of floating point types, C99 5.2.4.2.2 */
+       |   75|
+       |   76|#define FLT_EVAL_METHOD __FLT_EVAL_METHOD__
+       |   77|#define FLT_ROUNDS (__builtin_flt_rounds())
+       |   78|#define FLT_RADIX __FLT_RADIX__
+       |   79|
+       |   80|#define FLT_MANT_DIG __FLT_MANT_DIG__
+       |   81|#define DBL_MANT_DIG __DBL_MANT_DIG__
+       |   82|#define LDBL_MANT_DIG __LDBL_MANT_DIG__
+       |   83|
+       |   84|#define DECIMAL_DIG __DECIMAL_DIG__
+       |   85|
+       |   86|#define FLT_DIG __FLT_DIG__
+       |   87|#define DBL_DIG __DBL_DIG__
+       |   88|#define LDBL_DIG __LDBL_DIG__
+       |   89|
+       |   90|#define FLT_MIN_EXP __FLT_MIN_EXP__
+       |   91|#define DBL_MIN_EXP __DBL_MIN_EXP__
+       |   92|#define LDBL_MIN_EXP __LDBL_MIN_EXP__
+       |   93|
+       |   94|#define FLT_MIN_10_EXP __FLT_MIN_10_EXP__
+       |   95|#define DBL_MIN_10_EXP __DBL_MIN_10_EXP__
+       |   96|#define LDBL_MIN_10_EXP __LDBL_MIN_10_EXP__
+       |   97|
+       |   98|#define FLT_MAX_EXP __FLT_MAX_EXP__
+       |   99|#define DBL_MAX_EXP __DBL_MAX_EXP__
+       |  100|#define LDBL_MAX_EXP __LDBL_MAX_EXP__
+       |  101|
+       |  102|#define FLT_MAX_10_EXP __FLT_MAX_10_EXP__
+       |  103|#define DBL_MAX_10_EXP __DBL_MAX_10_EXP__
+       |  104|#define LDBL_MAX_10_EXP __LDBL_MAX_10_EXP__
+       |  105|
+      1|  106|#define FLT_MAX __FLT_MAX__
+       |  107|#define DBL_MAX __DBL_MAX__
+       |  108|#define LDBL_MAX __LDBL_MAX__
+       |  109|
+       |  110|#define FLT_EPSILON __FLT_EPSILON__
+       |  111|#define DBL_EPSILON __DBL_EPSILON__
+       |  112|#define LDBL_EPSILON __LDBL_EPSILON__
+       |  113|
+       |  114|#define FLT_MIN __FLT_MIN__
+       |  115|#define DBL_MIN __DBL_MIN__
+       |  116|#define LDBL_MIN __LDBL_MIN__
+       |  117|
+       |  118|#if __STDC_VERSION__ >= 201112L || !defined(__STRICT_ANSI__)
+       |  119|#  define FLT_TRUE_MIN __FLT_DENORM_MIN__
+       |  120|#  define DBL_TRUE_MIN __DBL_DENORM_MIN__
+       |  121|#  define LDBL_TRUE_MIN __LDBL_DENORM_MIN__
+       |  122|#endif
+       |  123|
+       |  124|#endif /* __FLOAT_H */
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/stddef.h:
+       |    1|/*===---- stddef.h - Basic type definitions --------------------------------===
+       |    2| *
+       |    3| * Copyright (c) 2008 Eli Friedman
+       |    4| *
+       |    5| * Permission is hereby granted, free of charge, to any person obtaining a copy
+       |    6| * of this software and associated documentation files (the "Software"), to deal
+       |    7| * in the Software without restriction, including without limitation the rights
+       |    8| * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+       |    9| * copies of the Software, and to permit persons to whom the Software is
+       |   10| * furnished to do so, subject to the following conditions:
+       |   11| *
+       |   12| * The above copyright notice and this permission notice shall be included in
+       |   13| * all copies or substantial portions of the Software.
+       |   14| *
+       |   15| * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+       |   16| * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+       |   17| * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+       |   18| * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+       |   19| * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+       |   20| * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+       |   21| * THE SOFTWARE.
+       |   22| *
+       |   23| *===-----------------------------------------------------------------------===
+       |   24| */
+       |   25|
+       |   26|#if !defined(__STDDEF_H) || defined(__need_ptrdiff_t) ||                       \
+       |   27|    defined(__need_size_t) || defined(__need_wchar_t) ||                       \
+       |   28|    defined(__need_NULL) || defined(__need_wint_t)
+       |   29|
+       |   30|#if !defined(__need_ptrdiff_t) && !defined(__need_size_t) &&                   \
+       |   31|    !defined(__need_wchar_t) && !defined(__need_NULL) &&                       \
+       |   32|    !defined(__need_wint_t)
+       |   33|/* Always define miscellaneous pieces when modules are available. */
+       |   34|#if !__has_feature(modules)
+       |   35|#define __STDDEF_H
+       |   36|#endif
+       |   37|#define __need_ptrdiff_t
+       |   38|#define __need_size_t
+       |   39|#define __need_wchar_t
+       |   40|#define __need_NULL
+       |   41|#define __need_STDDEF_H_misc
+       |   42|/* __need_wint_t is intentionally not defined here. */
+       |   43|#endif
+       |   44|
+       |   45|#if defined(__need_ptrdiff_t)
+       |   46|#if !defined(_PTRDIFF_T) || __has_feature(modules)
+       |   47|/* Always define ptrdiff_t when modules are available. */
+       |   48|#if !__has_feature(modules)
+       |   49|#define _PTRDIFF_T
+       |   50|#endif
+       |   51|typedef __PTRDIFF_TYPE__ ptrdiff_t;
+       |   52|#endif
+       |   53|#undef __need_ptrdiff_t
+       |   54|#endif /* defined(__need_ptrdiff_t) */
+       |   55|
+       |   56|#if defined(__need_size_t)
+       |   57|#if !defined(_SIZE_T) || __has_feature(modules)
+       |   58|/* Always define size_t when modules are available. */
+       |   59|#if !__has_feature(modules)
+       |   60|#define _SIZE_T
+       |   61|#endif
+       |   62|typedef __SIZE_TYPE__ size_t;
+       |   63|#endif
+       |   64|#undef __need_size_t
+       |   65|#endif /*defined(__need_size_t) */
+       |   66|
+       |   67|#if defined(__need_STDDEF_H_misc)
+       |   68|/* ISO9899:2011 7.20 (C11 Annex K): Define rsize_t if __STDC_WANT_LIB_EXT1__ is
+       |   69| * enabled. */
+       |   70|#if (defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ >= 1 && \
+       |   71|     !defined(_RSIZE_T)) || __has_feature(modules)
+       |   72|/* Always define rsize_t when modules are available. */
+       |   73|#if !__has_feature(modules)
+       |   74|#define _RSIZE_T
+       |   75|#endif
+       |   76|typedef __SIZE_TYPE__ rsize_t;
+       |   77|#endif
+       |   78|#endif /* defined(__need_STDDEF_H_misc) */
+       |   79|
+       |   80|#if defined(__need_wchar_t)
+       |   81|#ifndef __cplusplus
+       |   82|/* Always define wchar_t when modules are available. */
+       |   83|#if !defined(_WCHAR_T) || __has_feature(modules)
+       |   84|#if !__has_feature(modules)
+       |   85|#define _WCHAR_T
+       |   86|#if defined(_MSC_EXTENSIONS)
+       |   87|#define _WCHAR_T_DEFINED
+       |   88|#endif
+       |   89|#endif
+       |   90|typedef __WCHAR_TYPE__ wchar_t;
+       |   91|#endif
+       |   92|#endif
+       |   93|#undef __need_wchar_t
+       |   94|#endif /* defined(__need_wchar_t) */
+       |   95|
+       |   96|#if defined(__need_NULL)
+       |   97|#undef NULL
+       |   98|#ifdef __cplusplus
+       |   99|#  if !defined(__MINGW32__) && !defined(_MSC_VER)
+       |  100|#    define NULL __null
+       |  101|#  else
+       |  102|#    define NULL 0
+       |  103|#  endif
+       |  104|#else
+      1|  105|#  define NULL ((void*)0)
+       |  106|#endif
+       |  107|#ifdef __cplusplus
+       |  108|#if defined(_MSC_EXTENSIONS) && defined(_NATIVE_NULLPTR_SUPPORTED)
+       |  109|namespace std { typedef decltype(nullptr) nullptr_t; }
+       |  110|using ::std::nullptr_t;
+       |  111|#endif
+       |  112|#endif
+       |  113|#undef __need_NULL
+       |  114|#endif /* defined(__need_NULL) */
+       |  115|
+       |  116|#if defined(__need_STDDEF_H_misc)
+       |  117|#if __STDC_VERSION__ >= 201112L || __cplusplus >= 201103L
+       |  118|#include "__stddef_max_align_t.h"
+       |  119|#endif
+       |  120|#define offsetof(t, d) __builtin_offsetof(t, d)
+       |  121|#undef __need_STDDEF_H_misc
+       |  122|#endif  /* defined(__need_STDDEF_H_misc) */
+       |  123|
+       |  124|/* Some C libraries expect to see a wint_t here. Others (notably MinGW) will use
+       |  125|__WINT_TYPE__ directly; accommodate both by requiring __need_wint_t */
+       |  126|#if defined(__need_wint_t)
+       |  127|/* Always define wint_t when modules are available. */
+       |  128|#if !defined(_WINT_T) || __has_feature(modules)
+       |  129|#if !__has_feature(modules)
+       |  130|#define _WINT_T
+       |  131|#endif
+       |  132|typedef __WINT_TYPE__ wint_t;
+       |  133|#endif
+       |  134|#undef __need_wint_t
+       |  135|#endif /* __need_wint_t */
+       |  136|
+       |  137|#endif
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/AppDelegate.m:
+       |    1|//
+       |    2|//  AppDelegate.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/4.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "AppDelegate.h"
+       |   10|
+       |   11|@interface AppDelegate ()
+       |   12|
+       |   13|@end
+       |   14|
+       |   15|@implementation AppDelegate
+       |   16|
+       |   17|
+      1|   18|- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+      1|   19|    // Override point for customization after application launch.
+      1|   20|    return YES;
+      1|   21|}
+       |   22|
+      0|   23|- (void)applicationWillResignActive:(UIApplication *)application {
+      0|   24|    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+      0|   25|    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+      0|   26|}
+       |   27|
+      0|   28|- (void)applicationDidEnterBackground:(UIApplication *)application {
+      0|   29|    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+      0|   30|    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+      0|   31|}
+       |   32|
+      0|   33|- (void)applicationWillEnterForeground:(UIApplication *)application {
+      0|   34|    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+      0|   35|}
+       |   36|
+      1|   37|- (void)applicationDidBecomeActive:(UIApplication *)application {
+      1|   38|    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+      1|   39|}
+       |   40|
+      0|   41|- (void)applicationWillTerminate:(UIApplication *)application {
+      0|   42|    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+      0|   43|}
+       |   44|
+       |   45|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/BarChartViewController.m:
+       |    1|//
+       |    2|//  BarChartViewController.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/10.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "BarChartViewController.h"
+       |   10|#import "EWBarChartView.h"
+       |   11|
+       |   12|@interface BarChartViewController ()<EWBarChartViewDataSource,EWBarChartViewDelegate>
+       |   13|
+       |   14|@property(nonatomic,strong) NSMutableArray *array;
+       |   15|@property(nonatomic,strong) NSArray *array1;
+       |   16|@property(nonatomic,strong) NSArray *array2;
+       |   17|@property(nonatomic,strong) NSArray *array3;
+       |   18|
+       |   19|@property(nonatomic,strong) NSArray *arrayTitle;
+       |   20|
+       |   21|@end
+       |   22|
+       |   23|@implementation BarChartViewController
+       |   24|
+      0|   25|- (void)viewDidLoad {
+      0|   26|    [super viewDidLoad];
+      0|   27|    
+      0|   28|    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+      0|   29|    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+      0|   30|    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
+      0|   31|    self.array = [NSMutableArray array];
+      0|   32|    [self.array addObject:self.array1];
+      0|   33|    [self.array addObject:self.array2];
+      0|   34|    [self.array addObject:self.array3];
+      0|   35|    
+      0|   36|    self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
+      0|   37|    
+      0|   38|    EWBarChartView *barChart = [[EWBarChartView alloc] init];
+      0|   39|    barChart.dataSource = self;
+      0|   40|    barChart.delegate =self;
+      0|   41|    barChart.maximumValue = 3.0;
+      0|   42|    barChart.minimumValue = 0.0;
+      0|   43|    barChart.sectionCount = 4;
+      0|   44|    barChart.showBarValues = YES;
+      0|   45|
+      0|   46|    barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
+      0|   47|    barChart.coordinateColor = [UIColor redColor];
+      0|   48|    barChart.frame = CGRectMake(10, 50, 300, 200);
+      0|   49|    [barChart reloadData];
+      0|   50|    [self.view addSubview:barChart];
+      0|   51|}
+       |   52|
+       |   53|#pragma mark - EWBarChartViewDataSource
+       |   54|
+       |   55|-(NSUInteger)numberOfBarInBarChartView:(EWBarChartView *)barChartView
+      0|   56|{
+      0|   57|    return self.array.count;
+      0|   58|}
+       |   59|
+       |   60|-(NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex
+      0|   61|{
+      0|   62|    return [self.array[barIndex] count];
+      0|   63|}
+       |   64|
+       |   65|-(CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+      0|   66|{
+      0|   67|    return [self.array[barIndex][horizontalIndex] floatValue];
+      0|   68|}
+       |   69|
+       |   70|-(NSString *)barChartView:(EWBarChartView *)barChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex
+      0|   71|{
+      0|   72|    return self.arrayTitle[horizontalIndex];
+      0|   73|}
+       |   74|
+       |   75|#pragma mark - EWBarChartViewDelegate
+       |   76|
+       |   77|-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtBarIndex:(NSUInteger)barIndex
+      0|   78|{
+      0|   79|    if (barIndex == 0) {
+      0|   80|        return [UIColor redColor];
+      0|   81|    }
+      0|   82|    else if(barIndex == 1)
+      0|   83|    {
+      0|   84|        return [UIColor yellowColor];
+      0|   85|    }
+      0|   86|    return nil;
+      0|   87|}
+       |   88|
+       |   89|-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex
+      0|   90|{
+      0|   91|    switch (horizontalIndex) {
+      0|   92|        case 0:
+      0|   93|            return [UIColor redColor];
+      0|   94|            break;
+      0|   95|        case 1:
+      0|   96|            return [UIColor blackColor];
+      0|   97|            break;
+      0|   98|        case 2:
+      0|   99|            return [UIColor greenColor];
+      0|  100|            break;
+      0|  101|        case 3:
+      0|  102|            return [UIColor yellowColor];
+      0|  103|            break;
+      0|  104|        case 4:
+      0|  105|            return [UIColor grayColor];
+      0|  106|            break;
+      0|  107|
+      0|  108|        default:
+      0|  109|            break;
+      0|  110|    }return nil;
+      0|  111|}
+       |  112|
+       |  113|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWBarChartView.m:
+       |    1|//
+       |    2|//  EWBarChartView.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/5.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWBarChartView.h"
+       |   10|
+       |   11|//default parameter
+       |   12|NSInteger static const   kEWBarChartViewBarNumber         = 1;
+       |   13|CGFloat   static const   kEWChartViewDefalutCachedHeight  = -1.0f;
+       |   14|CGFloat   static const   kEWChartViewXYAxisPadding        = 3.0f;
+       |   15|BOOL      static const   kEWChartViewShowBarValues         = NO;
+       |   16|
+       |   17|//一个表的柱状图之间的距离 *0.5
+       |   18|CGFloat   static const   kEWBarChartViewBarMargin          = 3.0f;
+       |   19|//多个柱状图的柱之间的距离
+       |   20|CGFloat   static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
+       |   21|
+       |   22|CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
+       |   23|
+       |   24|//macro
+      0|   25|#define kEWBarChartViewBarColor nil
+       |   26|
+       |   27|@interface EWChartView (Private)
+       |   28|
+       |   29|- (BOOL)hasMaximumValue;
+       |   30|- (BOOL)hasMinimumValue;
+       |   31|
+       |   32|-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+       |   33|
+       |   34|@end
+       |   35|
+       |   36|@interface EWBarChartInfo : NSObject
+       |   37|
+       |   38|@property (nonatomic, assign) CGFloat y;
+       |   39|@property (nonatomic, assign) CGFloat height;
+       |   40|@property (nonatomic, assign) CGFloat value;
+       |   41|
+       |   42|@end
+       |   43|
+       |   44|@interface EWBarChartView()
+       |   45|
+       |   46|@property (nonatomic, strong) NSArray *chartData;
+       |   47|@property (nonatomic, assign) CGFloat cachedMinHeight;
+       |   48|@property (nonatomic, assign) CGFloat cachedMaxHeight;
+       |   49|@property (nonatomic, assign) NSInteger dataNumber;
+       |   50|
+       |   51|@end
+       |   52|
+       |   53|@implementation EWBarChartView
+       |   54|@dynamic dataSource;
+       |   55|@dynamic delegate;
+       |   56|
+       |   57|#pragma mark - alloc/init
+       |   58|
+       |   59|- (id)initWithFrame:(CGRect)frame
+      0|   60|{
+      0|   61|    self = [super initWithFrame:frame];
+      0|   62|    if(self){
+      0|   63|        [self setup];
+      0|   64|    }
+      0|   65|    return self;
+      0|   66|}
+       |   67|
+       |   68|- (id)initWithCoder:(NSCoder *)aDecoder
+      0|   69|{
+      0|   70|    self = [super initWithCoder:aDecoder];
+      0|   71|    if(self){
+      0|   72|        [self setup];
+      0|   73|    }
+      0|   74|    return self;
+      0|   75|}
+       |   76|
+       |   77|#pragma mark - Private Method
+       |   78|
+       |   79|- (void)setup
+      0|   80|{
+      0|   81|    self.barColor = kEWBarChartViewBarColor;
+      0|   82|    self.showBarValues = kEWChartViewShowBarValues;
+      0|   83|}
+       |   84|
+       |   85|-(NSInteger)numberOfBarInLineChart
+      0|   86|{
+      0|   87|    if ([self.dataSource respondsToSelector:@selector(numberOfBarInBarChartView:)])
+      0|   88|    {
+      0|   89|        return [self.dataSource numberOfBarInBarChartView:self];
+      0|   90|    }else
+      0|   91|    {
+      0|   92|        return kEWBarChartViewBarNumber;
+      0|   93|    }
+      0|   94|}
+       |   95|
+       |   96|-(UIColor *)colorForBarAtBarIndex:(NSUInteger)barIndex;
+      0|   97|{
+      0|   98|    if ([self.delegate respondsToSelector:@selector(barChartView:colorForBarAtBarIndex:)])
+      0|   99|    {
+      0|  100|        return [self.delegate barChartView:self colorForBarAtBarIndex:barIndex];
+      0|  101|    }else
+      0|  102|    {
+      0|  103|        return self.barColor;
+      0|  104|    }
+      0|  105|}
+       |  106|
+       |  107|-(UIColor *)colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex;
+      0|  108|{
+      0|  109|    if ([self.delegate respondsToSelector:@selector(barChartView:colorForBarAtHorizontalIndex:)])
+      0|  110|    {
+      0|  111|        return [self.delegate barChartView:self colorForBarAtHorizontalIndex:horizontalIndex];
+      0|  112|    }else
+      0|  113|    {
+      0|  114|        return self.barColor;
+      0|  115|    }
+      0|  116|}
+       |  117|
+       |  118|-(BOOL)showBarValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+      0|  119|{
+      0|  120|    if ([self.delegate respondsToSelector:@selector(barChartView:showBarValuesAtHorizontalIndex:atBarIndex:)])
+      0|  121|    {
+      0|  122|        return [self.delegate barChartView:self showBarValuesAtHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+      0|  123|    }else
+      0|  124|    {
+      0|  125|        return self.showBarValues;
+      0|  126|    }
+      0|  127|
+      0|  128|}
+       |  129|
+       |  130|/**
+       |  131| *  水平方向上数据个数
+       |  132| *
+       |  133| *  @return 数据个数
+       |  134| */
+       |  135|- (NSUInteger)dataCount
+      0|  136|{
+      0|  137|    NSUInteger dataCount = 0;
+      0|  138|    NSInteger numberOfBar = [self numberOfBarInLineChart];
+      0|  139|    for (NSInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+      0|  140|    {
+      0|  141|        NSAssert([self.dataSource respondsToSelector:@selector(barChartView:numberOfBarAtBarIndex:)], @"EWBarChartView // dataSource must implement - (NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex;");
+      0|  142|        NSUInteger barDataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      0|  143|        if (barDataCount > dataCount)
+      0|  144|        {
+      0|  145|            dataCount = barDataCount;
+      0|  146|        }
+      0|  147|    }
+      0|  148|    return dataCount;
+      0|  149|}
+       |  150|
+       |  151|/**
+       |  152| *  将数据转化成图表中的高度
+       |  153| *
+       |  154| *  @param valueHeight 水平方向上数据的值
+       |  155| */
+       |  156|-(CGFloat)standardizedHeightForvalueHeight:(CGFloat)valueHeight
+      0|  157|{
+      0|  158|    CGFloat minHeight = [self minimumValue];
+      0|  159|    CGFloat maxHeight = [self maximumValue];
+      0|  160|    
+      0|  161|    if ((maxHeight - minHeight) <= 0)
+      0|  162|    {
+      0|  163|        return 0;
+      0|  164|    }
+      0|  165|    
+      0|  166|    return ((valueHeight - minHeight) / (maxHeight - minHeight)) * (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight);
+      0|  167|}
+       |  168|
+       |  169|/**
+       |  170| *  每个柱的宽度
+       |  171| */
+       |  172|-(CGFloat)barWidthWithBarCount:(NSInteger)barChartCount stepLength:(CGFloat)xstepLength
+      0|  173|{
+      0|  174|    return (xstepLength - 2*kEWBarChartViewBarMargin - (barChartCount - 1)*kEWBarChartViewMarginBetweenBarChart)/barChartCount;
+      0|  175|}
+       |  176|
+       |  177|#pragma mark - Public Method
+       |  178|
+       |  179|-(void)reloadData
+      0|  180|{
+      0|  181|    // Reset
+      0|  182|    self.cachedMinHeight = kEWChartViewDefalutCachedHeight;
+      0|  183|    self.cachedMaxHeight = kEWChartViewDefalutCachedHeight;
+      0|  184|    
+      0|  185|    self.dataNumber = [self dataCount];
+      0|  186|    
+      0|  187|    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+      0|  188|    
+      0|  189|    CGFloat yOffset = 0;
+      0|  190|    
+      0|  191|    NSMutableArray *mutableChartData = [NSMutableArray array];
+      0|  192|    NSUInteger numberOfBar = [self numberOfBarInLineChart];
+      0|  193|    
+      0|  194|    for (NSUInteger barIndex=0; barIndex < numberOfBar; barIndex++)
+      0|  195|    {
+      0|  196|        NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      0|  197|        NSMutableArray *barInfoData = [NSMutableArray array];
+      0|  198|        for (NSUInteger horizontalIndex=0; horizontalIndex < dataCount; horizontalIndex++)
+      0|  199|        {
+      0|  200|            NSAssert([self.dataSource respondsToSelector:@selector(barChartView:verticalValueForHorizontalIndex:atBarIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex;");
+      0|  201|            
+      0|  202|            EWBarChartInfo *barInfo = [[EWBarChartInfo alloc] init];
+      0|  203|            
+      0|  204|            CGFloat valueHeight =  [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+      0|  205|            CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
+      0|  206|            yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
+      0|  207|            
+      0|  208|            barInfo.y = yOffset;
+      0|  209|            barInfo.height = standardizedHeight;
+      0|  210|            barInfo.value = valueHeight;
+      0|  211|            
+      0|  212|            [barInfoData addObject:barInfo];
+      0|  213|        }
+      0|  214|        [mutableChartData addObject:barInfoData];
+      0|  215|    }
+      0|  216|    self.chartData = [NSArray arrayWithArray:mutableChartData];
+      0|  217|    
+      0|  218|    [self setNeedsDisplay];
+      0|  219|
+      0|  220|}
+       |  221|
+       |  222|#pragma mark - Draw 
+       |  223|
+       |  224|- (void)drawRect:(CGRect)rect
+      0|  225|{
+      0|  226|    [super drawRect:rect];
+      0|  227|    
+      0|  228|    if (self.chartData.count <= 0) {
+      0|  229|        return;
+      0|  230|    }
+      0|  231|    CGContextRef ctx = UIGraphicsGetCurrentContext();
+      0|  232|    
+      0|  233|    [self drawBarChart:ctx];
+      0|  234|    
+      0|  235|    [self drawXYLabelText:ctx];
+      0|  236|}
+       |  237|
+       |  238|-(void)drawBarChart:(CGContextRef)ctx
+      0|  239|{
+      0|  240|    int index = 0;
+      0|  241|    
+      0|  242|    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / self.dataNumber;
+      0|  243|    
+      0|  244|    CGFloat barWidth = [self barWidthWithBarCount:self.chartData.count stepLength:xstepLength];
+      0|  245|    
+      0|  246|    for (NSArray *barData in self.chartData)
+      0|  247|    {
+      0|  248|        if (barData.count == 0)
+      0|  249|        {
+      0|  250|            continue;
+      0|  251|        }
+      0|  252|        __block CGFloat barX = kEWChartViewYAxisWidth + kEWBarChartViewBarMargin + index * (barWidth + kEWBarChartViewMarginBetweenBarChart);
+      0|  253|        
+      0|  254|        
+      0|  255|        [barData enumerateObjectsUsingBlock:^(EWBarChartInfo *barInfo, NSUInteger idx, BOOL *stop) {
+      0|  256|            CGContextSaveGState(ctx);
+      0|  257|            
+      0|  258|            CGContextAddRect(ctx, CGRectMake(barX, barInfo.y, barWidth, barInfo.height));
+      0|  259|            
+      0|  260|            [[self colorForBarAtBarIndex:index] set];
+      0|  261|            [[self colorForBarAtHorizontalIndex:idx] set];
+      0|  262|            
+      0|  263|            CGContextFillPath(ctx);
+      0|  264|            
+      0|  265|            //画数值
+      0|  266|            if ([self showBarValuesAtHorizontalIndex:idx atBarIndex:index]) {
+      0|  267|                CGPoint point = CGPointMake(barX , barInfo.y);
+      0|  268|                [self drawValueAtPoint:point value:barInfo.value];
+      0|  269|            }
+      0|  270|            
+      0|  271|            barX += xstepLength;
+      0|  272|            CGContextRestoreGState(ctx);
+      0|  273|        }];
+      0|  274|
+      0|  275|        
+      0|  276|        index++;
+      0|  277|    }
+      0|  278|}
+       |  279|
+       |  280|/**
+       |  281| *  画坐标值
+       |  282| *
+       |  283| *  @param ctx 上下文
+       |  284| */
+       |  285|-(void)drawXYLabelText:(CGContextRef)ctx
+      0|  286|{
+      0|  287|    //draw y axis labels
+      0|  288|    [self drawYAxisLabelsWithMaxValue:[self maximumValue] minValue:[self minimumValue] context:ctx showGrid:NO];
+      0|  289|    
+      0|  290|    //draw x axis labels
+      0|  291|    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5)/ self.dataNumber;
+      0|  292|
+      0|  293|    for (int index = 0; index < self.dataNumber; index++) {
+      0|  294|        NSString *title = nil;
+      0|  295|        if([self.dataSource respondsToSelector:@selector(barChartView:horizontalTitlseForHorizontalIndex:)])
+      0|  296|        {
+      0|  297|            title = [self.dataSource barChartView:self horizontalTitlseForHorizontalIndex:index];
+      0|  298|        }
+      0|  299|        CGContextSaveGState(ctx);
+      0|  300|        {
+      0|  301|            CGSize valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
+      0|  302|            CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
+      0|  303|            CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
+      0|  304|            
+      0|  305|            CGPoint point = (CGPoint){pointX,pointY};
+      0|  306|            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
+      0|  307|        }
+      0|  308|        CGContextRestoreGState(ctx);
+      0|  309|    }
+      0|  310|}
+       |  311|
+       |  312|/**
+       |  313| *  画具体数据值
+       |  314| *
+       |  315| *  @param point 需要处理的坐标点
+       |  316| */
+       |  317|-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value
+      0|  318|{
+      0|  319|    NSString *barValue = [NSString stringWithFormat:@"%.1f",value];
+      0|  320|    
+      0|  321|    CGSize valueSize = [barValue sizeWithAttributes:[super valueAttributes]];
+      0|  322|    
+      0|  323|    CGPoint valuePoint = CGPointMake(point.x , point.y - valueSize.height  - kEWBarChartViewValueMargin);
+      0|  324|    
+      0|  325|    [barValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+      0|  326|}
+       |  327|
+       |  328|#pragma mark - Getter And Setter
+       |  329|
+       |  330|- (CGFloat)minimumValue
+      0|  331|{
+      0|  332|    if ([self hasMinimumValue])
+      0|  333|    {
+      0|  334|        return fminf(self.cachedMinHeight, [super minimumValue]);
+      0|  335|    }
+      0|  336|    return self.cachedMinHeight;
+      0|  337|}
+       |  338|
+       |  339|- (CGFloat)maximumValue
+      0|  340|{
+      0|  341|    if ([self hasMaximumValue])
+      0|  342|    {
+      0|  343|        return fmaxf(self.cachedMaxHeight, [super maximumValue]);
+      0|  344|    }
+      0|  345|    return self.cachedMaxHeight;
+      0|  346|}
+       |  347|
+       |  348|-(CGFloat)cachedMinHeight
+      0|  349|{
+      0|  350|    if (_cachedMinHeight == kEWChartViewDefalutCachedHeight) {
+      0|  351|        CGFloat minHeight = FLT_MAX;
+      0|  352|        NSUInteger numberOfBar = [self numberOfBarInLineChart];
+      0|  353|        for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+      0|  354|        {
+      0|  355|            NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      0|  356|            for (NSUInteger horizontalIndex = 0; horizontalIndex < dataCount; horizontalIndex++)
+      0|  357|            {
+      0|  358|                CGFloat height = [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+      0|  359|                if (height < minHeight)
+      0|  360|                {
+      0|  361|                    minHeight = height;
+      0|  362|                }
+      0|  363|            }
+      0|  364|        }
+      0|  365|        _cachedMinHeight = minHeight;
+      0|  366|    }
+      0|  367|    return _cachedMinHeight;
+      0|  368|}
+       |  369|
+       |  370|-(CGFloat)cachedMaxHeight
+      0|  371|{
+      0|  372|    if (_cachedMaxHeight == kEWChartViewDefalutCachedHeight) {
+      0|  373|        CGFloat maxHeight = 0;
+      0|  374|        NSUInteger numberOfBar = [self numberOfBarInLineChart];
+      0|  375|        for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+      0|  376|        {
+      0|  377|            NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      0|  378|            for (NSUInteger horizontalIndex = 0; horizontalIndex < dataCount; horizontalIndex++)
+      0|  379|            {
+      0|  380|                CGFloat height = [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+      0|  381|                if (height > maxHeight)
+      0|  382|                {
+      0|  383|                    maxHeight = height;
+      0|  384|                }
+      0|  385|            }
+      0|  386|        }
+      0|  387|        _cachedMaxHeight = maxHeight;
+      0|  388|    }
+      0|  389|    return _cachedMaxHeight;
+      0|  390|}
+       |  391|
+       |  392|
+       |  393|@end
+       |  394|
+       |  395|@implementation EWBarChartInfo
+       |  396|
+       |  397|#pragma mark - Alloc/Init
+       |  398|
+       |  399|- (id)init
+      0|  400|{
+      0|  401|    self = [super init];
+      0|  402|    if (self)
+      0|  403|    {
+      0|  404|        _y = 0;
+      0|  405|        _height = 0;
+      0|  406|        _value = 0;
+      0|  407|    }
+      0|  408|    return self;
+      0|  409|}
+       |  410|
+       |  411|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWChartView.h:
+       |    1|//
+       |    2|//  EWChartView.h
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/5.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import <UIKit/UIKit.h>
+       |   10|
+       |   11|//default size
+       |   12|CGFloat static const kEWChartViewHeaderPadding = 10.0f;
+       |   13|CGFloat static const kEWChartViewYAxisWidth = 25.0f;
+       |   14|CGFloat static const kEWChartViewXAxisHeight = 20.0f;
+       |   15|CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
+       |   16|
+       |   17|//macro
+      4|   18|#define kEWChartViewcoordinateColor [UIColor lightGrayColor]
+       |   19|
+       |   20|@protocol EWChartViewDataSource <NSObject>
+       |   21|
+       |   22|//to extend
+       |   23|
+       |   24|@end
+       |   25|
+       |   26|@protocol EWChartViewDelegate <NSObject>
+       |   27|
+       |   28|//to extend
+       |   29|
+       |   30|@end
+       |   31|
+       |   32|@interface EWChartView : UIView
+       |   33|
+       |   34|@property (nonatomic, weak) id<EWChartViewDataSource> dataSource;
+       |   35|@property (nonatomic, weak) id<EWChartViewDelegate> delegate;
+       |   36|
+       |   37|/** y坐标的最小值 */
+       |   38|@property (nonatomic, assign) CGFloat minimumValue; //default the minValue in dataSource
+       |   39|
+       |   40|/** y坐标的最大值 */
+       |   41|@property (nonatomic, assign) CGFloat maximumValue; //default the maxValue in dataSource
+       |   42|
+       |   43|/** y坐标上的分段数 */
+       |   44|@property (nonatomic, assign) NSInteger sectionCount; //default one
+       |   45|
+       |   46|/** 是否显示坐标网格 */
+       |   47|//@property (nonatomic, assign) BOOL showGrid  ; //default NO  (暂定为折线图所有)
+       |   48|
+       |   49|/** 坐标轴的颜色 */
+       |   50|@property (nonatomic, strong) UIColor *coordinateColor; //default lightGrayColor
+       |   51|
+       |   52|/** x坐标上文字的样式 */
+       |   53|@property (nonatomic, strong) NSDictionary *xLabelAttributes; //default
+       |   54|
+       |   55|/** y坐标上文字的样式 */
+       |   56|@property (nonatomic, strong) NSDictionary *yLabelAttributes; //default
+       |   57|
+       |   58|/** 具体的数据值的样式 */
+       |   59|@property (nonatomic, strong) NSDictionary *valueAttributes; //default
+       |   60|
+       |   61|-(void)reloadData;
+       |   62|
+       |   63|// 将最大值和最小值reset为默认值
+       |   64|- (void)resetMinimumValue;
+       |   65|- (void)resetMaximumValue;
+       |   66|
+       |   67|-(void)creatYAxisWithSectionCount:(NSInteger)sectionCount minValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
+       |   68|
+       |   69|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWChartView.m:
+       |    1|//
+       |    2|//  EWChartView.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/5.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWChartView.h"
+       |   10|
+       |   11|//default parameter
+       |   12|NSInteger static const kEWChartViewSectionCount = 1;
+       |   13|NSInteger static const kEWChartViewLabelFont    = 10;
+       |   14|
+       |   15|//const
+       |   16|CGFloat static const kEWChartViewXYAxisPadding = 3.0f;
+       |   17|
+       |   18|//macro
+       |   19|#define kEWChartViewcoordinateLabelColor [UIColor blackColor]
+       |   20|
+       |   21|@interface EWChartView ()
+       |   22|
+       |   23|@property (nonatomic, assign) BOOL hasMaximumValue;
+       |   24|@property (nonatomic, assign) BOOL hasMinimumValue;
+       |   25|
+       |   26|-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+       |   27|
+       |   28|@end
+       |   29|
+       |   30|@implementation EWChartView
+       |   31|
+       |   32|#pragma mark - init
+       |   33|
+       |   34|- (id)initWithFrame:(CGRect)frame
+      1|   35|{
+      1|   36|    if(self = [super initWithFrame:frame]){
+      1|   37|        [self initData];
+      1|   38|        
+      1|   39|    }
+      1|   40|    return self;
+      1|   41|}
+       |   42|
+       |   43|- (id)initWithCoder:(NSCoder *)aDecoder
+      0|   44|{
+      0|   45|   
+      0|   46|    if(self = [super initWithCoder:aDecoder]){
+      0|   47|        [self initData];
+      0|   48|    }
+      0|   49|    return self;
+      0|   50|}
+       |   51|
+       |   52|#pragma mark - public method
+       |   53|
+       |   54|-(void)initData
+      1|   55|{
+      1|   56|    self.backgroundColor = [UIColor whiteColor];
+      1|   57|    self.sectionCount = kEWChartViewSectionCount;
+      1|   58|    self.coordinateColor = kEWChartViewcoordinateColor;
+      1|   59|    self.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+      1|   60|                   NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+      1|   61|                              };
+      1|   62|    self.yLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+      1|   63|                   NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+      1|   64|                              };
+      1|   65|    self.valueAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:kEWChartViewLabelFont],
+      1|   66|                  NSForegroundColorAttributeName:kEWChartViewcoordinateLabelColor,
+      1|   67|                             };
+      1|   68|}
+       |   69|
+       |   70|- (void)resetMinimumValue
+      0|   71|{
+      0|   72|    _hasMinimumValue = NO; // clears min
+      0|   73|}
+       |   74|
+       |   75|- (void)resetMaximumValue
+      0|   76|{
+      0|   77|    _hasMaximumValue = NO; // clears max
+      0|   78|}
+       |   79|
+       |   80|#pragma mark - public method
+       |   81|
+       |   82|-(void)reloadData
+      0|   83|{
+      0|   84|     // Override
+      0|   85|}
+       |   86|
+       |   87|-(void)creatYAxisWithSectionCount:(NSInteger)sectionCount minValue:(CGFloat)minValue maxValue:(CGFloat)maxValue
+      0|   88|{
+      0|   89|    self.minimumValue = minValue;
+      0|   90|    self.maximumValue = maxValue;
+      0|   91|    self.sectionCount = sectionCount;
+      0|   92|}
+       |   93|
+       |   94|#pragma mark - drawRect 
+       |   95|
+       |   96|/**
+       |   97| *  画坐标轴
+       |   98| */
+      1|   99|- (void)drawRect:(CGRect)rect {
+      1|  100|    
+      1|  101|    CGContextRef ctx = UIGraphicsGetCurrentContext();
+      1|  102|    
+      1|  103|//    CGContextSaveGState(ctx);
+      1|  104|    
+      1|  105|    CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding);
+      1|  106|    CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisWidth);
+      1|  107|    CGContextAddLineToPoint(ctx, self.bounds.size.width - kEWChartViewXYAxisWidth, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisWidth);
+      1|  108|    
+      1|  109|    [self.coordinateColor set];
+      1|  110|    CGContextSetLineWidth(ctx, kEWChartViewXYAxisWidth);
+      1|  111|    
+      1|  112|    CGContextStrokePath(ctx);
+      1|  113|}
+       |  114|
+       |  115|-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid
+      1|  116|{
+      1|  117|    CGFloat ystepLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/self.sectionCount;
+      1|  118|    CGFloat stepValue = ([self maximumValue] - [self minimumValue])/ self.sectionCount;
+      1|  119|    
+      6|  120|    for (int index = 0; index < self.sectionCount + 1; index++) {
+      5|  121|        NSString *yValue = [NSString stringWithFormat:@"%.1f",[self maximumValue]-(stepValue * index)];
+      5|  122|        
+      5|  123|        CGContextSaveGState(ctx);
+      5|  124|        {
+      5|  125|            if (!showGrid) {
+      0|  126|                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + ystepLength * index);
+      0|  127|                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + ystepLength * index);
+      0|  128|                [self.coordinateColor set];
+      0|  129|                CGContextSetLineWidth(ctx, kEWChartViewXYAxisWidth);
+      0|  130|                CGContextStrokePath(ctx);
+      0|  131|            }
+      5|  132|            
+      5|  133|            CGSize valueSize = [yValue sizeWithAttributes:self.yLabelAttributes];
+      5|  134|            CGFloat pointX = (kEWChartViewYAxisWidth - kEWChartViewXYAxisPadding) * 0.5 - valueSize.width * 0.5;
+      5|  135|            CGFloat pointY = kEWChartViewHeaderPadding + ystepLength * index - valueSize.height * 0.5;
+      5|  136|            
+      5|  137|            CGPoint point = (CGPoint){pointX,pointY};
+      5|  138|            [yValue drawAtPoint:point withAttributes:self.yLabelAttributes];
+      5|  139|        }
+      5|  140|        CGContextRestoreGState(ctx);
+      5|  141|    }
+      1|  142|
+      1|  143|}
+       |  144|
+       |  145|#pragma mark - Getter And Setter
+       |  146|
+       |  147|- (void)setMinimumValue:(CGFloat)minimumValue
+      1|  148|{
+      1|  149|    NSAssert(minimumValue >= 0, @"EWChartView // the minimumValue must be >= 0.");
+      1|  150|    _minimumValue = minimumValue;
+      1|  151|    _hasMinimumValue = YES;
+      1|  152|}
+       |  153|
+       |  154|- (void)setMaximumValue:(CGFloat)maximumValue
+      1|  155|{
+      1|  156|    NSAssert(maximumValue >= 0, @"EWChartView // the maximumValue must be >= 0.");
+      1|  157|    _maximumValue = maximumValue;
+      1|  158|    _hasMaximumValue = YES;
+      1|  159|}
+       |  160|
+       |  161|
+       |  162|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWLineCharView.m:
+       |    1|//
+       |    2|//  EWLineCharView.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/5.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWLineCharView.h"
+       |   10|
+       |   11|//default parameter
+       |   12|BOOL      static const kEWLineChartViewShowGrid        = NO;
+       |   13|BOOL      static const kEWLineChartViewShowLineValues  = NO;
+       |   14|BOOL      static const kEWLineChartViewShowLineCircle  = YES;
+       |   15|BOOL      static const kEWLineChartViewisHollowCircle  = NO;
+       |   16|CGFloat   static const kEWLineChartViewLineWidth       = 2.0f;
+       |   17|NSInteger static const kEWLineChartViewLineNumber      = 1;
+       |   18|CGFloat   static const kEWChartViewXYAxisPadding       = 3.0f;
+       |   19|CGFloat   static const kEWChartViewCachedHeight        = -1.0f;
+       |   20|CGFloat   static const kEWChartViewCricleRadius        = 4.0f;
+       |   21|
+       |   22|
+       |   23|//macro
+      0|   24|#define EWPieChartViewLineDefalutColor [UIColor blackColor];
+       |   25|
+       |   26|@interface EWLineChartInfo : NSObject
+       |   27|
+       |   28|@property (nonatomic, assign) CGPoint position;
+       |   29|@property (nonatomic, assign) CGFloat value;
+       |   30|@property (nonatomic, assign) BOOL hidden;
+       |   31|
+       |   32|@end
+       |   33|
+       |   34|@interface EWChartView (Private)
+       |   35|
+       |   36|- (BOOL)hasMaximumValue;
+       |   37|- (BOOL)hasMinimumValue;
+       |   38|
+       |   39|-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+       |   40|
+       |   41|@end
+       |   42|
+       |   43|
+       |   44|@interface EWLineCharView()
+       |   45|
+       |   46|@property (nonatomic, strong) NSArray *chartData;
+       |   47|@property (nonatomic, assign) CGFloat cachedMinHeight;
+       |   48|@property (nonatomic, assign) CGFloat cachedMaxHeight;
+       |   49|@property (nonatomic, assign) NSInteger dataNumber;
+       |   50|
+       |   51|@end
+       |   52|
+       |   53|@implementation EWLineCharView
+       |   54|@dynamic dataSource;
+       |   55|@dynamic delegate;
+       |   56|
+       |   57|#pragma mark - init
+       |   58|
+       |   59|- (id)initWithFrame:(CGRect)frame
+      1|   60|{
+      1|   61|    self = [super initWithFrame:frame];
+      1|   62|    if(self){
+      1|   63|        [self setup];
+      1|   64|    }
+      1|   65|    return self;
+      1|   66|}
+       |   67|
+       |   68|- (id)initWithCoder:(NSCoder *)aDecoder
+      0|   69|{
+      0|   70|    self = [super initWithCoder:aDecoder];
+      0|   71|    if(self){
+      0|   72|        [self setup];
+      0|   73|    }
+      0|   74|    return self;
+      0|   75|}
+       |   76|
+       |   77|#pragma mark - Private Method
+       |   78|
+       |   79|- (void)setup
+      1|   80|{
+      1|   81|    self.backgroundColor = [UIColor whiteColor];
+      1|   82|    self.showGrid = kEWLineChartViewShowGrid;
+      1|   83|    self.showLineValues = kEWLineChartViewShowLineValues;
+      1|   84|    self.isHollowCircle = kEWLineChartViewisHollowCircle;
+      1|   85|}
+       |   86|
+       |   87|
+       |   88|-(NSInteger)numberOfLineInLineChart
+      4|   89|{
+      4|   90|    if ([self.dataSource respondsToSelector:@selector(numberOfLinesInLineChartView:)])
+      4|   91|    {
+      4|   92|        return [self.dataSource numberOfLinesInLineChartView:self];
+      4|   93|    }else
+      0|   94|    {
+      0|   95|        return kEWLineChartViewLineNumber;
+      0|   96|    }
+      4|   97|}
+       |   98|
+       |   99|-(UIColor *)colorForLineAtLineIndex:(NSInteger)lineIndex
+      3|  100|{
+      3|  101|    if ([self.delegate respondsToSelector:@selector(lineChartView:colorForLineAtLineIndex:)])
+      3|  102|    {
+      3|  103|        return [self.delegate lineChartView:self colorForLineAtLineIndex:lineIndex];
+      3|  104|    }else
+      0|  105|    {
+      0|  106|        return EWPieChartViewLineDefalutColor;
+      0|  107|    }
+      3|  108|}
+       |  109|
+       |  110|-(CGFloat)widthForLineAtLineIndex:(NSInteger)lineIndex
+      3|  111|{
+      3|  112|    if ([self.delegate respondsToSelector:@selector(lineChartView:widthForLineAtLineIndex:)])
+      0|  113|    {
+      0|  114|        return [self.delegate lineChartView:self widthForLineAtLineIndex:lineIndex];
+      0|  115|    }else
+      3|  116|    {
+      3|  117|        return kEWLineChartViewLineWidth;
+      3|  118|    }
+      3|  119|}
+       |  120|
+       |  121|-(CGFloat)isShowCircleForLineAtLineIndex:(NSInteger)lineIndex
+      3|  122|{
+      3|  123|    if ([self.dataSource respondsToSelector:@selector(lineChartView:showsCircleForLineAtLineIndex:)])
+      0|  124|    {
+      0|  125|        return [self.dataSource lineChartView:self showsCircleForLineAtLineIndex:lineIndex];
+      0|  126|    }else
+      3|  127|    {
+      3|  128|        return kEWLineChartViewShowLineCircle;
+      3|  129|    }
+      3|  130|}
+       |  131|
+       |  132|-(CGFloat)isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+     15|  133|{
+     15|  134|    if ([self.delegate respondsToSelector:@selector(lineChartView:isHollowCircleForHorizontalIndex:atLineIndex:)])
+     15|  135|    {
+     15|  136|        return [self.delegate lineChartView:self isHollowCircleForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+     15|  137|    }else
+      0|  138|    {
+      0|  139|        return self.isHollowCircle;
+      0|  140|    }
+     15|  141|}
+       |  142|
+       |  143|- (CGFloat)circleRadiustAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+     15|  144|{
+     15|  145|    if ([self.delegate respondsToSelector:@selector(lineChartView:circleRadiustAtHorizontalIndex:atLineIndex:)])
+      0|  146|    {
+      0|  147|        return [self.delegate lineChartView:self circleRadiustAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+      0|  148|    }else
+     15|  149|    {
+     15|  150|        return kEWChartViewCricleRadius;
+     15|  151|    }
+     15|  152|}
+       |  153|
+       |  154|- (BOOL)showLineValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+     15|  155|{
+     15|  156|    if ([self.delegate respondsToSelector:@selector(lineChartView:showLineValuesAtHorizontalIndex:atLineIndex:)])
+      0|  157|    {
+      0|  158|        return [self.delegate lineChartView:self showLineValuesAtHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+      0|  159|    }else
+     15|  160|    {
+     15|  161|        return self.showLineValues;
+     15|  162|    }
+     15|  163|}
+       |  164|
+       |  165|/**
+       |  166| *  水平方向上数据个数
+       |  167| *
+       |  168| *  @return 数据个数
+       |  169| */
+       |  170|- (NSUInteger)dataCount
+      1|  171|{
+      1|  172|    NSUInteger dataCount = 0;
+      1|  173|    NSInteger numberOfLines = [self numberOfLineInLineChart];
+      4|  174|    for (NSInteger lineIndex = 0; lineIndex < numberOfLines; lineIndex++)
+      3|  175|    {
+      3|  176|        NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:numberOfLinesAtLineIndex:)], @"EWLineChartView // dataSource must implement - (NSUInteger)lineChartView:(EWLineChartView *)lineChartView numberOfVerticalValuesAtLineIndex:(NSUInteger)lineIndex");
+      3|  177|        NSUInteger lineDataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+      3|  178|        if (lineDataCount > dataCount)
+      1|  179|        {
+      1|  180|            dataCount = lineDataCount;
+      1|  181|        }
+      3|  182|    }
+      1|  183|    return dataCount;
+      1|  184|}
+       |  185|
+       |  186|/**
+       |  187| *  将数据转化成图表中的高度
+       |  188| *
+       |  189| *  @param valueHeight 水平方向上数据的值
+       |  190| */
+       |  191|-(CGFloat)standardizedHeightForvalueHeight:(CGFloat)valueHeight
+     15|  192|{
+     15|  193|    CGFloat minHeight = [self minimumValue];
+     15|  194|    CGFloat maxHeight = [self maximumValue];
+     15|  195|    
+     15|  196|    if ((maxHeight - minHeight) <= 0)
+      0|  197|    {
+      0|  198|        return 0;
+      0|  199|    }
+     15|  200|    
+     15|  201|    return ((valueHeight - minHeight) / (maxHeight - minHeight)) * (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight);
+     15|  202|}
+       |  203|
+       |  204|#pragma mark - Public Method
+       |  205|
+       |  206|-(void)reloadData
+      1|  207|{
+      1|  208|    // Reset
+      1|  209|    self.cachedMinHeight = kEWChartViewCachedHeight;
+      1|  210|    self.cachedMaxHeight = kEWChartViewCachedHeight;
+      1|  211|    
+      1|  212|    //
+      1|  213|    self.dataNumber = [self dataCount];
+      1|  214|    
+      1|  215|    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+      1|  216|    
+      1|  217|    CGFloat pointSpace = mainViewRect.size.width / self.dataNumber; // Space in between points
+      1|  218|    
+      1|  219|    CGFloat xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+      1|  220|    CGFloat yOffset = 0;
+      1|  221|    
+      1|  222|    NSMutableArray *mutableChartData = [NSMutableArray array];
+      1|  223|    NSUInteger numberOfLines = [self numberOfLineInLineChart];
+      1|  224|    
+      4|  225|    for (NSUInteger lineIndex=0; lineIndex<numberOfLines; lineIndex++)
+      3|  226|    {
+      3|  227|        NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+      3|  228|        NSMutableArray *chartPointData = [NSMutableArray array];
+     18|  229|        for (NSUInteger horizontalIndex=0; horizontalIndex<dataCount; horizontalIndex++)
+     15|  230|        {
+     15|  231|            NSAssert([self.dataSource respondsToSelector:@selector(lineChartView:verticalValueForHorizontalIndex:atLineIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex");
+     15|  232|            CGFloat valueHeight =  [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+     15|  233|                
+     15|  234|            EWLineChartInfo *lineinfo = [[EWLineChartInfo alloc] init];
+     15|  235|                
+     15|  236|            CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
+     15|  237|            
+     15|  238|            yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
+     15|  239|
+     15|  240|            lineinfo.position = CGPointMake(xOffset, yOffset);
+     15|  241|            lineinfo.value = valueHeight;
+     15|  242|            
+     15|  243|            [chartPointData addObject:lineinfo];
+     15|  244|            xOffset += pointSpace;
+     15|  245|        }
+      3|  246|        [mutableChartData addObject:chartPointData];
+      3|  247|        xOffset = kEWChartViewYAxisWidth + pointSpace * 0.5;
+      3|  248|    }
+      1|  249|    self.chartData = [NSArray arrayWithArray:mutableChartData];
+      1|  250|    
+      1|  251|    [self setNeedsDisplay];
+      1|  252|}
+       |  253|
+       |  254|#pragma mark - drawRect
+       |  255|
+      1|  256|- (void)drawRect:(CGRect)rect {
+      1|  257|    [super drawRect:rect];
+      1|  258|    
+      1|  259|    if (self.chartData.count <= 0) {
+      0|  260|        return;
+      0|  261|    }
+      1|  262|    
+      1|  263|    CGContextRef ctx = UIGraphicsGetCurrentContext();
+      1|  264|    
+      1|  265|    if (self.showGrid) {
+      1|  266|        CGContextSaveGState(ctx);
+      1|  267|        [self drawGrid:ctx];
+      1|  268|        CGContextRestoreGState(ctx);
+      1|  269|    }
+      1|  270|    
+      1|  271|    [self drawLineChart:ctx];
+      1|  272|    
+      1|  273|    [self drawXYLabelText:ctx];
+      1|  274|}
+       |  275|
+       |  276|/**
+       |  277| *  画网格
+       |  278| *
+       |  279| *  @param ctx 上下文
+       |  280| */
+       |  281|-(void)drawGrid:(CGContextRef)ctx
+      1|  282|{
+      1|  283|    CGFloat verticalLength = (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight)/[super sectionCount];
+      5|  284|    for (int index = 0; index < self.sectionCount ; index++) {
+      4|  285|        CGContextSaveGState(ctx);
+      4|  286|        {
+      4|  287|            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
+      4|  288|            CGContextAddLineToPoint(ctx, self.bounds.size.width, kEWChartViewHeaderPadding + kEWChartViewXYAxisWidth + verticalLength * index);
+      4|  289|            [[super coordinateColor] set];
+      4|  290|            CGContextStrokePath(ctx);
+      4|  291|        }
+      4|  292|        CGContextRestoreGState(ctx);
+      4|  293|    }
+      1|  294|    
+      1|  295|    CGFloat horizontalSpace = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / self.dataNumber;
+      1|  296|    
+      6|  297|    for (int index = 1; index < self.dataNumber + 1 ; index++) {
+      5|  298|        CGContextSaveGState(ctx);
+      5|  299|        {
+      5|  300|            CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, kEWChartViewHeaderPadding);
+      5|  301|            CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + index * horizontalSpace, self.bounds.size.height - kEWChartViewXAxisHeight);
+      5|  302|            [[super coordinateColor] set];
+      5|  303|            //            可设置虚线
+      5|  304|            //            CGContextSetLineDash(ctx, CGFloat phase, const CGFloat *lengths, size_t count)
+      5|  305|            CGContextStrokePath(ctx);
+      5|  306|        }
+      5|  307|        CGContextRestoreGState(ctx);
+      5|  308|    }
+      1|  309|    
+      1|  310|}
+       |  311|
+       |  312|/**
+       |  313| *  画折线图
+       |  314| *
+       |  315| *  @param ctx 上下文
+       |  316| */
+       |  317|-(void)drawLineChart:(CGContextRef)ctx
+      1|  318|{
+      1|  319|    int index = 0;
+      1|  320|    
+      1|  321|    for (NSArray *lineData in self.chartData)
+      3|  322|    {
+      3|  323|        CGContextSaveGState(ctx);
+      3|  324|        if (lineData.count == 0)
+      0|  325|        {
+      0|  326|            continue;
+      0|  327|        }
+      3|  328|        
+      3|  329|        UIColor *color = [self colorForLineAtLineIndex:index];
+      3|  330|        CGFloat lineWidth = [self widthForLineAtLineIndex:index];
+      3|  331|        BOOL isShowCircle = [self isShowCircleForLineAtLineIndex:index];
+      3|  332|        __block CGFloat radius = 0;
+      3|  333|        
+      3|  334|        [color set];
+      3|  335|        CGContextSetLineWidth(ctx, lineWidth);
+      3|  336|        CGContextSetLineJoin(ctx, kCGLineJoinRound);
+      3|  337|        CGContextSetLineCap(ctx, kCGLineCapRound);
+      3|  338|        
+      3|  339|        //画线
+     15|  340|        [lineData enumerateObjectsUsingBlock:^(EWLineChartInfo *point, NSUInteger idx, BOOL *stop) {
+     15|  341|            if (idx == 0)
+      3|  342|            {
+      3|  343|                CGContextMoveToPoint(ctx, point.position.x, point.position.y);
+      3|  344|            }else
+     12|  345|            {
+     12|  346|                CGContextAddLineToPoint(ctx, point.position.x, point.position.y);
+     12|  347|            }
+     15|  348|            //画圆
+     15|  349|            if (isShowCircle) {
+     15|  350|                BOOL isHollow = [self isHollowCircleForHorizontalIndex:idx atLineIndex:index];
+     15|  351|                radius = [self circleRadiustAtHorizontalIndex:idx atLineIndex:index];
+     15|  352|                
+     15|  353|                [self drawCircleAtPoint:point.position
+     15|  354|                               isHollow:isHollow
+     15|  355|                                 radius:radius
+     15|  356|                                context:ctx
+     15|  357|                              lineWidth:lineWidth
+     15|  358|                                  color:color];
+     15|  359|            }
+     15|  360|            
+     15|  361|            //画数值
+     15|  362|            if ([self showLineValuesAtHorizontalIndex:idx atLineIndex:index]) {
+      0|  363|                [self drawValueAtPoint:point.position
+      0|  364|                                 value:point.value
+      0|  365|                                radius:radius
+      0|  366|                               context:ctx];
+      0|  367|            }
+     15|  368|        }];
+      3|  369|        
+      3|  370|        CGContextStrokePath(ctx);
+      3|  371|        
+      3|  372|        index++;
+      3|  373|        CGContextRestoreGState(ctx);
+      3|  374|    }
+      1|  375|}
+       |  376|
+       |  377|/**
+       |  378| *  画xy轴上的坐标值
+       |  379| *
+       |  380| *  @param ctx 上下文
+       |  381| */
+       |  382|-(void)drawXYLabelText:(CGContextRef)ctx
+      1|  383|{
+      1|  384|    //draw y axis labels
+      1|  385|    [self drawYAxisLabelsWithMaxValue:[self maximumValue] minValue:[self minimumValue] context:ctx showGrid:self.showGrid];
+      1|  386|    
+      1|  387|    //draw x axis labels
+      1|  388|    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5)/ self.dataNumber;
+      1|  389|    
+      6|  390|    for (int index = 0; index < self.dataNumber; index++) {
+      5|  391|        NSString *title = nil;
+      5|  392|        if([self.dataSource respondsToSelector:@selector(lineChartView:horizontalTitlseForHorizontalIndex:)])
+      5|  393|        {
+      5|  394|            title = [self.dataSource lineChartView:self horizontalTitlseForHorizontalIndex:index];
+      5|  395|        }
+      5|  396|        CGContextSaveGState(ctx);
+      5|  397|        {
+      5|  398|            if (!self.showGrid) {
+      0|  399|                CGContextMoveToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index , self.bounds.size.height - kEWChartViewXAxisHeight);
+      0|  400|                CGContextAddLineToPoint(ctx, kEWChartViewYAxisWidth + xstepLength * 0.5 +xstepLength * index, self.bounds.size.height - kEWChartViewXAxisHeight + kEWChartViewXYAxisPadding);
+      0|  401|                [[super coordinateColor] set];
+      0|  402|                CGContextStrokePath(ctx);
+      0|  403|            }
+      5|  404|            
+      5|  405|            CGSize  valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
+      5|  406|            CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
+      5|  407|            CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
+      5|  408|            
+      5|  409|            CGPoint point = (CGPoint){pointX,pointY};
+      5|  410|            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
+      5|  411|        }
+      5|  412|        CGContextRestoreGState(ctx);
+      5|  413|
+      5|  414|    }
+      1|  415|   
+      1|  416|}
+       |  417|
+       |  418|/**
+       |  419| *  画折线上的圆
+       |  420| *
+       |  421| *  @param point    坐标
+       |  422| *  @param isHollow 是否是空心圆
+       |  423| *  @param ctx      上下文
+       |  424| */
+       |  425|-(void)drawCircleAtPoint:(CGPoint)center isHollow:(BOOL)isHollow radius:(CGFloat)radius context:(CGContextRef)ctx lineWidth:(CGFloat)lineWidth color:(UIColor *)color
+     15|  426|{
+     15|  427|    UIView *cricle = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius*2, radius*2)];
+     15|  428|    cricle.center = center;
+     15|  429|    cricle.layer.masksToBounds = YES;
+     15|  430|    cricle.layer.cornerRadius = radius;
+     15|  431|    cricle.layer.borderWidth = lineWidth;
+     15|  432|    cricle.layer.borderColor = color.CGColor;
+     15|  433|    
+     15|  434|    if (isHollow) {
+      6|  435|        cricle.backgroundColor = self.backgroundColor;
+      9|  436|    }else{
+      9|  437|        cricle.backgroundColor = color;
+      9|  438|    }
+     15|  439|    
+     15|  440|    [self addSubview:cricle];
+     15|  441|
+     15|  442|//    CGContextAddArc(ctx, center.x, center.y, radius, 0, 2 * M_PI, NO);
+     15|  443|////    CGContextAddEllipseInRect(ctx, CGRectMake(center.x - radius, center.y - radius, radius*2, radius*2));
+     15|  444|//    if (isHollow) {
+     15|  445|//        CGContextStrokePath(ctx);
+     15|  446|//    }else
+     15|  447|//    {
+     15|  448|//        CGContextFillPath(ctx);
+     15|  449|//    }
+     15|  450|}
+       |  451|
+       |  452|/**
+       |  453| *  在折线上画数值
+       |  454| *
+       |  455| *  @param value 要画的数值
+       |  456| *  @param ctx   上下文
+       |  457| */
+       |  458|-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value radius:(CGFloat)radius context:(CGContextRef)ctx
+      0|  459|{
+      0|  460|    CGContextSaveGState(ctx);
+      0|  461|    NSString *lineValue = [NSString stringWithFormat:@"%.1f",value];
+      0|  462|    
+      0|  463|    CGSize valueSize = [lineValue sizeWithAttributes:[super valueAttributes]];
+      0|  464|    
+      0|  465|    CGPoint valuePoint = CGPointMake(point.x - valueSize.width * 0.5, point.y - valueSize.height - radius - 2);
+      0|  466|    
+      0|  467|    [lineValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+      0|  468|    
+      0|  469|    CGContextRestoreGState(ctx);
+      0|  470|}
+       |  471|
+       |  472|#pragma mark - Getter And Setter
+       |  473|
+       |  474|- (CGFloat)minimumValue
+     17|  475|{
+     17|  476|    if ([self hasMinimumValue])
+     17|  477|    {
+     17|  478|        return fminf(self.cachedMinHeight, [super minimumValue]);
+     17|  479|    }
+      0|  480|    return self.cachedMinHeight;
+     17|  481|}
+       |  482|
+       |  483|- (CGFloat)maximumValue
+     22|  484|{
+     22|  485|    if ([self hasMaximumValue])
+     22|  486|    {
+     22|  487|        return fmaxf(self.cachedMaxHeight, [super maximumValue]);
+     22|  488|    }
+      0|  489|    return self.cachedMaxHeight;
+     22|  490|}
+       |  491|
+       |  492|-(CGFloat)cachedMinHeight
+     17|  493|{
+     17|  494|    if (_cachedMinHeight == kEWChartViewCachedHeight) {
+      1|  495|        CGFloat minHeight = FLT_MAX;
+      1|  496|        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+      4|  497|        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+      3|  498|        {
+      3|  499|            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+     18|  500|            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+     15|  501|            {
+     15|  502|                CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+     15|  503|                if (height < minHeight)
+      6|  504|                {
+      6|  505|                    minHeight = height;
+      6|  506|                }
+     15|  507|            }
+      3|  508|        }
+      1|  509|        _cachedMinHeight = minHeight;
+      1|  510|    }
+     17|  511|    return _cachedMinHeight;
+     17|  512|}
+       |  513|
+       |  514|-(CGFloat)cachedMaxHeight
+     22|  515|{
+     22|  516|    if (_cachedMaxHeight == kEWChartViewCachedHeight) {
+      1|  517|        CGFloat maxHeight = 0;
+      1|  518|        NSUInteger numberOfLines = [self numberOfLineInLineChart];
+      4|  519|        for (NSUInteger lineIndex = 0; lineIndex<numberOfLines; lineIndex++)
+      3|  520|        {
+      3|  521|            NSUInteger dataCount = [self.dataSource lineChartView:self numberOfLinesAtLineIndex:lineIndex];
+     18|  522|            for (NSUInteger horizontalIndex = 0; horizontalIndex<dataCount; horizontalIndex++)
+     15|  523|            {
+     15|  524|                 CGFloat height = [self.dataSource lineChartView:self verticalValueForHorizontalIndex:horizontalIndex atLineIndex:lineIndex];
+     15|  525|                if (height > maxHeight)
+      2|  526|                {
+      2|  527|                    maxHeight = height;
+      2|  528|                }
+     15|  529|            }
+      3|  530|        }
+      1|  531|        _cachedMaxHeight = maxHeight;
+      1|  532|    }
+     22|  533|    return _cachedMaxHeight;
+     22|  534|}
+       |  535|
+       |  536|@end
+       |  537|@implementation EWLineChartInfo
+       |  538|
+       |  539|#pragma mark - Alloc/Init
+       |  540|
+       |  541|- (id)init
+     15|  542|{
+     15|  543|    self = [super init];
+     15|  544|    if (self)
+     15|  545|    {
+     15|  546|        _position = CGPointZero;
+     15|  547|        _value = 0;
+     15|  548|    }
+     15|  549|    return self;
+     15|  550|}
+       |  551|
+       |  552|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWPieChartView.m:
+       |    1|//
+       |    2|//  EWPieChartView.m
+       |    3|//  JBChartViewDemo
+       |    4|//
+       |    5|//  Created by wansy on 15/8/4.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWPieChartView.h"
+       |   10|
+       |   11|//default parameter
+       |   12|CGFloat static const kEWPieChartViewMaxRadius = 100.0f;
+       |   13|CGFloat static const kEWPieChartViewMinRadius = 0.0f;
+       |   14|CGFloat static const kEWPieChartViewStartAngle = 0.0f;
+       |   15|CGFloat static const kEWPieChartViewEndAngle = 360.0f;
+       |   16|//CGFloat static const kEWPieChartViewAnimationDuration = 0.6f;
+       |   17|
+       |   18|EWPieChartShowTitleType static const kEWPieChartViewShowTitleType = EWPieChartShowTitleDefault;
+       |   19|BOOL static const kEWPieChartViewShowItemPercent = NO;
+       |   20|
+      0|   21|static inline float radians(float degrees) {
+      0|   22|    return degrees * M_PI / 180.0;
+      0|   23|}
+       |   24|
+       |   25|//in [0..1], out [0..1]
+      0|   26|static inline float easeInOut(float x){
+      0|   27|    //1/(1+e^((0.5-x)*12))
+      0|   28|    return 1/(1+powf(M_E, (0.5-x)*12));
+      0|   29|}
+       |   30|
+       |   31|//颜色
+      0|   32|#define EWColor(r,g,b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
+       |   33|//随即色
+      0|   34|#define EWRandomColor EWColor(arc4random_uniform(256),arc4random_uniform(256),arc4random_uniform(256))
+       |   35|
+       |   36|@interface EWPieChartView()
+       |   37|
+       |   38|@property (nonatomic, strong) NSArray *chartData;
+       |   39|
+       |   40|@property (nonatomic, strong) NSMutableArray *values;
+       |   41|
+       |   42|@property (nonatomic, assign) CGPoint touchPoint;
+       |   43|
+       |   44|//点击扇形的时候的偏移量
+       |   45|@property (nonatomic, assign) CGFloat centerOffset;
+       |   46|@end
+       |   47|
+       |   48|@implementation EWPieChartView
+       |   49|
+       |   50|#pragma mark - init
+       |   51|
+       |   52|- (id)initWithFrame:(CGRect)frame
+      0|   53|{
+      0|   54|    self = [super initWithFrame:frame];
+      0|   55|    if(self){
+      0|   56|        [self setup];
+      0|   57|    }
+      0|   58|    return self;
+      0|   59|}
+       |   60|
+       |   61|- (id)initWithCoder:(NSCoder *)aDecoder
+      0|   62|{
+      0|   63|    self = [super initWithCoder:aDecoder];
+      0|   64|    if(self){
+      0|   65|        [self setup];
+      0|   66|    }
+      0|   67|    return self;
+      0|   68|}
+       |   69|
+       |   70|#pragma mark - Private Method
+       |   71|
+       |   72|- (void)setup
+      0|   73|{
+      0|   74|    self.backgroundColor = [UIColor whiteColor];
+      0|   75|    self.maxRadius = kEWPieChartViewMaxRadius;
+      0|   76|    self.minRadius = kEWPieChartViewMinRadius;
+      0|   77|    self.startAngle = kEWPieChartViewStartAngle;
+      0|   78|    self.endAngle = kEWPieChartViewEndAngle;
+      0|   79|    
+      0|   80|    self.titleAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:15]};
+      0|   81|    
+      0|   82|    self.percentAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],
+      0|   83|                               NSForegroundColorAttributeName:[UIColor whiteColor]};
+      0|   84|    
+      0|   85|//    self.animationDuration = kEWPieChartViewAnimationDuration;
+      0|   86|    self.showTitleType = kEWPieChartViewShowTitleType;
+      0|   87|    self.showItemPercent = kEWPieChartViewShowItemPercent;
+      0|   88|}
+       |   89|
+       |   90|-(EWPieChartShowTitleType)showItemTitleTypeAtItemIndex:(NSInteger)index
+      0|   91|{
+      0|   92|    if ([self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)])
+      0|   93|    {
+      0|   94|        return [self.delegate pieChartView:self showItemTitleTypeAtItemIndex:index]?[self.delegate pieChartView:self showItemTitleTypeAtItemIndex:index]:EWPieChartShowTitleDefault;
+      0|   95|    }else
+      0|   96|    {
+      0|   97|        return self.showTitleType;
+      0|   98|    }
+      0|   99|}
+       |  100|
+       |  101|-(BOOL)showItemPercentAtItemIndex:(NSInteger)index
+      0|  102|{
+      0|  103|    if ([self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)])
+      0|  104|    {
+      0|  105|        return [self.delegate pieChartView:self showItemPercentAtItemIndex:index]?[self.delegate pieChartView:self showItemPercentAtItemIndex:index]:NO;
+      0|  106|    }else
+      0|  107|    {
+      0|  108|        return self.showItemPercent;
+      0|  109|    }
+      0|  110|}
+       |  111|
+       |  112|
+       |  113|-(void)drawItemTitles:(CGContextRef)ctx sumValues:(CGFloat)sum
+      0|  114|{
+      0|  115|    float angleStart = radians(self.startAngle);
+      0|  116|    float angleInterval = radians(self.endAngle - self.startAngle);
+      0|  117|    
+      0|  118|    for (int index = 0; index < self.chartData.count; index++) {
+      0|  119|        EWPieChartViewCell *cell = self.chartData[index];
+      0|  120|        float angleEnd = angleStart + angleInterval * cell.value / sum;
+      0|  121|        float angle = (angleStart + angleEnd) / 2.0;
+      0|  122|        
+      0|  123|        EWPieChartShowTitleType showTitleType = [self showItemTitleTypeAtItemIndex:index];
+      0|  124|        BOOL showPercent = [self showItemPercentAtItemIndex:index];
+      0|  125|
+      0|  126|        if(showTitleType == EWPieChartShowTitleDefault && !showPercent){
+      0|  127|            angleStart = angleEnd;
+      0|  128|            continue;
+      0|  129|        }else if (showTitleType != EWPieChartShowTitleDefault && showPercent)
+      0|  130|        {
+      0|  131|            [self drawTitle:cell angle:angle context:ctx];
+      0|  132|            [self drawPercent:cell angle:angle context:ctx sum:sum];
+      0|  133|
+      0|  134|        }else if(showTitleType != EWPieChartShowTitleDefault )
+      0|  135|        {
+      0|  136|           [self drawTitle:cell angle:angle context:ctx];
+      0|  137|        }else if(showPercent)
+      0|  138|        {
+      0|  139|           [self drawPercent:cell angle:angle context:ctx sum:sum];
+      0|  140|        }
+      0|  141|        
+      0|  142|        angleStart = angleEnd;
+      0|  143|    }
+      0|  144|}
+       |  145|
+       |  146|-(void)drawTitle:(EWPieChartViewCell *)cell angle:(CGFloat)angle context:(CGContextRef)ctx
+      0|  147|{
+      0|  148|    UIColor *color = cell.color?: [UIColor blackColor];
+      0|  149|    
+      0|  150|    NSString *title = cell.title?cell.title:[NSString stringWithFormat:@"%.2f", cell.value];
+      0|  151|    float radius = self.maxRadius;
+      0|  152|    [self drawTitle:title angle:M_PI*2 - angle radius:radius context:ctx color:color];
+      0|  153|}
+       |  154|
+       |  155|-(void)drawPercent:(EWPieChartViewCell *)cell angle:(CGFloat)angle context:(CGContextRef)ctx sum:(CGFloat)sum
+      0|  156|{
+      0|  157|    [[UIColor whiteColor] set];
+      0|  158|    
+      0|  159|    NSString *percent = [NSString stringWithFormat:@"%.1f%%",(cell.value / sum)*100];
+      0|  160|    float radius = (self.maxRadius + self.minRadius) * 0.5;
+      0|  161|    [self drawPercent:percent angle:M_PI*2 - angle radius:radius context:ctx];
+      0|  162|}
+       |  163|
+       |  164|
+       |  165|/**
+       |  166| *  画标题
+       |  167| *
+       |  168| *  @param text   标题内容
+       |  169| *  @param angle  当前扇形的中间角度
+       |  170| *  @param radius 半径
+       |  171| *  @param ctx    上下文
+       |  172| *  @param font   标题样式
+       |  173| */
+       |  174|- (void)drawTitle:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx color:(UIColor *)color
+      0|  175|{
+      0|  176|    NSDictionary *dic = @{NSFontAttributeName:self.titleAttributes[NSFontAttributeName],
+      0|  177|                          NSForegroundColorAttributeName:color};
+      0|  178|    self.titleAttributes = dic;
+      0|  179|    
+      0|  180|    CGSize textSize = [text sizeWithAttributes:self.titleAttributes];
+      0|  181|    CGPoint anchorPoint;
+      0|  182|    
+      0|  183|    //closewise
+      0|  184|    if(angle >= -M_PI_4 && angle < M_PI_4){
+      0|  185|        anchorPoint = CGPointMake(0, easeInOut((M_PI_4-angle) / M_PI_2));
+      0|  186|    } else if(angle >= M_PI_4 && angle < M_PI_2+M_PI_4){
+      0|  187|        anchorPoint = CGPointMake(easeInOut((angle-M_PI_4) / M_PI_2), 0);
+      0|  188|    } else if(angle >= M_PI_2+M_PI_4 && angle < M_PI+M_PI_4){
+      0|  189|        anchorPoint = CGPointMake(1, easeInOut((angle - (M_PI_2+M_PI_4)) / M_PI_2));
+      0|  190|    } else {
+      0|  191|        anchorPoint = CGPointMake(easeInOut(((2*M_PI - M_PI_4) - angle) / M_PI_2), 1);
+      0|  192|    }
+      0|  193|    
+      0|  194|    CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+      0|  195|    CGPoint pos = CGPointMake(center.x + radius*cosf(angle), center.y + radius*sinf(angle));
+      0|  196|    
+      0|  197|    CGRect frame = CGRectMake(pos.x - anchorPoint.x * textSize.width,
+      0|  198|                              pos.y - anchorPoint.y * textSize.height,
+      0|  199|                              textSize.width,
+      0|  200|                              textSize.height);
+      0|  201|    UIGraphicsPushContext(ctx);
+      0|  202|    [text drawInRect:frame withAttributes:self.titleAttributes];
+      0|  203|    UIGraphicsPopContext();
+      0|  204|}
+       |  205|
+       |  206|/**
+       |  207| *  画百分比
+       |  208| *
+       |  209| *  @param text   标题内容
+       |  210| *  @param angle  当前扇形的中间角度
+       |  211| *  @param radius 半径
+       |  212| *  @param ctx    上下文
+       |  213| *  @param font   标题样式
+       |  214| */
+       |  215|- (void)drawPercent:(NSString*)text angle:(float)angle radius:(float)radius context:(CGContextRef)ctx
+      0|  216|{
+      0|  217|    CGSize textSize = [text sizeWithAttributes:self.percentAttributes];
+      0|  218|    
+      0|  219|    CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+      0|  220|    CGPoint textCenter = CGPointMake(center.x + radius*cosf(angle), center.y + radius*sinf(angle));
+      0|  221|    CGPoint drawPoint = CGPointMake(textCenter.x - textSize.width * 0.5 ,textCenter.y - textSize.height * 0.5);
+      0|  222|    
+      0|  223|    UIGraphicsPushContext(ctx);
+      0|  224|    [text drawAtPoint:drawPoint withAttributes:self.percentAttributes];
+      0|  225|    UIGraphicsPopContext();
+      0|  226|
+      0|  227|    
+      0|  228|    
+      0|  229|}
+       |  230|#pragma mark - Public Method
+       |  231|
+       |  232|-(void)reloadData
+      0|  233|{
+      0|  234|    [self setNeedsDisplay];
+      0|  235|    
+      0|  236|    NSMutableArray *mutableChartData = [NSMutableArray array];
+      0|  237|        
+      0|  238|    NSAssert([self.dataSource respondsToSelector:@selector(numberOfItemInPieChartView)], @"EWPieChartView // dataSource must implement - (NSUInteger)numberOfSection");
+      0|  239|    NSUInteger numberOfItem = [self.dataSource numberOfItemInPieChartView];
+      0|  240|        
+      0|  241|    for (NSUInteger itemIndex = 0; itemIndex < numberOfItem; itemIndex++)
+      0|  242|    {
+      0|  243|        NSAssert([self.dataSource respondsToSelector:@selector(pieChartView:pieChartViewCellForItemIndex:)], @"EWPieChartView // delegate must implement - - (CGFloat)pieChartView(EWPieChartView *)pieChartViewitemValueForItemIndex:(NSUInteger)itemIndex;");
+      0|  244|        EWPieChartViewCell *cell =  [self.dataSource pieChartView:self pieChartViewCellForItemIndex:itemIndex];
+      0|  245|            
+      0|  246|        [mutableChartData addObject:cell];
+      0|  247|        [self.values addObject:@(cell.value)];
+      0|  248|    }
+      0|  249|    self.chartData = [NSArray arrayWithArray:mutableChartData];
+      0|  250|    
+      0|  251|    [self setNeedsDisplay];
+      0|  252|}
+       |  253|
+       |  254|#pragma mark - drawRect
+       |  255|
+      0|  256|- (void)drawRect:(CGRect)rect {
+      0|  257|    [super drawRect:rect];
+      0|  258|    if(self.chartData.count == 0 || self.minRadius >= self.maxRadius)
+      0|  259|        return;
+      0|  260|
+      0|  261|    float sum = [[self.values valueForKeyPath:@"@sum.floatValue"] floatValue];
+      0|  262|    if(sum <= 0)
+      0|  263|        return;
+      0|  264|    
+      0|  265|    CGPoint center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+      0|  266|    
+      0|  267|    CGContextRef ctx = UIGraphicsGetCurrentContext();
+      0|  268|    CGContextSaveGState(ctx);
+      0|  269|    
+      0|  270|    //翻转
+      0|  271|    CGContextTranslateCTM(ctx, 0, self.bounds.size.height);
+      0|  272|    CGContextScaleCTM(ctx, 1, -1);
+      0|  273|    
+      0|  274|    __block float angleStart = radians(self.startAngle);
+      0|  275|    float angleInterval = radians(self.endAngle - self.startAngle);
+      0|  276|    
+      0|  277|    [self.chartData enumerateObjectsUsingBlock:^(EWPieChartViewCell *cell, NSUInteger idx, BOOL *stop) {
+      0|  278|        float angleEnd = angleStart + angleInterval * cell.value / sum;
+      0|  279|//        float centrAngle = (angleEnd + angleStart) * 0.5;
+      0|  280|        
+      0|  281|        UIColor *itemColor = cell.color?cell.color:EWRandomColor;
+      0|  282|        cell.color = itemColor;
+      0|  283|        
+      0|  284|        CGPoint minRadiusStart = CGPointMake(center.x + self.minRadius*cosf(angleStart), center.y + self.minRadius*sinf(angleStart));
+      0|  285|        CGPoint maxRadiusEnd = CGPointMake(center.x + self.maxRadius*cosf(angleEnd), center.y + self.maxRadius*sinf(angleEnd));
+      0|  286|        
+      0|  287|        CGContextSaveGState(ctx);
+      0|  288|
+      0|  289|        //画扇形
+      0|  290|        CGContextMoveToPoint(ctx, minRadiusStart.x, minRadiusStart.y);
+      0|  291|        CGContextAddArc(ctx, center.x, center.y, self.minRadius, angleStart, angleEnd, NO);
+      0|  292|        CGContextAddLineToPoint(ctx, maxRadiusEnd.x, maxRadiusEnd.y);
+      0|  293|        CGContextAddArc(ctx, center.x, center.y, self.maxRadius, angleEnd, angleStart, YES);
+      0|  294|        CGContextClosePath(ctx);
+      0|  295|        [itemColor set];
+      0|  296|    
+      0|  297|        //选择的扇形
+      0|  298|        CGPoint transPoint = CGPointMake(self.touchPoint.x, self.frame.size.height - self.touchPoint.y);
+      0|  299|        BOOL containsPoint = CGContextPathContainsPoint(ctx, transPoint, kCGPathFill);
+      0|  300|        if (containsPoint) {
+      0|  301|            if ([self.delegate respondsToSelector:@selector(pieChartView:didSelectItemAtIndex:)]) {
+      0|  302|                [self.delegate pieChartView:self didSelectItemAtIndex:idx];
+      0|  303|            }
+      0|  304|        }
+      0|  305|            CGContextFillPath(ctx);
+      0|  306|            CGContextRestoreGState(ctx);
+      0|  307|        angleStart = angleEnd;
+      0|  308|    }];
+      0|  309|    
+      0|  310|    CGContextRestoreGState(ctx);
+      0|  311|    
+      0|  312|    if (self.showTitleType != EWPieChartShowTitleDefault
+      0|  313|        || [self.delegate respondsToSelector:@selector(pieChartView:showItemTitleTypeAtItemIndex:)]
+      0|  314|        || self.showItemPercent
+      0|  315|        || [self.delegate respondsToSelector:@selector(pieChartView:showItemPercentAtItemIndex:)]) {
+      0|  316|        
+      0|  317|        [self drawItemTitles:ctx sumValues:sum];
+      0|  318|    }
+      0|  319|}
+       |  320|
+       |  321|#pragma mark - Touch
+       |  322|
+       |  323|-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+      0|  324|{
+      0|  325|    UITouch *touch = [touches anyObject];
+      0|  326|    CGPoint touchPoint = [touch locationInView:self];
+      0|  327|    self.touchPoint = touchPoint;
+      0|  328|    [self setNeedsDisplay];
+      0|  329|}
+       |  330|
+       |  331|#pragma mark - getter and setter
+       |  332|
+       |  333|-(NSMutableArray *)values
+      0|  334|{
+      0|  335|    if (!_values) {
+      0|  336|        self.values = [NSMutableArray array];
+      0|  337|    }
+      0|  338|    return _values;
+      0|  339|}
+       |  340|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWPieChartViewCell.m:
+       |    1|//
+       |    2|//  EWPieChartViewCell.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/5.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWPieChartViewCell.h"
+       |   10|
+       |   11|@implementation EWPieChartViewCell
+       |   12|
+       |   13|+(instancetype)cellWithTitle:(NSString *)title color:(UIColor *)color value:(CGFloat)value
+      0|   14|{
+      0|   15|    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
+      0|   16|    cell.title = title;
+      0|   17|    cell.color = color;
+      0|   18|    cell.value = value;
+      0|   19|    return cell;
+      0|   20|}
+       |   21|
+       |   22|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/LineChartViewController.m:
+       |    1|//
+       |    2|//  LineChartViewController.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/10.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "LineChartViewController.h"
+       |   10|#import "EWLineCharView.h"
+       |   11|
+       |   12|@interface LineChartViewController ()<EWLineChartViewDataSource,EWLineChartViewDelegate>
+       |   13|
+       |   14|@property(nonatomic,strong) NSMutableArray *array;
+       |   15|@property(nonatomic,strong) NSArray *array1;
+       |   16|@property(nonatomic,strong) NSArray *array2;
+       |   17|@property(nonatomic,strong) NSArray *array3;
+       |   18|
+       |   19|@property(nonatomic,strong) NSArray *arrayTitle;
+       |   20|
+       |   21|@end
+       |   22|
+       |   23|@implementation LineChartViewController
+       |   24|
+      1|   25|- (void)viewDidLoad {
+      1|   26|    [super viewDidLoad];
+      1|   27|    
+      1|   28|    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+      1|   29|    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+      1|   30|    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
+      1|   31|    self.array = [NSMutableArray array];
+      1|   32|    [self.array addObject:self.array1];
+      1|   33|    [self.array addObject:self.array2];
+      1|   34|    [self.array addObject:self.array3];
+      1|   35|    
+      1|   36|    self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
+      1|   37|    
+      1|   38|    EWLineCharView *lineChart = [[EWLineCharView alloc] init];
+      1|   39|    lineChart.dataSource = self;
+      1|   40|    lineChart.delegate =self;
+      1|   41|    lineChart.maximumValue = 3.0;
+      1|   42|    lineChart.minimumValue = 0.0;
+      1|   43|    lineChart.sectionCount = 4;
+      1|   44|    lineChart.showGrid = YES;
+      1|   45|    lineChart.frame = CGRectMake(10, 50, 300, 200);
+      1|   46|    [lineChart reloadData];
+      1|   47|    [self.view addSubview:lineChart];
+      1|   48|}
+       |   49|
+       |   50|#pragma mark - EWLineChartViewDataSource
+       |   51|
+       |   52|-(NSUInteger)numberOfLinesInLineChartView:(EWLineCharView *)lineChartView
+      4|   53|{
+      4|   54|    return self.array.count;
+      4|   55|}
+       |   56|
+       |   57|-(NSUInteger)lineChartView:(EWLineCharView *)lineChartView numberOfLinesAtLineIndex:(NSUInteger)lineIndex
+     12|   58|{
+     12|   59|    return [self.array[lineIndex] count];
+     12|   60|}
+       |   61|
+       |   62|-(CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+     45|   63|{
+     45|   64|    return [self.array[lineIndex][horizontalIndex] floatValue];
+     45|   65|}
+       |   66|
+       |   67|#pragma mark - EWLineChartViewDelegate
+       |   68|
+      3|   69|-(UIColor *)lineChartView:(EWLineCharView *)lineChartView colorForLineAtLineIndex:(NSUInteger)lineIndex{
+      3|   70|    if (lineIndex == 0) {
+      1|   71|        return [UIColor redColor];
+      1|   72|    }
+      2|   73|    else if(lineIndex == 1)
+      1|   74|    {
+      1|   75|        return [UIColor greenColor];
+      1|   76|    }
+      2|   77|    else
+      1|   78|        return [UIColor blueColor];
+      3|   79|}
+       |   80|
+       |   81|
+       |   82|-(NSString *)lineChartView:(EWLineCharView *)lineChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex
+      5|   83|{
+      5|   84|    return self.arrayTitle[horizontalIndex];
+      5|   85|}
+       |   86|
+       |   87|-(BOOL)lineChartView:(EWLineCharView *)lineChartView isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex
+     15|   88|{
+     15|   89|    if (lineIndex == 0) {
+      5|   90|        return YES;
+      5|   91|    }
+     10|   92|    else if(lineIndex == 2){
+      5|   93|        if (horizontalIndex == 1) {
+      1|   94|            return YES;
+      1|   95|        }
+      4|   96|        return NO;
+      5|   97|
+      5|   98|    }else{
+      5|   99|        return NO;
+      5|  100|    }
+     15|  101|}
+       |  102|
+       |  103|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/PieChartViewController.m:
+       |    1|//
+       |    2|//  PieChartViewController.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/10.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "PieChartViewController.h"
+       |   10|#import "EWPieChartView.h"
+       |   11|
+       |   12|@interface PieChartViewController ()<EWPieChartViewDataSource,EWPieChartViewDelegate>
+       |   13|
+       |   14|@property(nonatomic,strong) NSArray *array;
+       |   15|
+       |   16|@end
+       |   17|
+       |   18|@implementation PieChartViewController
+       |   19|
+      0|   20|- (void)viewDidLoad {
+      0|   21|    [super viewDidLoad];
+      0|   22|    self.array = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+      0|   23|    
+      0|   24|    EWPieChartView *pie = [[EWPieChartView alloc] init];
+      0|   25|    pie.frame = self.view.bounds;
+      0|   26|    pie.dataSource = self;
+      0|   27|    pie.delegate = self;
+      0|   28|    pie.minRadius = 30.0;
+      0|   29|    pie.showTitleType = EWPieChartShowTitleOutItem;
+      0|   30|    pie.showItemPercent = YES;
+      0|   31|    [pie reloadData];
+      0|   32|    [self.view addSubview:pie];
+      0|   33|}
+       |   34|
+       |   35|#pragma mark - EWPieChartViewDataSource
+       |   36|
+       |   37|-(NSUInteger)numberOfItemInPieChartView
+      0|   38|{
+      0|   39|    return self.array.count;
+      0|   40|}
+       |   41|
+       |   42|-(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
+      0|   43|{
+      0|   44|    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
+      0|   45|    cell.value = [self.array[itemIndex] floatValue];
+      0|   46|    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
+      0|   47|    return cell;
+      0|   48|}
+       |   49|
+       |   50|#pragma mark - EWPieChartViewDelegate
+       |   51|
+       |   52|-(void)pieChartView:(EWPieChartView *)pieChartView didSelectItemAtIndex:(NSUInteger)itemIndex
+      0|   53|{
+      0|   54|    NSLog(@"index:%ld",itemIndex);
+      0|   55|}
+       |   56|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/SegmentView/EWSegmentHeadButton.m:
+       |    1|//
+       |    2|//  EWSegmentHeadButton.m
+       |    3|//  EWSegmentView
+       |    4|//
+       |    5|//  Created by wansy on 15/7/8.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWSegmentHeadButton.h"
+       |   10|
+       |   11|@implementation EWSegmentHeadButton
+       |   12|
+       |   13|-(instancetype)initWithFrame:(CGRect)frame
+      3|   14|{
+      3|   15|    if (self = [super initWithFrame:frame]) {
+      3|   16|        [self setupSubViews];
+      3|   17|    }
+      3|   18|    return self;
+      3|   19|}
+       |   20|
+       |   21|-(id)initWithCoder:(NSCoder *)aDecoder
+      0|   22|{
+      0|   23|    if (self = [super initWithCoder:aDecoder]) {
+      0|   24|        [self setupSubViews];
+      0|   25|    }
+      0|   26|    return self;
+      0|   27|}
+       |   28|
+       |   29|-(void)setupSubViews
+      3|   30|{
+      3|   31|    _button = [[UIButton alloc] init];
+      3|   32|    [self addSubview:_button];
+      3|   33|    
+      3|   34|    _colorLabel = [[UILabel alloc] init];
+      3|   35|    [self addSubview:_colorLabel];
+      3|   36|}
+       |   37|
+       |   38|-(void)layoutSubviews
+      6|   39|{
+      6|   40|    CGFloat viewH = self.frame.size.height;
+      6|   41|    CGFloat viewW = self.frame.size.width;
+      6|   42|    
+      6|   43|    self.button.frame = CGRectMake(0, 0, viewW, viewH);
+      6|   44|    self.colorLabel.frame = CGRectMake(0.05 * viewW, viewH * 0.9, viewW * 0.9, viewH * 0.1);
+      6|   45|}
+       |   46|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/SegmentView/EWSegmentHeadView.m:
+       |    1|//
+       |    2|//  EWSegmentHeadView.m
+       |    3|//  EWSegmentView
+       |    4|//
+       |    5|//  Created by wansy on 15/7/8.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWSegmentHeadView.h"
+       |   10|#import "EWSegmentHeadButton.h"
+       |   11|
+       |   12|@interface EWSegmentHeadView()
+       |   13|
+       |   14|@property (nonatomic, strong) EWSegmentHeadButton *selectedHeadButton;
+       |   15|
+       |   16|@end
+       |   17|
+       |   18|@implementation EWSegmentHeadView
+       |   19|
+       |   20|/**
+       |   21| *  布局按钮
+       |   22| */
+       |   23|-(void)layoutSubviews
+      1|   24|{
+      1|   25|    CGFloat viewH = self.frame.size.height;
+      1|   26|    CGFloat headButtonW = self.frame.size.width/self.subviews.count;
+      1|   27|    
+      3|   28|    [self.subviews enumerateObjectsUsingBlock:^(EWSegmentHeadButton *headView, NSUInteger idx, BOOL *stop) {
+      3|   29|        headView.frame = CGRectMake(idx * headButtonW, 0, headButtonW , viewH);
+      3|   30|    }];
+      1|   31|}
+       |   32|
+       |   33|#pragma mark - private method
+       |   34|
+       |   35|/**
+       |   36| *  根据传入控制器的标题来添加按钮
+       |   37| *
+       |   38| *  @param title 控制器标题
+       |   39| */
+       |   40|-(void)addHeadButton:(NSString *)title
+      3|   41|{
+      3|   42|    EWSegmentHeadButton *headButton = [[EWSegmentHeadButton alloc] init];
+      3|   43|    
+      3|   44|    //设置按钮的基本属性
+      3|   45|    [headButton.button setTitle:title forState:UIControlStateNormal];
+      3|   46|    [headButton.button setTitleColor:self.selectedTitleColor?self.selectedTitleColor:[UIColor orangeColor] forState:UIControlStateSelected];
+      3|   47|    [headButton.button setTitleColor:self.normalTitleColor?self.normalTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+      3|   48|    [headButton.button addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+      3|   49|    if (!self.selectedHeadButton) {
+      1|   50|        self.selectedHeadButton = headButton;
+      1|   51|        if (!self.isHiddenBottom)
+      1|   52|        {
+      1|   53|            [headButton.colorLabel setBackgroundColor:self.bottomColor?self.bottomColor:[UIColor orangeColor]];
+      1|   54|        }
+      1|   55|        self.selectedHeadButton.button.selected = YES;
+      1|   56|    }
+      3|   57|    [self addSubview:headButton];
+      3|   58|}
+       |   59|
+       |   60|/**
+       |   61| *  按钮的切换
+       |   62| *
+       |   63| *  @param button 按钮
+       |   64| */
+       |   65|-(void)turnSelectedButton:(UIButton *)button
+      0|   66|{
+      0|   67|    EWSegmentHeadButton *headButton = (EWSegmentHeadButton *)[button superview];
+      0|   68|    
+      0|   69|    //切换选中状态
+      0|   70|    if(self.selectedHeadButton.button != button)
+      0|   71|    {
+      0|   72|        
+      0|   73|        //没隐藏底部条的时候切换颜色
+      0|   74|        if (!self.isHiddenBottom) {
+      0|   75|            [self.selectedHeadButton.colorLabel setBackgroundColor:[UIColor clearColor]];
+      0|   76|            headButton.colorLabel.backgroundColor = self.bottomColor?self.bottomColor:[UIColor orangeColor];
+      0|   77|        }
+      0|   78|        
+      0|   79|        self.selectedHeadButton.button.selected = NO;
+      0|   80|        button.selected = YES;
+      0|   81|        self.selectedHeadButton = headButton;
+      0|   82|    }
+      0|   83|    
+      0|   84|}
+       |   85|
+       |   86|#pragma mark - event response
+       |   87|
+       |   88|-(void)buttonClick:(UIButton *)button
+      0|   89|{
+      0|   90|    if(self.selectedHeadButton.button == button) return;
+      0|   91|    [self turnSelectedButton:button];
+      0|   92|
+      0|   93|    if (self.didClick) {
+      0|   94|        _didClick();
+      0|   95|    }
+      0|   96|}
+       |   97|
+       |   98|#pragma mark - public method
+       |   99|
+       |  100|-(void)setHeadTitles:(NSMutableArray *)titles
+      1|  101|{
+      3|  102|    [titles enumerateObjectsUsingBlock:^(NSString *title, NSUInteger idx, BOOL *stop) {
+      3|  103|        [self addHeadButton:title];
+      3|  104|    }];
+      1|  105|}
+       |  106|
+       |  107|-(void)setSelectedButtonIndex:(NSInteger)selectedButtonIndex
+      0|  108|{
+      0|  109|    EWSegmentHeadButton *headButton = (EWSegmentHeadButton *)self.subviews[selectedButtonIndex];
+      0|  110|    
+      0|  111|    [self turnSelectedButton:headButton.button];
+      0|  112|}
+       |  113|
+       |  114|-(NSInteger)selectedButtonIndex
+      0|  115|{
+      0|  116|    return [self.subviews indexOfObject:self.selectedHeadButton];
+      0|  117|}
+       |  118|
+       |  119|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/SegmentView/EWSegmentView.m:
+       |    1|//
+       |    2|//  EWSegmentView.m
+       |    3|//  EWSegmentView
+       |    4|//
+       |    5|//  Created by wansy on 15/7/8.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "EWSegmentView.h"
+       |   10|#import "EWSegmentHeadView.h"
+       |   11|
+       |   12|@interface EWSegmentView()<UIPageViewControllerDataSource,UIPageViewControllerDelegate>
+       |   13|
+       |   14|@property (strong, nonatomic) UIPageViewController *pageViewController;
+       |   15|
+       |   16|@end
+       |   17|
+       |   18|@implementation EWSegmentView
+       |   19|
+       |   20|-(instancetype)initWithFrame:(CGRect)frame
+      0|   21|{
+      0|   22|    if (self = [super initWithFrame:frame]) {
+      0|   23|        [self setupPageView];
+      0|   24|    }
+      0|   25|    return self;
+      0|   26|}
+       |   27|
+       |   28|-(id)initWithCoder:(NSCoder *)aDecoder
+      1|   29|{
+      1|   30|    if (self = [super initWithCoder:aDecoder]) {
+      1|   31|        [self setupPageView];
+      1|   32|    }
+      1|   33|    return self;
+      1|   34|}
+       |   35|
+       |   36|#pragma mark - setup
+       |   37|
+       |   38|-(void)setupPageView
+      1|   39|{
+      1|   40|    [self addSubview:self.pageViewController.view];
+      1|   41|}
+       |   42|
+       |   43|#pragma mark - private method
+       |   44|
+       |   45|-(NSMutableArray *)getTitles
+      1|   46|{
+      1|   47|    NSMutableArray *titles = [NSMutableArray array];
+      3|   48|    for (UIViewController *vc in self.subViewControllers) {
+      3|   49|        [titles addObject:vc.title? vc.title:@"title"];
+      3|   50|    }
+      1|   51|    return [titles copy];
+      1|   52|}
+       |   53|
+       |   54|- (UIViewController *)selectedController
+      0|   55|{
+      0|   56|    return self.subViewControllers[[self.headView selectedButtonIndex]];
+      0|   57|}
+       |   58|
+       |   59|#pragma mark - UIPageViewControllerDataSource
+       |   60|
+       |   61|- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+      0|   62|{
+      0|   63|    NSUInteger index = [self.subViewControllers indexOfObject:viewController];
+      0|   64|    
+      0|   65|    if ((index == NSNotFound) || (index == 0)) {
+      0|   66|        return nil;
+      0|   67|    }
+      0|   68|    
+      0|   69|    return self.subViewControllers[--index];
+      0|   70|}
+       |   71|
+       |   72|- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+      0|   73|{
+      0|   74|    NSUInteger index = [self.subViewControllers indexOfObject:viewController];
+      0|   75|    
+      0|   76|    if ((index == NSNotFound)||(index+1 >= [self.subViewControllers count])) {
+      0|   77|        return nil;
+      0|   78|    }
+      0|   79|    
+      0|   80|    return self.subViewControllers[++index];
+      0|   81|}
+       |   82|
+       |   83|- (void)pageViewController:(UIPageViewController *)viewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+      0|   84|{
+      0|   85|    if (!completed){
+      0|   86|        return;
+      0|   87|    }
+      0|   88|    
+      0|   89|    //改变headView中选种的按钮
+      0|   90|    [self.headView setSelectedButtonIndex:[self.subViewControllers indexOfObject:[viewController.viewControllers lastObject]]];
+      0|   91|}
+       |   92|
+       |   93|#pragma mark - setter and getter
+       |   94|
+       |   95|-(void)setSubViewControllers:(NSMutableArray *)subViewControllers
+      1|   96|{
+      1|   97|    _subViewControllers = subViewControllers;
+      1|   98|    
+      1|   99|    if ([self.subViewControllers count]>0) {
+      1|  100|        [self.pageViewController setViewControllers:@[self.subViewControllers[0]]
+      1|  101|                                          direction:UIPageViewControllerNavigationDirectionForward
+      1|  102|                                           animated:NO
+      1|  103|                                         completion:NULL];
+      1|  104|    }
+      1|  105|    
+      1|  106|}
+       |  107|
+       |  108|-(void)setHeadView:(EWSegmentHeadView *)headView
+      1|  109|{
+      1|  110|    _headView = headView;
+      1|  111|    
+      1|  112|//    _headView.delegate = self;
+      1|  113|    
+      1|  114|    [self.headView setHeadTitles:[self getTitles]];
+      1|  115|    
+      1|  116|    //利用block完成点击headview按钮事件
+      1|  117|    _headView.didClick = ^()
+      0|  118|    {
+      0|  119|        UIPageViewControllerNavigationDirection direction = [self.headView selectedButtonIndex] > [self.subViewControllers indexOfObject:[self.pageViewController.viewControllers lastObject]] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+      0|  120|        
+      0|  121|            [self.pageViewController setViewControllers:@[[self selectedController]]
+      0|  122|                                              direction:direction
+      0|  123|                                               animated:YES
+      0|  124|                                             completion:NULL];
+      0|  125|    };
+      1|  126|}
+       |  127|
+       |  128|- (UIPageViewController *)pageViewController
+      2|  129|{
+      2|  130|    if (!_pageViewController)
+      1|  131|    {
+      1|  132|        _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
+      1|  133|        _pageViewController.view.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+      1|  134|        _pageViewController.dataSource = self;
+      1|  135|        _pageViewController.delegate = self;
+      1|  136|        [_pageViewController.view setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+      1|  137|    }
+      2|  138|    return _pageViewController;
+      2|  139|}
+       |  140|
+       |  141|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/ViewController.m:
+       |    1|//
+       |    2|//  ViewController.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/4.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "ViewController.h"
+       |   10|#import "EWSegmentView.h"
+       |   11|#import "BarChartViewController.h"
+       |   12|#import "LineChartViewController.h"
+       |   13|#import "PieChartViewController.h"
+       |   14|#import "EWSegmentHeadView.h"
+       |   15|
+       |   16|@interface ViewController ()
+       |   17|
+       |   18|@property (weak, nonatomic) IBOutlet EWSegmentHeadView *segmentHeadView;
+       |   19|
+       |   20|@property (weak, nonatomic) IBOutlet EWSegmentView *segmentView;
+       |   21|@end
+       |   22|
+       |   23|@implementation ViewController
+       |   24|
+      1|   25|- (void)viewDidLoad {
+      1|   26|    [super viewDidLoad];
+      1|   27|    
+      1|   28|    PieChartViewController *pieChartVC = [[PieChartViewController alloc] init];
+      1|   29|    pieChartVC.title = @"饼状图";
+      1|   30|    LineChartViewController *lineChartVC = [[LineChartViewController alloc] init];
+      1|   31|    lineChartVC.title = @"折现图";
+      1|   32|    BarChartViewController *barChartVC = [[BarChartViewController alloc] init];
+      1|   33|    barChartVC.title =@"柱状图";
+      1|   34|    NSMutableArray *array = [NSMutableArray array];
+      1|   35|    [array addObject:lineChartVC];
+      1|   36|    [array addObject:barChartVC];
+      1|   37|    [array addObject:pieChartVC];
+      1|   38|    
+      1|   39|    self.segmentView.subViewControllers = array;
+      1|   40|    
+      1|   41|    self.segmentView.headView = self.segmentHeadView;
+      1|   42|}
+       |   43|
+       |   44|@end
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/main.m:
+       |    1|//
+       |    2|//  main.m
+       |    3|//  EWChartView
+       |    4|//
+       |    5|//  Created by wansy on 15/8/4.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import <UIKit/UIKit.h>
+       |   10|#import "AppDelegate.h"
+       |   11|
+      1|   12|int main(int argc, char * argv[]) {
+      1|   13|    @autoreleasepool {
+      1|   14|        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+      1|   15|    }
+      1|   16|}
+

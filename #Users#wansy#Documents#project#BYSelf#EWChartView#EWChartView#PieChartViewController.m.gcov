@@ -1,0 +1,79 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/PieChartViewController.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/PieChartViewController.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/PieChartViewController.gcda
+        -:    0:Runs:10
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  PieChartViewController.m
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/10.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "PieChartViewController.h"
+        -:   10:#import "EWPieChartView.h"
+        -:   11:
+        -:   12:@interface PieChartViewController ()<EWPieChartViewDataSource,EWPieChartViewDelegate>
+        -:   13:
+function -[PieChartViewController array] called 1632 returned 100% blocks executed 100%
+function -[PieChartViewController setArray:] called 272 returned 100% blocks executed 100%
+     1904:   14:@property(nonatomic,strong) NSArray *array;
+unconditional  0 taken 1632
+unconditional  1 taken 272
+        -:   15:
+        -:   16:@end
+        -:   17:
+function -[PieChartViewController .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   18:@implementation PieChartViewController
+unconditional  0 never executed
+        -:   19:
+function -[PieChartViewController viewDidLoad] called 272 returned 100% blocks executed 80%
+        -:   20:- (void)viewDidLoad {
+      272:   21:    [super viewDidLoad];
+      272:   22:    self.array = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+        -:   23:    
+      272:   24:    EWPieChartView *pie = [[EWPieChartView alloc] init];
+      816:   25:    pie.frame = self.view.bounds;
+branch  0 taken 272
+branch  1 taken 0
+unconditional  2 taken 272
+unconditional  3 never executed
+      272:   26:    pie.dataSource = self;
+      272:   27:    pie.delegate = self;
+      272:   28:    pie.minRadius = 30.0;
+      272:   29:    pie.showTitleType = EWPieChartShowTitleOutItem;
+      272:   30:    pie.showItemPercent = YES;
+      272:   31:    [pie reloadData];
+      272:   32:    [self.view addSubview:pie];
+      272:   33:}
+unconditional  0 taken 272
+        -:   34:
+        -:   35:#pragma mark - EWPieChartViewDataSource
+        -:   36:
+function -[PieChartViewController numberOfItemInPieChartView] called 272 returned 100% blocks executed 100%
+        -:   37:-(NSUInteger)numberOfItemInPieChartView
+        -:   38:{
+      272:   39:    return self.array.count;
+unconditional  0 taken 272
+        -:   40:}
+        -:   41:
+function -[PieChartViewController pieChartView:pieChartViewCellForItemIndex:] called 1360 returned 100% blocks executed 100%
+        -:   42:-(EWPieChartViewCell *)pieChartView:(EWPieChartView *)pieChartView pieChartViewCellForItemIndex:(NSUInteger)itemIndex
+        -:   43:{
+     1360:   44:    EWPieChartViewCell *cell = [[EWPieChartViewCell alloc] init];
+     1360:   45:    cell.value = [self.array[itemIndex] floatValue];
+     1360:   46:    cell.title = [NSString stringWithFormat:@"扇形区域%ld",itemIndex];
+     1360:   47:    return cell;
+     1360:   48:}
+unconditional  0 taken 1360
+        -:   49:
+        -:   50:#pragma mark - EWPieChartViewDelegate
+        -:   51:
+function -[PieChartViewController pieChartView:didSelectItemAtIndex:] called 0 returned 0% blocks executed 0%
+        -:   52:-(void)pieChartView:(EWPieChartView *)pieChartView didSelectItemAtIndex:(NSUInteger)itemIndex
+        -:   53:{
+    #####:   54:    NSLog(@"index:%ld",itemIndex);
+    #####:   55:}
+unconditional  0 never executed
+        -:   56:@end

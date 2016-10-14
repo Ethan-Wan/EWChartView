@@ -1,0 +1,106 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWChartView.h
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWChartView.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWChartView.gcda
+        -:    0:Runs:10
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  EWChartView.h
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/5.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import <UIKit/UIKit.h>
+        -:   10:
+        -:   11://default size
+        -:   12:CGFloat static const kEWChartViewHeaderPadding = 10.0f;
+        -:   13:CGFloat static const kEWChartViewYAxisWidth = 25.0f;
+        -:   14:CGFloat static const kEWChartViewXAxisHeight = 20.0f;
+        -:   15:CGFloat static const kEWChartViewXYAxisWidth   = 0.5f;
+        -:   16:
+        -:   17://macro
+        -:   18:#define kEWChartViewcoordinateColor [UIColor lightGrayColor]
+        -:   19:
+        -:   20:@protocol EWChartViewDataSource <NSObject>
+        -:   21:
+        -:   22://to extend
+        -:   23:
+        -:   24:@end
+        -:   25:
+        -:   26:@protocol EWChartViewDelegate <NSObject>
+        -:   27:
+        -:   28://to extend
+        -:   29:
+        -:   30:@end
+        -:   31:
+        -:   32:@interface EWChartView : UIView
+        -:   33:
+function -[EWChartView dataSource] called 51408 returned 100% blocks executed 100%
+function -[EWChartView setDataSource:] called 544 returned 100% blocks executed 100%
+    51952:   34:@property (nonatomic, weak) id<EWChartViewDataSource> dataSource;
+unconditional  0 taken 51408
+unconditional  1 taken 544
+function -[EWChartView delegate] called 39168 returned 100% blocks executed 100%
+function -[EWChartView setDelegate:] called 544 returned 100% blocks executed 100%
+    39712:   35:@property (nonatomic, weak) id<EWChartViewDelegate> delegate;
+unconditional  0 taken 39168
+unconditional  1 taken 544
+        -:   36:
+        -:   37:/** y坐标的最小值 */
+function -[EWChartView minimumValue] called 9248 returned 100% blocks executed 100%
+     9248:   38:@property (nonatomic, assign) CGFloat minimumValue; //default the minValue in dataSource
+unconditional  0 taken 9248
+        -:   39:
+        -:   40:/** y坐标的最大值 */
+function -[EWChartView maximumValue] called 11968 returned 100% blocks executed 100%
+    11968:   41:@property (nonatomic, assign) CGFloat maximumValue; //default the maxValue in dataSource
+unconditional  0 taken 11968
+        -:   42:
+        -:   43:/** y坐标上的分段数 */
+function -[EWChartView sectionCount] called 5984 returned 100% blocks executed 100%
+function -[EWChartView setSectionCount:] called 1088 returned 100% blocks executed 100%
+     7072:   44:@property (nonatomic, assign) NSInteger sectionCount; //default one
+unconditional  0 taken 5984
+unconditional  1 taken 1088
+        -:   45:
+        -:   46:/** 是否显示坐标网格 */
+        -:   47://@property (nonatomic, assign) BOOL showGrid  ; //default NO  (暂定为折线图所有)
+        -:   48:
+        -:   49:/** 坐标轴的颜色 */
+function -[EWChartView coordinateColor] called 4352 returned 100% blocks executed 100%
+function -[EWChartView setCoordinateColor:] called 816 returned 100% blocks executed 100%
+     5168:   50:@property (nonatomic, strong) UIColor *coordinateColor; //default lightGrayColor
+unconditional  0 taken 4352
+unconditional  1 taken 816
+        -:   51:
+        -:   52:/** x坐标上文字的样式 */
+function -[EWChartView xLabelAttributes] called 5440 returned 100% blocks executed 100%
+function -[EWChartView setXLabelAttributes:] called 816 returned 100% blocks executed 100%
+     6256:   53:@property (nonatomic, strong) NSDictionary *xLabelAttributes; //default
+unconditional  0 taken 5440
+unconditional  1 taken 816
+        -:   54:
+        -:   55:/** y坐标上文字的样式 */
+function -[EWChartView yLabelAttributes] called 5440 returned 100% blocks executed 100%
+function -[EWChartView setYLabelAttributes:] called 544 returned 100% blocks executed 100%
+     5984:   56:@property (nonatomic, strong) NSDictionary *yLabelAttributes; //default
+unconditional  0 taken 5440
+unconditional  1 taken 544
+        -:   57:
+        -:   58:/** 具体的数据值的样式 */
+function -[EWChartView valueAttributes] called 8160 returned 100% blocks executed 100%
+function -[EWChartView setValueAttributes:] called 544 returned 100% blocks executed 100%
+     8704:   59:@property (nonatomic, strong) NSDictionary *valueAttributes; //default
+unconditional  0 taken 8160
+unconditional  1 taken 544
+        -:   60:
+        -:   61:-(void)reloadData;
+        -:   62:
+        -:   63:// 将最大值和最小值reset为默认值
+        -:   64:- (void)resetMinimumValue;
+        -:   65:- (void)resetMaximumValue;
+        -:   66:
+        -:   67:-(void)creatYAxisWithSectionCount:(NSInteger)sectionCount minValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
+        -:   68:
+        -:   69:@end

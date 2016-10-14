@@ -1,0 +1,64 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/AppDelegate.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/AppDelegate.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/AppDelegate.gcda
+        -:    0:Runs:8
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  AppDelegate.m
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/4.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "AppDelegate.h"
+        -:   10:
+        -:   11:@interface AppDelegate ()
+        -:   12:
+        -:   13:@end
+        -:   14:
+function -[AppDelegate .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   15:@implementation AppDelegate
+unconditional  0 never executed
+        -:   16:
+        -:   17:
+function -[AppDelegate application:didFinishLaunchingWithOptions:] called 72 returned 100% blocks executed 100%
+        -:   18:- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+        -:   19:    // Override point for customization after application launch.
+        -:   20:    return YES;
+       72:   21:}
+unconditional  0 taken 72
+        -:   22:
+function -[AppDelegate applicationWillResignActive:] called 72 returned 100% blocks executed 100%
+        -:   23:- (void)applicationWillResignActive:(UIApplication *)application {
+        -:   24:    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        -:   25:    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+       72:   26:}
+unconditional  0 taken 72
+        -:   27:
+function -[AppDelegate applicationDidEnterBackground:] called 72 returned 100% blocks executed 100%
+        -:   28:- (void)applicationDidEnterBackground:(UIApplication *)application {
+        -:   29:    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        -:   30:    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+       72:   31:}
+unconditional  0 taken 72
+        -:   32:
+function -[AppDelegate applicationWillEnterForeground:] called 0 returned 0% blocks executed 0%
+        -:   33:- (void)applicationWillEnterForeground:(UIApplication *)application {
+        -:   34:    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    #####:   35:}
+unconditional  0 never executed
+        -:   36:
+function -[AppDelegate applicationDidBecomeActive:] called 72 returned 100% blocks executed 100%
+        -:   37:- (void)applicationDidBecomeActive:(UIApplication *)application {
+        -:   38:    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+       72:   39:}
+unconditional  0 taken 72
+        -:   40:
+function -[AppDelegate applicationWillTerminate:] called 72 returned 100% blocks executed 100%
+        -:   41:- (void)applicationWillTerminate:(UIApplication *)application {
+        -:   42:    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+       72:   43:}
+unconditional  0 taken 72
+        -:   44:
+        -:   45:@end

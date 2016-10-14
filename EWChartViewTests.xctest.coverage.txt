@@ -1,0 +1,1000 @@
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertions.h:
+       |    1|//
+       |    2|// Copyright (c) 2013-2015 Apple Inc. All rights reserved.
+       |    3|//
+       |    4|// Copyright (c) 1997-2005, Sen:te (Sente SA).  All rights reserved.
+       |    5|//
+       |    6|// Use of this source code is governed by the following license:
+       |    7|// 
+       |    8|// Redistribution and use in source and binary forms, with or without modification, 
+       |    9|// are permitted provided that the following conditions are met:
+       |   10|// 
+       |   11|// (1) Redistributions of source code must retain the above copyright notice, 
+       |   12|// this list of conditions and the following disclaimer.
+       |   13|// 
+       |   14|// (2) Redistributions in binary form must reproduce the above copyright notice, 
+       |   15|// this list of conditions and the following disclaimer in the documentation 
+       |   16|// and/or other materials provided with the distribution.
+       |   17|// 
+       |   18|// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
+       |   19|// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+       |   20|// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+       |   21|// IN NO EVENT SHALL Sente SA OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+       |   22|// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+       |   23|// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+       |   24|// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+       |   25|// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+       |   26|// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+       |   27|// 
+       |   28|// Note: this license is equivalent to the FreeBSD license.
+       |   29|// 
+       |   30|// This notice may not be removed from this file.
+       |   31|
+       |   32|#import <XCTest/XCTestAssertionsImpl.h>
+       |   33|
+       |   34|/*!
+       |   35| * @function XCTFail(...)
+       |   36| * Generates a failure unconditionally.
+       |   37| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   38|*/
+       |   39|#define XCTFail(...) \
+       |   40|    _XCTPrimitiveFail(self, __VA_ARGS__)
+       |   41|
+       |   42|/*!
+       |   43| * @define XCTAssertNil(expression, ...)
+       |   44| * Generates a failure when ((\a expression) != nil).
+       |   45| * @param expression An expression of id type.
+       |   46| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   47|*/
+       |   48|#define XCTAssertNil(expression, ...) \
+       |   49|    _XCTPrimitiveAssertNil(self, expression, @#expression, __VA_ARGS__)
+       |   50|
+       |   51|/*!
+       |   52| * @define XCTAssertNotNil(expression, ...)
+       |   53| * Generates a failure when ((\a expression) == nil).
+       |   54| * @param expression An expression of id type.
+       |   55| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   56|*/
+       |   57|#define XCTAssertNotNil(expression, ...) \
+       |   58|    _XCTPrimitiveAssertNotNil(self, expression, @#expression, __VA_ARGS__)
+       |   59|
+       |   60|/*!
+       |   61| * @define XCTAssert(expression, ...)
+       |   62| * Generates a failure when ((\a expression) == false).
+       |   63| * @param expression An expression of boolean type.
+       |   64| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   65|*/
+       |   66|#define XCTAssert(expression, ...) \
+      1|   67|    _XCTPrimitiveAssertTrue(self, expression, @#expression, __VA_ARGS__)
+       |   68|
+       |   69|/*!
+       |   70| * @define XCTAssertTrue(expression, ...)
+       |   71| * Generates a failure when ((\a expression) == false).
+       |   72| * @param expression An expression of boolean type.
+       |   73| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   74|*/
+       |   75|#define XCTAssertTrue(expression, ...) \
+       |   76|    _XCTPrimitiveAssertTrue(self, expression, @#expression, __VA_ARGS__)
+       |   77|
+       |   78|/*!
+       |   79| * @define XCTAssertFalse(expression, ...)
+       |   80| * Generates a failure when ((\a expression) != false).
+       |   81| * @param expression An expression of boolean type.
+       |   82| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   83|*/
+       |   84|#define XCTAssertFalse(expression, ...) \
+       |   85|    _XCTPrimitiveAssertFalse(self, expression, @#expression, __VA_ARGS__)
+       |   86|
+       |   87|/*!
+       |   88| * @define XCTAssertEqualObjects(expression1, expression2, ...)
+       |   89| * Generates a failure when ((\a expression1) not equal to (\a expression2)).
+       |   90| * @param expression1 An expression of id type.
+       |   91| * @param expression2 An expression of id type.
+       |   92| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |   93|*/
+       |   94|#define XCTAssertEqualObjects(expression1, expression2, ...) \
+       |   95|    _XCTPrimitiveAssertEqualObjects(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |   96|
+       |   97|/*!
+       |   98| * @define XCTAssertNotEqualObjects(expression1, expression2, ...)
+       |   99| * Generates a failure when ((\a expression1) equal to (\a expression2)).
+       |  100| * @param expression1 An expression of id type.
+       |  101| * @param expression2 An expression of id type.
+       |  102| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  103|*/
+       |  104|#define XCTAssertNotEqualObjects(expression1, expression2, ...) \
+       |  105|    _XCTPrimitiveAssertNotEqualObjects(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  106|
+       |  107|/*!
+       |  108| * @define XCTAssertEqual(expression1, expression2, ...)
+       |  109| * Generates a failure when ((\a expression1) != (\a expression2)).
+       |  110| * @param expression1 An expression of C scalar type.
+       |  111| * @param expression2 An expression of C scalar type.
+       |  112| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  113|*/
+       |  114|#define XCTAssertEqual(expression1, expression2, ...) \
+       |  115|    _XCTPrimitiveAssertEqual(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  116|
+       |  117|/*!
+       |  118| * @define XCTAssertNotEqual(expression1, expression2, ...)
+       |  119| * Generates a failure when ((\a expression1) == (\a expression2)).
+       |  120| * @param expression1 An expression of C scalar type.
+       |  121| * @param expression2 An expression of C scalar type.
+       |  122| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  123|*/
+       |  124|#define XCTAssertNotEqual(expression1, expression2, ...) \
+       |  125|    _XCTPrimitiveAssertNotEqual(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  126|
+       |  127|/*!
+       |  128| * @define XCTAssertEqualWithAccuracy(expression1, expression2, accuracy, ...)
+       |  129| * Generates a failure when (difference between (\a expression1) and (\a expression2) is > (\a accuracy))).
+       |  130| * @param expression1 An expression of C scalar type.
+       |  131| * @param expression2 An expression of C scalar type.
+       |  132| * @param accuracy An expression of C scalar type describing the maximum difference between \a expression1 and \a expression2 for these values to be considered equal.
+       |  133| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  134|*/
+       |  135|#define XCTAssertEqualWithAccuracy(expression1, expression2, accuracy, ...) \
+       |  136|    _XCTPrimitiveAssertEqualWithAccuracy(self, expression1, @#expression1, expression2, @#expression2, accuracy, @#accuracy, __VA_ARGS__)
+       |  137|
+       |  138|/*!
+       |  139| * @define XCTAssertNotEqualWithAccuracy(expression1, expression2, accuracy, ...)
+       |  140| * Generates a failure when (difference between (\a expression1) and (\a expression2) is <= (\a accuracy)).
+       |  141| * @param expression1 An expression of C scalar type.
+       |  142| * @param expression2 An expression of C scalar type.
+       |  143| * @param accuracy An expression of C scalar type describing the maximum difference between \a expression1 and \a expression2 for these values to be considered equal.
+       |  144| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  145|*/
+       |  146|#define XCTAssertNotEqualWithAccuracy(expression1, expression2, accuracy, ...) \
+       |  147|    _XCTPrimitiveAssertNotEqualWithAccuracy(self, expression1, @#expression1, expression2, @#expression2, accuracy, @#accuracy, __VA_ARGS__)
+       |  148|
+       |  149|/*!
+       |  150| * @define XCTAssertGreaterThan(expression1, expression2, ...)
+       |  151| * Generates a failure when ((\a expression1) <= (\a expression2)).
+       |  152| * @param expression1 An expression of C scalar type.
+       |  153| * @param expression2 An expression of C scalar type.
+       |  154| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  155|*/
+       |  156|#define XCTAssertGreaterThan(expression1, expression2, ...) \
+       |  157|    _XCTPrimitiveAssertGreaterThan(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  158|
+       |  159|/*!
+       |  160| * @define XCTAssertGreaterThanOrEqual(expression1, expression2, ...)
+       |  161| * Generates a failure when ((\a expression1) < (\a expression2)).
+       |  162| * @param expression1 An expression of C scalar type.
+       |  163| * @param expression2 An expression of C scalar type.
+       |  164| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  165|*/
+       |  166|#define XCTAssertGreaterThanOrEqual(expression1, expression2, ...) \
+       |  167|    _XCTPrimitiveAssertGreaterThanOrEqual(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  168|
+       |  169|/*!
+       |  170| * @define XCTAssertLessThan(expression1, expression2, ...)
+       |  171| * Generates a failure when ((\a expression1) >= (\a expression2)).
+       |  172| * @param expression1 An expression of C scalar type.
+       |  173| * @param expression2 An expression of C scalar type.
+       |  174| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  175|*/
+       |  176|#define XCTAssertLessThan(expression1, expression2, ...) \
+       |  177|    _XCTPrimitiveAssertLessThan(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  178|
+       |  179|/*!
+       |  180| * @define XCTAssertLessThanOrEqual(expression1, expression2, ...)
+       |  181| * Generates a failure when ((\a expression1) > (\a expression2)).
+       |  182| * @param expression1 An expression of C scalar type.
+       |  183| * @param expression2 An expression of C scalar type.
+       |  184| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  185|*/
+       |  186|#define XCTAssertLessThanOrEqual(expression1, expression2, ...) \
+       |  187|    _XCTPrimitiveAssertLessThanOrEqual(self, expression1, @#expression1, expression2, @#expression2, __VA_ARGS__)
+       |  188|
+       |  189|/*!
+       |  190| * @define XCTAssertThrows(expression, ...)
+       |  191| * Generates a failure when ((\a expression) does not throw).
+       |  192| * @param expression An expression.
+       |  193| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  194|*/
+       |  195|#define XCTAssertThrows(expression, ...) \
+       |  196|    _XCTPrimitiveAssertThrows(self, expression, @#expression, __VA_ARGS__)
+       |  197|
+       |  198|/*!
+       |  199| * @define XCTAssertThrowsSpecific(expression, exception_class, ...)
+       |  200| * Generates a failure when ((\a expression) does not throw \a exception_class).
+       |  201| * @param expression An expression.
+       |  202| * @param exception_class The class of the exception. Must be NSException, or a subclass of NSException.
+       |  203| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  204|*/
+       |  205|#define XCTAssertThrowsSpecific(expression, exception_class, ...) \
+       |  206|    _XCTPrimitiveAssertThrowsSpecific(self, expression, @#expression, exception_class, __VA_ARGS__)
+       |  207|
+       |  208|/*!
+       |  209| * @define XCTAssertThrowsSpecificNamed(expression, exception_class, exception_name, ...)
+       |  210| * Generates a failure when ((\a expression) does not throw \a exception_class with \a exception_name).
+       |  211| * @param expression An expression.
+       |  212| * @param exception_class The class of the exception. Must be NSException, or a subclass of NSException.
+       |  213| * @param exception_name The name of the exception.
+       |  214| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  215|*/
+       |  216|#define XCTAssertThrowsSpecificNamed(expression, exception_class, exception_name, ...) \
+       |  217|    _XCTPrimitiveAssertThrowsSpecificNamed(self, expression, @#expression, exception_class, exception_name, __VA_ARGS__)
+       |  218|
+       |  219|/*!
+       |  220| * @define XCTAssertNoThrow(expression, ...)
+       |  221| * Generates a failure when ((\a expression) throws).
+       |  222| * @param expression An expression.
+       |  223| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  224|*/
+       |  225|#define XCTAssertNoThrow(expression, ...) \
+       |  226|    _XCTPrimitiveAssertNoThrow(self, expression, @#expression, __VA_ARGS__)
+       |  227|
+       |  228|/*!
+       |  229| * @define XCTAssertNoThrowSpecific(expression, exception_class, ...)
+       |  230| * Generates a failure when ((\a expression) throws \a exception_class).
+       |  231| * @param expression An expression.
+       |  232| * @param exception_class The class of the exception. Must be NSException, or a subclass of NSException.
+       |  233| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  234|*/
+       |  235|#define XCTAssertNoThrowSpecific(expression, exception_class, ...) \
+       |  236|    _XCTPrimitiveAssertNoThrowSpecific(self, expression, @#expression, exception_class, __VA_ARGS__)
+       |  237|
+       |  238|/*!
+       |  239| * @define XCTAssertNoThrowSpecificNamed(expression, exception_class, exception_name, ...)
+       |  240| * Generates a failure when ((\a expression) throws \a exception_class with \a exception_name).
+       |  241| * @param expression An expression.
+       |  242| * @param exception_class The class of the exception. Must be NSException, or a subclass of NSException.
+       |  243| * @param exception_name The name of the exception.
+       |  244| * @param ... An optional supplementary description of the failure. A literal NSString, optionally with string format specifiers. This parameter can be completely omitted.
+       |  245|*/
+       |  246|#define XCTAssertNoThrowSpecificNamed(expression, exception_class, exception_name, ...) \
+       |  247|    _XCTPrimitiveAssertNoThrowSpecificNamed(self, expression, @#expression, exception_class, exception_name, __VA_ARGS__)
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h:
+       |    1|//
+       |    2|// Copyright (c) 2013-2015 Apple Inc. All rights reserved.
+       |    3|//
+       |    4|// Copyright (c) 1997-2005, Sen:te (Sente SA).  All rights reserved.
+       |    5|//
+       |    6|// Use of this source code is governed by the following license:
+       |    7|// 
+       |    8|// Redistribution and use in source and binary forms, with or without modification, 
+       |    9|// are permitted provided that the following conditions are met:
+       |   10|// 
+       |   11|// (1) Redistributions of source code must retain the above copyright notice, 
+       |   12|// this list of conditions and the following disclaimer.
+       |   13|// 
+       |   14|// (2) Redistributions in binary form must reproduce the above copyright notice,
+       |   15|// this list of conditions and the following disclaimer in the documentation 
+       |   16|// and/or other materials provided with the distribution.
+       |   17|// 
+       |   18|// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
+       |   19|// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+       |   20|// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+       |   21|// IN NO EVENT SHALL Sente SA OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+       |   22|// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+       |   23|// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+       |   24|// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+       |   25|// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+       |   26|// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+       |   27|// 
+       |   28|// Note: this license is equivalent to the FreeBSD license.
+       |   29|// 
+       |   30|// This notice may not be removed from this file.
+       |   31|
+       |   32|#import <XCTest/XCTestCase.h>
+       |   33|#import <XCTest/XCTestDefines.h>
+       |   34|
+       |   35|NS_ASSUME_NONNULL_BEGIN
+       |   36|
+       |   37|@interface _XCTestCaseInterruptionException : NSException
+       |   38|@end
+       |   39|
+       |   40|XCT_EXPORT void _XCTFailureHandler(XCTestCase *test, BOOL expected, const char *filePath, NSUInteger lineNumber, NSString *condition, NSString * __nullable format, ...) NS_FORMAT_FUNCTION(6,7);
+       |   41|
+       |   42|XCT_EXPORT void _XCTPreformattedFailureHandler(XCTestCase *test, BOOL expected, NSString *filePath, NSUInteger lineNumber, NSString *condition, NSString *message);
+       |   43|
+      0|   44|#define _XCTRegisterFailure(test, condition, ...) \
+      0|   45|({ \
+      0|   46|    _XCTFailureHandler(test, YES, __FILE__, __LINE__, condition, @"" __VA_ARGS__); \
+      0|   47|})
+       |   48|
+      2|   49|#define _XCTRegisterUnexpectedFailure(test, condition, ...) \
+      2|   50|({ \
+      2|   51|_XCTFailureHandler(test, NO, __FILE__, __LINE__, condition, @"" __VA_ARGS__); \
+      2|   52|})
+       |   53|
+       |   54|#pragma mark -
+       |   55|
+       |   56|typedef NS_ENUM(NSUInteger, _XCTAssertionType) {
+       |   57|    _XCTAssertion_Fail,
+       |   58|    _XCTAssertion_Nil,
+       |   59|    _XCTAssertion_NotNil,
+       |   60|    _XCTAssertion_EqualObjects,
+       |   61|    _XCTAssertion_NotEqualObjects,
+       |   62|    _XCTAssertion_Equal,
+       |   63|    _XCTAssertion_NotEqual,
+       |   64|    _XCTAssertion_EqualWithAccuracy,
+       |   65|    _XCTAssertion_NotEqualWithAccuracy,
+       |   66|    _XCTAssertion_GreaterThan,
+       |   67|    _XCTAssertion_GreaterThanOrEqual,
+       |   68|    _XCTAssertion_LessThan,
+       |   69|    _XCTAssertion_LessThanOrEqual,
+       |   70|    _XCTAssertion_True,
+       |   71|    _XCTAssertion_False,
+       |   72|    _XCTAssertion_Throws,
+       |   73|    _XCTAssertion_ThrowsSpecific,
+       |   74|    _XCTAssertion_ThrowsSpecificNamed,
+       |   75|    _XCTAssertion_NoThrow,
+       |   76|    _XCTAssertion_NoThrowSpecific,
+       |   77|    _XCTAssertion_NoThrowSpecificNamed,
+       |   78|};
+       |   79|
+       |   80|XCT_EXPORT NSString * _XCTFailureFormat (_XCTAssertionType assertionType, NSUInteger formatIndex);
+       |   81|
+       |   82|#define _XCTFailureDescription(assertion_type, format_index, ...) \
+       |   83|({ \
+       |   84|    _Pragma("clang diagnostic push") \
+       |   85|    _Pragma("clang diagnostic ignored \"-Wformat-nonliteral\"") \
+       |   86|    [NSString stringWithFormat:_XCTFailureFormat(assertion_type, format_index), @"" __VA_ARGS__]; \
+       |   87|    _Pragma("clang diagnostic pop") \
+       |   88|})
+       |   89|
+       |   90|#pragma mark -
+       |   91|
+       |   92|XCT_EXPORT NSString * _XCTDescriptionForValue (NSValue *value);
+       |   93|
+       |   94|NS_ASSUME_NONNULL_END
+       |   95|
+       |   96|#pragma mark -
+       |   97|
+       |   98|#define _XCTPrimitiveFail(test, ...) \
+       |   99|({ \
+       |  100|    _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Fail, 0), __VA_ARGS__); \
+       |  101|})
+       |  102|
+       |  103|#define _XCTPrimitiveAssertNil(test, expression, expressionStr, ...) \
+       |  104|({ \
+       |  105|    @try { \
+       |  106|        id expressionValue = (expression); \
+       |  107|        if (expressionValue != nil) { \
+       |  108|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Nil, 0, expressionStr, expressionValue), __VA_ARGS__); \
+       |  109|        } \
+       |  110|    } \
+       |  111|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  112|    @catch (NSException *exception) { \
+       |  113|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_Nil, 1, expressionStr, [exception reason]), __VA_ARGS__); \
+       |  114|    } \
+       |  115|    @catch (...) { \
+       |  116|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_Nil, 2, expressionStr), __VA_ARGS__); \
+       |  117|    } \
+       |  118|})
+       |  119|
+       |  120|#define _XCTPrimitiveAssertNotNil(test, expression, expressionStr, ...) \
+       |  121|({ \
+       |  122|    @try { \
+       |  123|        id expressionValue = (expression); \
+       |  124|        if (expressionValue == nil) { \
+       |  125|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NotNil, 0, expressionStr), __VA_ARGS__); \
+       |  126|        } \
+       |  127|    } \
+       |  128|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  129|    @catch (NSException *exception) { \
+       |  130|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotNil, 1, expressionStr, [exception reason]), __VA_ARGS__); \
+       |  131|    } \
+       |  132|    @catch (...) { \
+       |  133|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotNil, 2, expressionStr), __VA_ARGS__); \
+       |  134|    } \
+       |  135|})
+       |  136|
+      1|  137|#define _XCTPrimitiveAssertTrue(test, expression, expressionStr, ...) \
+      1|  138|({ \
+      1|  139|    @try { \
+      1|  140|        BOOL expressionValue = !!(expression); \
+      1|  141|        if (!expressionValue) { \
+      0|  142|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_True, 0, expressionStr), __VA_ARGS__); \
+      0|  143|        } \
+      1|  144|    } \
+      1|  145|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+      1|  146|    @catch (NSException *exception) { \
+      1|  147|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_True, 1, expressionStr, [exception reason]), __VA_ARGS__); \
+      1|  148|    } \
+      1|  149|    @catch (...) { \
+      1|  150|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_True, 2, expressionStr), __VA_ARGS__); \
+      1|  151|    } \
+      1|  152|})
+       |  153|
+       |  154|#define _XCTPrimitiveAssertFalse(test, expression, expressionStr, ...) \
+       |  155|({ \
+       |  156|    @try { \
+       |  157|        BOOL expressionValue = !!(expression); \
+       |  158|        if (expressionValue) { \
+       |  159|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_False, 0, expressionStr), __VA_ARGS__); \
+       |  160|        } \
+       |  161|    } \
+       |  162|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  163|    @catch (NSException *exception) { \
+       |  164|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_False, 1, expressionStr, [exception reason]), __VA_ARGS__); \
+       |  165|    } \
+       |  166|    @catch (...) { \
+       |  167|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_False, 2, expressionStr), __VA_ARGS__); \
+       |  168|    } \
+       |  169|})
+       |  170|
+       |  171|#define _XCTPrimitiveAssertEqualObjects(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  172|({ \
+       |  173|    @try { \
+       |  174|        id expressionValue1 = (expression1); \
+       |  175|        id expressionValue2 = (expression2); \
+       |  176|        if ((expressionValue1 != expressionValue2) && ![expressionValue1 isEqual:expressionValue2]) { \
+       |  177|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_EqualObjects, 0, expressionStr1, expressionStr2, expressionValue1, expressionValue2), __VA_ARGS__); \
+       |  178|        } \
+       |  179|    } \
+       |  180|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  181|    @catch (NSException *exception) { \
+       |  182|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_EqualObjects, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  183|    } \
+       |  184|    @catch (...) { \
+       |  185|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_EqualObjects, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  186|    } \
+       |  187|})
+       |  188|
+       |  189|#define _XCTPrimitiveAssertNotEqualObjects(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  190|({ \
+       |  191|    @try { \
+       |  192|        id expressionValue1 = (expression1); \
+       |  193|        id expressionValue2 = (expression2); \
+       |  194|        if ((expressionValue1 == expressionValue2) || [expressionValue1 isEqual:expressionValue2]) { \
+       |  195|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualObjects, 0, expressionStr1, expressionStr2, expressionValue1, expressionValue2), __VA_ARGS__); \
+       |  196|        } \
+       |  197|    } \
+       |  198|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  199|    @catch (NSException *exception) { \
+       |  200|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualObjects, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  201|    } \
+       |  202|    @catch (...) { \
+       |  203|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualObjects, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  204|    } \
+       |  205|})
+       |  206|
+       |  207|#define _XCTPrimitiveAssertEqual(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  208|({ \
+       |  209|    @try { \
+       |  210|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  211|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  212|        if (expressionValue1 != expressionValue2) { \
+       |  213|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  214|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  215|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Equal, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  216|        } \
+       |  217|    } \
+       |  218|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  219|    @catch (NSException *exception) { \
+       |  220|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_Equal, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  221|    } \
+       |  222|    @catch (...) { \
+       |  223|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_Equal, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  224|    } \
+       |  225|})
+       |  226|
+       |  227|#define _XCTPrimitiveAssertNotEqual(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  228|({ \
+       |  229|    @try { \
+       |  230|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  231|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  232|        if (expressionValue1 == expressionValue2) { \
+       |  233|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  234|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  235|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqual, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  236|        } \
+       |  237|    } \
+       |  238|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  239|    @catch (NSException *exception) { \
+       |  240|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqual, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  241|    } \
+       |  242|    @catch (...) { \
+       |  243|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqual, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  244|    } \
+       |  245|})
+       |  246|
+       |  247|#define _XCTPrimitiveAssertEqualWithAccuracy(test, expression1, expressionStr1, expression2, expressionStr2, accuracy, accuracyStr, ...) \
+       |  248|({ \
+       |  249|    @try { \
+       |  250|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  251|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  252|        __typeof__(accuracy) accuracyValue = (accuracy); \
+       |  253|        if (isnan(expressionValue1) || isnan(expressionValue2) || ((MAX(expressionValue1, expressionValue2) - MIN(expressionValue1, expressionValue2)) > accuracyValue)) { \
+       |  254|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  255|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  256|            NSValue *accuracyBox = [NSValue value:&accuracyValue withObjCType:@encode(__typeof__(accuracy))]; \
+       |  257|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_EqualWithAccuracy, 0, expressionStr1, expressionStr2, accuracyStr, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2), _XCTDescriptionForValue(accuracyBox)), __VA_ARGS__); \
+       |  258|        } \
+       |  259|    } \
+       |  260|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  261|    @catch (NSException *exception) { \
+       |  262|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_EqualWithAccuracy, 1, expressionStr1, expressionStr2, accuracyStr, [exception reason]), __VA_ARGS__); \
+       |  263|    } \
+       |  264|    @catch (...) { \
+       |  265|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_EqualWithAccuracy, 2, expressionStr1, expressionStr2, accuracyStr), __VA_ARGS__); \
+       |  266|    } \
+       |  267|})
+       |  268|
+       |  269|#define _XCTPrimitiveAssertNotEqualWithAccuracy(test, expression1, expressionStr1, expression2, expressionStr2, accuracy, accuracyStr, ...) \
+       |  270|({ \
+       |  271|    @try { \
+       |  272|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  273|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  274|        __typeof__(accuracy) accuracyValue = (accuracy); \
+       |  275|        if (!isnan(expressionValue1) && !isnan(expressionValue2) && ((MAX(expressionValue1, expressionValue2) - MIN(expressionValue1, expressionValue2)) <= accuracyValue)) { \
+       |  276|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  277|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  278|            NSValue *accuracyBox = [NSValue value:&accuracyValue withObjCType:@encode(__typeof__(accuracy))]; \
+       |  279|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualWithAccuracy, 0, expressionStr1, expressionStr2, accuracyStr, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2), _XCTDescriptionForValue(accuracyBox)), __VA_ARGS__); \
+       |  280|        } \
+       |  281|    } \
+       |  282|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  283|    @catch (NSException *exception) { \
+       |  284|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualWithAccuracy, 1, expressionStr1, expressionStr2, accuracyStr, [exception reason]), __VA_ARGS__); \
+       |  285|    } \
+       |  286|    @catch (...) { \
+       |  287|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_NotEqualWithAccuracy, 2, expressionStr1, expressionStr2, accuracyStr), __VA_ARGS__); \
+       |  288|    } \
+       |  289|})
+       |  290|
+       |  291|#define _XCTPrimitiveAssertGreaterThan(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  292|({ \
+       |  293|    @try { \
+       |  294|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  295|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  296|        if (expressionValue1 <= expressionValue2) { \
+       |  297|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  298|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  299|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThan, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  300|        } \
+       |  301|    } \
+       |  302|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  303|    @catch (NSException *exception) { \
+       |  304|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThan, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  305|    } \
+       |  306|    @catch (...) { \
+       |  307|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThan, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  308|    } \
+       |  309|})
+       |  310|
+       |  311|#define _XCTPrimitiveAssertGreaterThanOrEqual(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  312|({ \
+       |  313|    @try { \
+       |  314|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  315|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  316|        if (expressionValue1 < expressionValue2) { \
+       |  317|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  318|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  319|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThanOrEqual, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  320|        } \
+       |  321|    } \
+       |  322|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  323|    @catch (NSException *exception) { \
+       |  324|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThanOrEqual, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  325|    } \
+       |  326|    @catch (...) { \
+       |  327|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_GreaterThanOrEqual, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  328|    } \
+       |  329|})
+       |  330|
+       |  331|#define _XCTPrimitiveAssertLessThan(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  332|({ \
+       |  333|    @try { \
+       |  334|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  335|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  336|        if (expressionValue1 >= expressionValue2) { \
+       |  337|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  338|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  339|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_LessThan, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  340|        } \
+       |  341|    } \
+       |  342|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  343|    @catch (NSException *exception) { \
+       |  344|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_LessThan, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  345|    } \
+       |  346|    @catch (...) { \
+       |  347|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_LessThan, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  348|    } \
+       |  349|})
+       |  350|
+       |  351|#define _XCTPrimitiveAssertLessThanOrEqual(test, expression1, expressionStr1, expression2, expressionStr2, ...) \
+       |  352|({ \
+       |  353|    @try { \
+       |  354|        __typeof__(expression1) expressionValue1 = (expression1); \
+       |  355|        __typeof__(expression2) expressionValue2 = (expression2); \
+       |  356|        if (expressionValue1 > expressionValue2) { \
+       |  357|            NSValue *expressionBox1 = [NSValue value:&expressionValue1 withObjCType:@encode(__typeof__(expression1))]; \
+       |  358|            NSValue *expressionBox2 = [NSValue value:&expressionValue2 withObjCType:@encode(__typeof__(expression2))]; \
+       |  359|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_LessThanOrEqual, 0, expressionStr1, expressionStr2, _XCTDescriptionForValue(expressionBox1), _XCTDescriptionForValue(expressionBox2)), __VA_ARGS__); \
+       |  360|        } \
+       |  361|    } \
+       |  362|    @catch (_XCTestCaseInterruptionException *interruption) { [interruption raise]; } \
+       |  363|    @catch (NSException *exception) { \
+       |  364|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_LessThanOrEqual, 1, expressionStr1, expressionStr2, [exception reason]), __VA_ARGS__); \
+       |  365|    } \
+       |  366|    @catch (...) { \
+       |  367|        _XCTRegisterUnexpectedFailure(test, _XCTFailureDescription(_XCTAssertion_LessThanOrEqual, 2, expressionStr1, expressionStr2), __VA_ARGS__); \
+       |  368|    } \
+       |  369|})
+       |  370|
+       |  371|#define _XCTPrimitiveAssertThrows(test, expression, expressionStr, ...) \
+       |  372|({ \
+       |  373|    BOOL __didThrow = NO; \
+       |  374|    @try { \
+       |  375|        (void)(expression); \
+       |  376|    } \
+       |  377|    @catch (...) { \
+       |  378|        __didThrow = YES; \
+       |  379|    } \
+       |  380|    if (!__didThrow) { \
+       |  381|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Throws, 0, expressionStr), __VA_ARGS__); \
+       |  382|    } \
+       |  383|})
+       |  384|
+       |  385|#define _XCTPrimitiveAssertThrowsSpecific(test, expression, expressionStr, exception_class, ...) \
+       |  386|({ \
+       |  387|    BOOL __didThrow = NO; \
+       |  388|    @try { \
+       |  389|        (void)(expression); \
+       |  390|    } \
+       |  391|    @catch (exception_class *exception) { \
+       |  392|        __didThrow = YES; \
+       |  393|    } \
+       |  394|    @catch (NSException *exception) { \
+       |  395|        __didThrow = YES; \
+       |  396|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecific, 0, expressionStr, @#exception_class, [exception class], [exception reason]), __VA_ARGS__); \
+       |  397|    } \
+       |  398|    @catch (...) { \
+       |  399|        __didThrow = YES; \
+       |  400|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecific, 1, expressionStr, @#exception_class), __VA_ARGS__); \
+       |  401|    } \
+       |  402|    if (!__didThrow) { \
+       |  403|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecific, 2, expressionStr, @#exception_class), __VA_ARGS__); \
+       |  404|    } \
+       |  405|})
+       |  406|
+       |  407|#define _XCTPrimitiveAssertThrowsSpecificNamed(test, expression, expressionStr, exception_class, exception_name, ...) \
+       |  408|({ \
+       |  409|    BOOL __didThrow = NO; \
+       |  410|    @try { \
+       |  411|        (void)(expression); \
+       |  412|    } \
+       |  413|    @catch (exception_class *exception) { \
+       |  414|        __didThrow = YES; \
+       |  415|        if (![exception_name isEqualToString:[exception name]]) { \
+       |  416|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecificNamed, 0, expressionStr, @#exception_class, exception_name, [exception class], [exception name], [exception reason]), __VA_ARGS__); \
+       |  417|        } \
+       |  418|    } \
+       |  419|    @catch (NSException *exception) { \
+       |  420|        __didThrow = YES; \
+       |  421|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecificNamed, 1, expressionStr, @#exception_class, exception_name, [exception class], [exception name], [exception reason]), __VA_ARGS__); \
+       |  422|    } \
+       |  423|    @catch (...) { \
+       |  424|        __didThrow = YES; \
+       |  425|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecificNamed, 2, expressionStr, @#exception_class, exception_name), __VA_ARGS__); \
+       |  426|    } \
+       |  427|    if (!__didThrow) { \
+       |  428|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_ThrowsSpecificNamed, 3, expressionStr, @#exception_class, exception_name), __VA_ARGS__); \
+       |  429|    } \
+       |  430|})
+       |  431|
+       |  432|#define _XCTPrimitiveAssertNoThrow(test, expression, expressionStr, ...) \
+       |  433|({ \
+       |  434|    @try { \
+       |  435|        (void)(expression); \
+       |  436|    } \
+       |  437|    @catch (NSException *exception) { \
+       |  438|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NoThrow, 0, expressionStr, [exception reason]), __VA_ARGS__); \
+       |  439|    } \
+       |  440|    @catch (...) { \
+       |  441|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NoThrow, 1, expressionStr), __VA_ARGS__); \
+       |  442|    } \
+       |  443|})
+       |  444|
+       |  445|#define _XCTPrimitiveAssertNoThrowSpecific(test, expression, expressionStr, exception_class, ...) \
+       |  446|({ \
+       |  447|    @try { \
+       |  448|        (void)(expression); \
+       |  449|    } \
+       |  450|    @catch (exception_class *exception) { \
+       |  451|        _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NoThrowSpecific, 0, expressionStr, @#exception_class, [exception class], [exception reason]), __VA_ARGS__); \
+       |  452|    } \
+       |  453|    @catch (...) { \
+       |  454|        ; \
+       |  455|    } \
+       |  456|})
+       |  457|
+       |  458|#define _XCTPrimitiveAssertNoThrowSpecificNamed(test, expression, expressionStr, exception_class, exception_name, ...) \
+       |  459|({ \
+       |  460|    @try { \
+       |  461|        (void)(expression); \
+       |  462|    } \
+       |  463|    @catch (exception_class *exception) { \
+       |  464|        if ([exception_name isEqualToString:[exception name]]) { \
+       |  465|            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_NoThrowSpecificNamed, 0, expressionStr, @#exception_class, exception_name, [exception class], [exception name], [exception reason]), __VA_ARGS__); \
+       |  466|        } \
+       |  467|    } \
+       |  468|    @catch (...) { \
+       |  469|        ; \
+       |  470|    } \
+       |  471|})
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/objc/objc.h:
+       |    1|/*
+       |    2| * Copyright (c) 1999-2007 Apple Inc.  All Rights Reserved.
+       |    3| * 
+       |    4| * @APPLE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * This file contains Original Code and/or Modifications of Original Code
+       |    7| * as defined in and that are subject to the Apple Public Source License
+       |    8| * Version 2.0 (the 'License'). You may not use this file except in
+       |    9| * compliance with the License. Please obtain a copy of the License at
+       |   10| * http://www.opensource.apple.com/apsl/ and read it before using this
+       |   11| * file.
+       |   12| * 
+       |   13| * The Original Code and all software distributed under the License are
+       |   14| * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   15| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   16| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   17| * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+       |   18| * Please see the License for the specific language governing rights and
+       |   19| * limitations under the License.
+       |   20| * 
+       |   21| * @APPLE_LICENSE_HEADER_END@
+       |   22| */
+       |   23|/*
+       |   24| *	objc.h
+       |   25| *	Copyright 1988-1996, NeXT Software, Inc.
+       |   26| */
+       |   27|
+       |   28|#ifndef _OBJC_OBJC_H_
+       |   29|#define _OBJC_OBJC_H_
+       |   30|
+       |   31|#include <sys/types.h>      // for __DARWIN_NULL
+       |   32|#include <Availability.h>
+       |   33|#include <objc/objc-api.h>
+       |   34|#include <stdbool.h>
+       |   35|
+       |   36|#if !OBJC_TYPES_DEFINED
+       |   37|/// An opaque type that represents an Objective-C class.
+       |   38|typedef struct objc_class *Class;
+       |   39|
+       |   40|/// Represents an instance of a class.
+       |   41|struct objc_object {
+       |   42|    Class isa  OBJC_ISA_AVAILABILITY;
+       |   43|};
+       |   44|
+       |   45|/// A pointer to an instance of a class.
+       |   46|typedef struct objc_object *id;
+       |   47|#endif
+       |   48|
+       |   49|/// An opaque type that represents a method selector.
+       |   50|typedef struct objc_selector *SEL;
+       |   51|
+       |   52|/// A pointer to the function of a method implementation. 
+       |   53|#if !OBJC_OLD_DISPATCH_PROTOTYPES
+       |   54|typedef void (*IMP)(void /* id, SEL, ... */ ); 
+       |   55|#else
+       |   56|typedef id (*IMP)(id, SEL, ...); 
+       |   57|#endif
+       |   58|
+       |   59|#define OBJC_BOOL_DEFINED
+       |   60|
+       |   61|/// Type to represent a boolean value.
+       |   62|#if (TARGET_OS_IPHONE && __LP64__)  ||  TARGET_OS_WATCH
+       |   63|#define OBJC_BOOL_IS_BOOL 1
+       |   64|typedef bool BOOL;
+       |   65|#else
+       |   66|#define OBJC_BOOL_IS_CHAR 1
+       |   67|typedef signed char BOOL; 
+       |   68|// BOOL is explicitly signed so @encode(BOOL) == "c" rather than "C" 
+       |   69|// even if -funsigned-char is used.
+       |   70|#endif
+       |   71|
+       |   72|#if __has_feature(objc_bool)
+      0|   73|#define YES __objc_yes
+      2|   74|#define NO  __objc_no
+       |   75|#else
+       |   76|#define YES ((BOOL)1)
+       |   77|#define NO  ((BOOL)0)
+       |   78|#endif
+       |   79|
+       |   80|#ifndef Nil
+       |   81|# if __has_feature(cxx_nullptr)
+       |   82|#   define Nil nullptr
+       |   83|# else
+       |   84|#   define Nil __DARWIN_NULL
+       |   85|# endif
+       |   86|#endif
+       |   87|
+       |   88|#ifndef nil
+       |   89|# if __has_feature(cxx_nullptr)
+       |   90|#   define nil nullptr
+       |   91|# else
+       |   92|#   define nil __DARWIN_NULL
+       |   93|# endif
+       |   94|#endif
+       |   95|
+       |   96|#ifndef __strong
+       |   97|# if !__has_feature(objc_arc)
+       |   98|#   define __strong /* empty */
+       |   99|# endif
+       |  100|#endif
+       |  101|
+       |  102|#ifndef __unsafe_unretained
+       |  103|# if !__has_feature(objc_arc)
+       |  104|#   define __unsafe_unretained /* empty */
+       |  105|# endif
+       |  106|#endif
+       |  107|
+       |  108|#ifndef __autoreleasing
+       |  109|# if !__has_feature(objc_arc)
+       |  110|#   define __autoreleasing /* empty */
+       |  111|# endif
+       |  112|#endif
+       |  113|
+       |  114|
+       |  115|/** 
+       |  116| * Returns the name of the method specified by a given selector.
+       |  117| * 
+       |  118| * @param sel A pointer of type \c SEL. Pass the selector whose name you wish to determine.
+       |  119| * 
+       |  120| * @return A C string indicating the name of the selector.
+       |  121| */
+       |  122|OBJC_EXPORT const char *sel_getName(SEL sel)
+       |  123|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  124|
+       |  125|/** 
+       |  126| * Registers a method with the Objective-C runtime system, maps the method 
+       |  127| * name to a selector, and returns the selector value.
+       |  128| * 
+       |  129| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  130| * 
+       |  131| * @return A pointer of type SEL specifying the selector for the named method.
+       |  132| * 
+       |  133| * @note You must register a method name with the Objective-C runtime system to obtain the
+       |  134| *  method’s selector before you can add the method to a class definition. If the method name
+       |  135| *  has already been registered, this function simply returns the selector.
+       |  136| */
+       |  137|OBJC_EXPORT SEL sel_registerName(const char *str)
+       |  138|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  139|
+       |  140|/** 
+       |  141| * Returns the class name of a given object.
+       |  142| * 
+       |  143| * @param obj An Objective-C object.
+       |  144| * 
+       |  145| * @return The name of the class of which \e obj is an instance.
+       |  146| */
+       |  147|OBJC_EXPORT const char *object_getClassName(id obj)
+       |  148|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  149|
+       |  150|/** 
+       |  151| * Returns a pointer to any extra bytes allocated with an instance given object.
+       |  152| * 
+       |  153| * @param obj An Objective-C object.
+       |  154| * 
+       |  155| * @return A pointer to any extra bytes allocated with \e obj. If \e obj was
+       |  156| *   not allocated with any extra bytes, then dereferencing the returned pointer is undefined.
+       |  157| * 
+       |  158| * @note This function returns a pointer to any extra bytes allocated with the instance
+       |  159| *  (as specified by \c class_createInstance with extraBytes>0). This memory follows the
+       |  160| *  object's ordinary ivars, but may not be adjacent to the last ivar.
+       |  161| * @note The returned pointer is guaranteed to be pointer-size aligned, even if the area following
+       |  162| *  the object's last ivar is less aligned than that. Alignment greater than pointer-size is never
+       |  163| *  guaranteed, even if the area following the object's last ivar is more aligned than that.
+       |  164| * @note In a garbage-collected environment, the memory is scanned conservatively.
+       |  165| */
+       |  166|OBJC_EXPORT void *object_getIndexedIvars(id obj)
+       |  167|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  168|
+       |  169|/** 
+       |  170| * Identifies a selector as being valid or invalid.
+       |  171| * 
+       |  172| * @param sel The selector you want to identify.
+       |  173| * 
+       |  174| * @return YES if selector is valid and has a function implementation, NO otherwise. 
+       |  175| * 
+       |  176| * @warning On some platforms, an invalid reference (to invalid memory addresses) can cause
+       |  177| *  a crash. 
+       |  178| */
+       |  179|OBJC_EXPORT BOOL sel_isMapped(SEL sel)
+       |  180|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  181|
+       |  182|/** 
+       |  183| * Registers a method name with the Objective-C runtime system.
+       |  184| * 
+       |  185| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  186| * 
+       |  187| * @return A pointer of type SEL specifying the selector for the named method.
+       |  188| * 
+       |  189| * @note The implementation of this method is identical to the implementation of \c sel_registerName.
+       |  190| * @note Prior to OS X version 10.0, this method tried to find the selector mapped to the given name
+       |  191| *  and returned \c NULL if the selector was not found. This was changed for safety, because it was
+       |  192| *  observed that many of the callers of this function did not check the return value for \c NULL.
+       |  193| */
+       |  194|OBJC_EXPORT SEL sel_getUid(const char *str)
+       |  195|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  196|
+       |  197|typedef const void* objc_objectptr_t;
+       |  198|
+       |  199|
+       |  200|// Obsolete ARC conversions.
+       |  201|
+       |  202|OBJC_EXPORT id objc_retainedObject(objc_objectptr_t obj)
+       |  203|    OBJC_UNAVAILABLE("use CFBridgingRelease() or a (__bridge_transfer id) cast instead");
+       |  204|OBJC_EXPORT id objc_unretainedObject(objc_objectptr_t obj)
+       |  205|    OBJC_UNAVAILABLE("use a (__bridge id) cast instead");
+       |  206|OBJC_EXPORT objc_objectptr_t objc_unretainedPointer(id obj)
+       |  207|    OBJC_UNAVAILABLE("use a __bridge cast instead");
+       |  208|
+       |  209|
+       |  210|#if !__OBJC2__
+       |  211|
+       |  212|// The following declarations are provided here for source compatibility.
+       |  213|
+       |  214|#if defined(__LP64__)
+       |  215|    typedef long arith_t;
+       |  216|    typedef unsigned long uarith_t;
+       |  217|#   define ARITH_SHIFT 32
+       |  218|#else
+       |  219|    typedef int arith_t;
+       |  220|    typedef unsigned uarith_t;
+       |  221|#   define ARITH_SHIFT 16
+       |  222|#endif
+       |  223|
+       |  224|typedef char *STR;
+       |  225|
+       |  226|#define ISSELECTOR(sel) sel_isMapped(sel)
+       |  227|#define SELNAME(sel)	sel_getName(sel)
+       |  228|#define SELUID(str)	sel_getUid(str)
+       |  229|#define NAMEOF(obj)     object_getClassName(obj)
+       |  230|#define IV(obj)         object_getIndexedIvars(obj)
+       |  231|
+       |  232|#endif
+       |  233|
+       |  234|#endif  /* _OBJC_OBJC_H_ */
+
+/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartViewTests/EWChartViewTests.m:
+       |    1|//
+       |    2|//  EWChartViewTests.m
+       |    3|//  EWChartViewTests
+       |    4|//
+       |    5|//  Created by wansy on 15/8/4.
+       |    6|//  Copyright (c) 2015年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import <UIKit/UIKit.h>
+       |   10|#import <XCTest/XCTest.h>
+       |   11|
+       |   12|@interface EWChartViewTests : XCTestCase
+       |   13|
+       |   14|@end
+       |   15|
+       |   16|@implementation EWChartViewTests
+       |   17|
+      2|   18|- (void)setUp {
+      2|   19|    [super setUp];
+      2|   20|    // Put setup code here. This method is called before the invocation of each test method in the class.
+      2|   21|}
+       |   22|
+      2|   23|- (void)tearDown {
+      2|   24|    // Put teardown code here. This method is called after the invocation of each test method in the class.
+      2|   25|    [super tearDown];
+      2|   26|}
+       |   27|
+      1|   28|- (void)testExample {
+      1|   29|    // This is an example of a functional test case.
+      1|   30|    XCTAssert(YES, @"Pass");
+      1|   31|}
+       |   32|
+      1|   33|- (void)testPerformanceExample {
+      1|   34|    // This is an example of a performance test case.
+     10|   35|    [self measureBlock:^{
+     10|   36|        // Put the code you want to measure the time of here.
+     10|   37|    }];
+      1|   38|}
+       |   39|
+       |   40|@end
+

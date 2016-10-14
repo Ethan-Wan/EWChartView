@@ -1,0 +1,198 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWLineCharView.h
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWLineCharView.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWLineCharView.gcda
+        -:    0:Runs:12
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  EWLineCharView.h
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/5.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "EWChartView.h"
+        -:   10:@class EWLineCharView;
+        -:   11:
+        -:   12:@protocol EWLineChartViewDataSource <EWChartViewDataSource>
+        -:   13:
+        -:   14:@required
+        -:   15:
+        -:   16:/**
+        -:   17: *  给个折线图的数据的数量
+        -:   18: *
+        -:   19: *  @param lineChartView 当前折线图
+        -:   20: *  @param lineIndex     第几条折线的索引
+        -:   21: *
+        -:   22: *  @return 返回不同折线的数据个数
+        -:   23: */
+        -:   24:- (NSUInteger)lineChartView:(EWLineCharView *)lineChartView numberOfLinesAtLineIndex:(NSUInteger)lineIndex;
+        -:   25:
+        -:   26:/**
+        -:   27: *  不同的折线上数据的具体值
+        -:   28: *
+        -:   29: *  @param lineChartView   当前折线图
+        -:   30: *  @param horizontalIndex x轴的索引
+        -:   31: *  @param lineIndex       第几条折线的索引
+        -:   32: *
+        -:   33: *  @return 返回不同的折线上数据的具体值
+        -:   34: */
+        -:   35:- (CGFloat)lineChartView:(EWLineCharView *)lineChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+        -:   36:
+        -:   37:@optional
+        -:   38:
+        -:   39:/**
+        -:   40: *  折线图的个数（默认是1条折线图）
+        -:   41: *
+        -:   42: *  @param lineChartView 当前折线图
+        -:   43: *
+        -:   44: *  @return 返回折线图数量
+        -:   45: */
+        -:   46:- (NSUInteger)numberOfLinesInLineChartView:(EWLineCharView *)lineChartView;
+        -:   47:
+        -:   48:/**
+        -:   49: *  是否显示折线图上的圆点
+        -:   50: *
+        -:   51: *  @param lineChartView 当前折线图
+        -:   52: *  @param lineIndex     第几条折线的索引
+        -:   53: *
+        -:   54: *  @return YES／NO （默认为NO）
+        -:   55: */
+        -:   56:- (BOOL)lineChartView:(EWLineCharView *)lineChartView showsCircleForLineAtLineIndex:(NSUInteger)lineIndex;
+        -:   57:
+        -:   58:/**
+        -:   59: *  是否是光滑的线段（默认是折线）
+        -:   60: *
+        -:   61: *  @param lineChartView 当前折线图
+        -:   62: *  @param lineIndex     第几条折线的索引
+        -:   63: *
+        -:   64: *  @return YES／NO （默认为NO）
+        -:   65: */
+        -:   66://- (BOOL)lineChartView:(EWLineCharView *)lineChartView smoothLineAtLineIndex:(NSUInteger)lineIndex;
+        -:   67:
+        -:   68:/**
+        -:   69: *  水平坐标上的坐标值
+        -:   70: *
+        -:   71: *  @param lineChartView   当前折线图
+        -:   72: *  @param horizontalIndex x轴的索引
+        -:   73: *
+        -:   74: *  @return 返回坐标值的text
+        -:   75: */
+        -:   76:- (NSString *)lineChartView:(EWLineCharView *)lineChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex;
+        -:   77:
+        -:   78:@end
+        -:   79:
+        -:   80:@protocol EWLineChartViewDelegate <EWChartViewDelegate>
+        -:   81:
+        -:   82:@optional
+        -:   83:
+        -:   84:/**
+        -:   85: *  选择折线图
+        -:   86: *
+        -:   87: *  @param lineChartView   当前折线图
+        -:   88: *  @param horizontalIndex x轴的索引
+        -:   89: *  @param lineIndex       第几条折线的索引
+        -:   90: *  @param touchPoint      触摸点的坐标
+        -:   91: */
+        -:   92://- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex touchPoint:(CGPoint)touchPoint;
+        -:   93:
+        -:   94:/**
+        -:   95: *  选择折线图
+        -:   96: *
+        -:   97: *  @param lineChartView   当前折线图
+        -:   98: *  @param horizontalIndex x轴的索引
+        -:   99: *  @param lineIndex       第几条折线的索引
+        -:  100: */
+        -:  101://- (void)lineChartView:(EWLineCharView *)lineChartView didSelectLineAtIndex:(NSUInteger)lineIndex horizontalIndex:(NSUInteger)horizontalIndex;
+        -:  102:
+        -:  103:/**
+        -:  104: *  取消选择
+        -:  105: *
+        -:  106: *  @param lineChartView 当前折线图
+        -:  107: */
+        -:  108:- (void)didDeselectLineInLineChartView:(EWLineCharView *)lineChartView;
+        -:  109:
+        -:  110:/**
+        -:  111: *  不同线段的颜色
+        -:  112: *
+        -:  113: *  @param lineChartView 当前折线图
+        -:  114: *  @param lineIndex     第几条折线的索引
+        -:  115: *
+        -:  116: *  @return 返回不同线段的颜色
+        -:  117: */
+        -:  118:- (UIColor *)lineChartView:(EWLineCharView *)lineChartView colorForLineAtLineIndex:(NSUInteger)lineIndex;
+        -:  119:
+        -:  120:/**
+        -:  121: *  不同线段的宽度
+        -:  122: *
+        -:  123: *  @param lineChartView 当前折线图
+        -:  124: *  @param lineIndex     第几条折线的索引
+        -:  125: *
+        -:  126: *  @return 返回不同线段的宽度
+        -:  127: */
+        -:  128:- (CGFloat)lineChartView:(EWLineCharView *)lineChartView widthForLineAtLineIndex:(NSUInteger)lineIndex;
+        -:  129:
+        -:  130:
+        -:  131:/**
+        -:  132: *  圆或圆环的半径
+        -:  133: *
+        -:  134: *  @param lineChartView   当前折线图
+        -:  135: *  @param horizontalIndex x轴的索引
+        -:  136: *  @param lineIndex       第几条折线的索引
+        -:  137: *
+        -:  138: *  @return 返回圆或圆环的半径
+        -:  139: */
+        -:  140:- (CGFloat)lineChartView:(EWLineCharView *)lineChartView circleRadiustAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+        -:  141:
+        -:  142:/**
+        -:  143: *  显示每个点的具体数据值
+        -:  144: *
+        -:  145: *  @param lineChartView   当前折线图
+        -:  146: *  @param horizontalIndex x轴的索引
+        -:  147: *  @param lineIndex       第几条折线的索引
+        -:  148: *
+        -:  149: *  @return YES/NO
+        -:  150: */
+        -:  151:- (BOOL)lineChartView:(EWLineCharView *)lineChartView showLineValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+        -:  152:
+        -:  153:/**
+        -:  154: *  是否显示折线图上的空心圆（前提要先显示折线图上的圆点）
+        -:  155: *
+        -:  156: *  @param lineChartView   当前折线图
+        -:  157: *  @param horizontalIndex x轴的索引
+        -:  158: *  @param lineIndex       第几条折线的索引
+        -:  159: *
+        -:  160: *  @return YES／NO （默认为NO）
+        -:  161: */
+        -:  162:- (BOOL)lineChartView:(EWLineCharView *)lineChartView isHollowCircleForHorizontalIndex:(NSUInteger)horizontalIndex atLineIndex:(NSUInteger)lineIndex;
+        -:  163:
+        -:  164:@end
+        -:  165:
+        -:  166:@interface EWLineCharView : EWChartView
+        -:  167:
+        -:  168:@property (nonatomic, weak) id<EWLineChartViewDataSource> dataSource;
+        -:  169:@property (nonatomic, weak) id<EWLineChartViewDelegate> delegate;
+        -:  170:
+        -:  171:/** 是否显示坐标网格 */
+function -[EWLineCharView showGrid] called 7392 returned 100% blocks executed 100%
+function -[EWLineCharView setShowGrid:] called 2112 returned 100% blocks executed 100%
+     9504:  172:@property (nonatomic, assign) BOOL showGrid  ; //default NO
+unconditional  0 taken 7392
+unconditional  1 taken 2112
+        -:  173:
+        -:  174:/** 是否显示折线图上的具体数值 */
+function -[EWLineCharView showLineValues] called 15840 returned 100% blocks executed 100%
+function -[EWLineCharView setShowLineValues:] called 1056 returned 100% blocks executed 100%
+    16896:  175:@property (nonatomic, assign) BOOL showLineValues; //default NO
+unconditional  0 taken 15840
+unconditional  1 taken 1056
+        -:  176:
+        -:  177:/** 折线上的点是否是空心圆 */
+function -[EWLineCharView isHollowCircle] called 0 returned 0% blocks executed 0%
+function -[EWLineCharView setIsHollowCircle:] called 1056 returned 100% blocks executed 100%
+     1056:  178:@property (nonatomic, assign) BOOL isHollowCircle; //default NO
+unconditional  0 never executed
+unconditional  1 taken 1056
+        -:  179:
+        -:  180:-(void)reloadData;
+        -:  181:@end

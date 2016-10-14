@@ -1,0 +1,232 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/SegmentView/EWSegmentView.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWSegmentView.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWSegmentView.gcda
+        -:    0:Runs:10
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  EWSegmentView.m
+        -:    3://  EWSegmentView
+        -:    4://
+        -:    5://  Created by wansy on 15/7/8.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "EWSegmentView.h"
+        -:   10:#import "EWSegmentHeadView.h"
+        -:   11:
+        -:   12:@interface EWSegmentView()<UIPageViewControllerDataSource,UIPageViewControllerDelegate>
+        -:   13:
+function -[EWSegmentView setPageViewController:] called 0 returned 0% blocks executed 0%
+    #####:   14:@property (strong, nonatomic) UIPageViewController *pageViewController;
+unconditional  0 never executed
+        -:   15:
+        -:   16:@end
+        -:   17:
+function -[EWSegmentView .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   18:@implementation EWSegmentView
+unconditional  0 never executed
+        -:   19:
+function -[EWSegmentView initWithFrame:] called 0 returned 0% blocks executed 0%
+        -:   20:-(instancetype)initWithFrame:(CGRect)frame
+        -:   21:{
+    #####:   22:    if (self = [super initWithFrame:frame]) {
+branch  0 never executed
+branch  1 never executed
+    #####:   23:        [self setupPageView];
+    #####:   24:    }
+unconditional  0 never executed
+    #####:   25:    return self;
+    #####:   26:}
+unconditional  0 never executed
+        -:   27:
+function -[EWSegmentView initWithCoder:] called 272 returned 100% blocks executed 100%
+        -:   28:-(id)initWithCoder:(NSCoder *)aDecoder
+        -:   29:{
+      272:   30:    if (self = [super initWithCoder:aDecoder]) {
+branch  0 taken 272
+branch  1 taken 0
+      272:   31:        [self setupPageView];
+      272:   32:    }
+unconditional  0 taken 272
+      272:   33:    return self;
+      272:   34:}
+unconditional  0 taken 272
+        -:   35:
+        -:   36:#pragma mark - setup
+        -:   37:
+function -[EWSegmentView setupPageView] called 272 returned 100% blocks executed 100%
+        -:   38:-(void)setupPageView
+        -:   39:{
+      272:   40:    [self addSubview:self.pageViewController.view];
+      272:   41:}
+unconditional  0 taken 272
+        -:   42:
+        -:   43:#pragma mark - private method
+        -:   44:
+function -[EWSegmentView getTitles] called 272 returned 100% blocks executed 86%
+        -:   45:-(NSMutableArray *)getTitles
+        -:   46:{
+      272:   47:    NSMutableArray *titles = [NSMutableArray array];
+     2176:   48:    for (UIViewController *vc in self.subViewControllers) {
+branch  0 taken 272
+branch  1 taken 0
+unconditional  2 taken 272
+branch  3 taken 0
+branch  4 taken 816
+unconditional  5 never executed
+     4080:   49:        [titles addObject:vc.title? vc.title:@"title"];
+branch  0 taken 816
+branch  1 taken 0
+unconditional  2 taken 816
+unconditional  3 never executed
+branch  4 taken 816
+branch  5 taken 0
+unconditional  6 taken 816
+     2176:   50:    }
+unconditional  0 taken 816
+branch  1 taken 544
+branch  2 taken 272
+branch  3 taken 0
+branch  4 taken 272
+unconditional  5 taken 272
+      272:   51:    return [titles copy];
+      272:   52:}
+unconditional  0 taken 272
+        -:   53:
+function -[EWSegmentView selectedController] called 0 returned 0% blocks executed 0%
+        -:   54:- (UIViewController *)selectedController
+        -:   55:{
+    #####:   56:    return self.subViewControllers[[self.headView selectedButtonIndex]];
+unconditional  0 never executed
+        -:   57:}
+        -:   58:
+        -:   59:#pragma mark - UIPageViewControllerDataSource
+        -:   60:
+function -[EWSegmentView pageViewController:viewControllerBeforeViewController:] called 528 returned 100% blocks executed 100%
+        -:   61:- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+        -:   62:{
+      528:   63:    NSUInteger index = [self.subViewControllers indexOfObject:viewController];
+        -:   64:    
+     1056:   65:    if ((index == NSNotFound) || (index == 0)) {
+branch  0 taken 528
+branch  1 taken 0
+branch  2 taken 272
+branch  3 taken 256
+      272:   66:        return nil;
+unconditional  0 taken 272
+        -:   67:    }
+        -:   68:    
+      256:   69:    return self.subViewControllers[--index];
+unconditional  0 taken 256
+      528:   70:}
+unconditional  0 taken 528
+        -:   71:
+function -[EWSegmentView pageViewController:viewControllerAfterViewController:] called 1072 returned 100% blocks executed 100%
+        -:   72:- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+        -:   73:{
+     1072:   74:    NSUInteger index = [self.subViewControllers indexOfObject:viewController];
+        -:   75:    
+     5360:   76:    if ((index == NSNotFound)||(index+1 >= [self.subViewControllers count])) {
+branch  0 taken 1072
+branch  1 taken 0
+unconditional  2 taken 1072
+branch  3 taken 1072
+branch  4 taken 0
+unconditional  5 taken 1072
+branch  6 taken 272
+branch  7 taken 800
+      272:   77:        return nil;
+unconditional  0 taken 272
+        -:   78:    }
+        -:   79:    
+      800:   80:    return self.subViewControllers[++index];
+unconditional  0 taken 800
+     1072:   81:}
+unconditional  0 taken 1072
+        -:   82:
+function -[EWSegmentView pageViewController:didFinishAnimating:previousViewControllers:transitionCompleted:] called 1568 returned 100% blocks executed 71%
+        -:   83:- (void)pageViewController:(UIPageViewController *)viewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+        -:   84:{
+     1568:   85:    if (!completed){
+branch  0 taken 0
+branch  1 taken 1568
+    #####:   86:        return;
+unconditional  0 never executed
+        -:   87:    }
+        -:   88:    
+        -:   89:    //改变headView中选种的按钮
+     1568:   90:    [self.headView setSelectedButtonIndex:[self.subViewControllers indexOfObject:[viewController.viewControllers lastObject]]];
+     4704:   91:}
+unconditional  0 taken 1568
+branch  1 taken 0
+branch  2 taken 1568
+branch  3 taken 0
+unconditional  4 taken 1568
+        -:   92:
+        -:   93:#pragma mark - setter and getter
+        -:   94:
+function -[EWSegmentView setSubViewControllers:] called 272 returned 100% blocks executed 100%
+        -:   95:-(void)setSubViewControllers:(NSMutableArray *)subViewControllers
+        -:   96:{
+      272:   97:    _subViewControllers = subViewControllers;
+        -:   98:    
+      272:   99:    if ([self.subViewControllers count]>0) {
+branch  0 taken 272
+branch  1 taken 0
+      272:  100:        [self.pageViewController setViewControllers:@[self.subViewControllers[0]]
+        -:  101:                                          direction:UIPageViewControllerNavigationDirectionForward
+        -:  102:                                           animated:NO
+        -:  103:                                         completion:NULL];
+      272:  104:    }
+unconditional  0 taken 272
+        -:  105:    
+      272:  106:}
+unconditional  0 taken 272
+        -:  107:
+function -[EWSegmentView setHeadView:] called 272 returned 100% blocks executed 100%
+        -:  108:-(void)setHeadView:(EWSegmentHeadView *)headView
+        -:  109:{
+      272:  110:    _headView = headView;
+        -:  111:    
+        -:  112://    _headView.delegate = self;
+        -:  113:    
+      272:  114:    [self.headView setHeadTitles:[self getTitles]];
+        -:  115:    
+        -:  116:    //利用block完成点击headview按钮事件
+function __29-[EWSegmentView setHeadView:]_block_invoke called 0 returned 0% blocks executed 0%
+      272:  117:    _headView.didClick = ^()
+    #####:  118:    {
+    #####:  119:        UIPageViewControllerNavigationDirection direction = [self.headView selectedButtonIndex] > [self.subViewControllers indexOfObject:[self.pageViewController.viewControllers lastObject]] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+        -:  120:        
+    #####:  121:            [self.pageViewController setViewControllers:@[[self selectedController]]
+    #####:  122:                                              direction:direction
+        -:  123:                                               animated:YES
+        -:  124:                                             completion:NULL];
+function __copy_helper_block_ called 272 returned 100% blocks executed 100%
+function __destroy_helper_block_ called 0 returned 0% blocks executed 0%
+      272:  125:    };
+unconditional  0 never executed
+unconditional  1 taken 272
+unconditional  2 never executed
+      272:  126:}
+unconditional  0 taken 272
+        -:  127:
+function -[EWSegmentView pageViewController] called 544 returned 100% blocks executed 100%
+        -:  128:- (UIPageViewController *)pageViewController
+        -:  129:{
+      544:  130:    if (!_pageViewController)
+branch  0 taken 272
+branch  1 taken 272
+        -:  131:    {
+      272:  132:        _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
+      272:  133:        _pageViewController.view.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+      272:  134:        _pageViewController.dataSource = self;
+      272:  135:        _pageViewController.delegate = self;
+      272:  136:        [_pageViewController.view setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+      272:  137:    }
+unconditional  0 taken 272
+      544:  138:    return _pageViewController;
+unconditional  0 taken 544
+        -:  139:}
+        -:  140:
+        -:  141:@end

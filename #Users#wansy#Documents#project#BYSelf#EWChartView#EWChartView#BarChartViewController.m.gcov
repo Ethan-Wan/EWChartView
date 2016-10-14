@@ -1,0 +1,174 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/BarChartViewController.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/BarChartViewController.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/BarChartViewController.gcda
+        -:    0:Runs:10
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  BarChartViewController.m
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/10.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "BarChartViewController.h"
+        -:   10:#import "EWBarChartView.h"
+        -:   11:
+        -:   12:@interface BarChartViewController ()<EWBarChartViewDataSource,EWBarChartViewDelegate>
+        -:   13:
+function -[BarChartViewController array] called 17408 returned 100% blocks executed 100%
+function -[BarChartViewController setArray:] called 272 returned 100% blocks executed 100%
+    17680:   14:@property(nonatomic,strong) NSMutableArray *array;
+unconditional  0 taken 17408
+unconditional  1 taken 272
+function -[BarChartViewController array1] called 272 returned 100% blocks executed 100%
+function -[BarChartViewController setArray1:] called 272 returned 100% blocks executed 100%
+      544:   15:@property(nonatomic,strong) NSArray *array1;
+unconditional  0 taken 272
+unconditional  1 taken 272
+function -[BarChartViewController array2] called 272 returned 100% blocks executed 100%
+function -[BarChartViewController setArray2:] called 272 returned 100% blocks executed 100%
+      544:   16:@property(nonatomic,strong) NSArray *array2;
+unconditional  0 taken 272
+unconditional  1 taken 272
+function -[BarChartViewController array3] called 272 returned 100% blocks executed 100%
+function -[BarChartViewController setArray3:] called 272 returned 100% blocks executed 100%
+      544:   17:@property(nonatomic,strong) NSArray *array3;
+unconditional  0 taken 272
+unconditional  1 taken 272
+        -:   18:
+function -[BarChartViewController arrayTitle] called 1360 returned 100% blocks executed 100%
+function -[BarChartViewController setArrayTitle:] called 272 returned 100% blocks executed 100%
+     1632:   19:@property(nonatomic,strong) NSArray *arrayTitle;
+unconditional  0 taken 1360
+unconditional  1 taken 272
+        -:   20:
+        -:   21:@end
+        -:   22:
+function -[BarChartViewController .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   23:@implementation BarChartViewController
+unconditional  0 never executed
+        -:   24:
+function -[BarChartViewController viewDidLoad] called 272 returned 100% blocks executed 100%
+        -:   25:- (void)viewDidLoad {
+      272:   26:    [super viewDidLoad];
+        -:   27:    
+      272:   28:    self.array1 = [NSArray arrayWithObjects:@"1.5",@"1.2",@"2.3",@"1.1",@"1.7", nil];
+      272:   29:    self.array2 = [NSArray arrayWithObjects:@"1.0",@"1.5",@"0.9",@"2.1",@"1.1", nil];
+      272:   30:    self.array3 = [NSArray arrayWithObjects:@"1.2",@"0.7",@"1.3",@"1.5",@"1.1", nil];
+      272:   31:    self.array = [NSMutableArray array];
+      272:   32:    [self.array addObject:self.array1];
+      272:   33:    [self.array addObject:self.array2];
+      272:   34:    [self.array addObject:self.array3];
+        -:   35:    
+      272:   36:    self.arrayTitle = [NSArray arrayWithObjects:@"R-1",@"R-2",@"R-3",@"R-4",@"R-5", nil];//[NSArray arrayWithObjects:@"礼拜一",@"礼拜二",@"礼拜三",@"礼拜四",@"礼拜五", nil];
+        -:   37:    
+      272:   38:    EWBarChartView *barChart = [[EWBarChartView alloc] init];
+      272:   39:    barChart.dataSource = self;
+      272:   40:    barChart.delegate =self;
+      272:   41:    barChart.maximumValue = 3.0;
+      272:   42:    barChart.minimumValue = 0.0;
+      272:   43:    barChart.sectionCount = 4;
+      272:   44:    barChart.showBarValues = YES;
+        -:   45:
+      272:   46:    barChart.xLabelAttributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor redColor]};
+      272:   47:    barChart.coordinateColor = [UIColor redColor];
+      272:   48:    barChart.frame = CGRectMake(10, 50, 300, 200);
+      272:   49:    [barChart reloadData];
+      272:   50:    [self.view addSubview:barChart];
+      272:   51:}
+unconditional  0 taken 272
+        -:   52:
+        -:   53:#pragma mark - EWBarChartViewDataSource
+        -:   54:
+function -[BarChartViewController numberOfBarInBarChartView:] called 1088 returned 100% blocks executed 100%
+        -:   55:-(NSUInteger)numberOfBarInBarChartView:(EWBarChartView *)barChartView
+        -:   56:{
+     1088:   57:    return self.array.count;
+     1088:   58:}
+unconditional  0 taken 1088
+        -:   59:
+function -[BarChartViewController barChartView:numberOfBarAtBarIndex:] called 3264 returned 100% blocks executed 100%
+        -:   60:-(NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex
+        -:   61:{
+     3264:   62:    return [self.array[barIndex] count];
+     3264:   63:}
+unconditional  0 taken 3264
+        -:   64:
+function -[BarChartViewController barChartView:verticalValueForHorizontalIndex:atBarIndex:] called 12240 returned 100% blocks executed 100%
+        -:   65:-(CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+        -:   66:{
+    12240:   67:    return [self.array[barIndex][horizontalIndex] floatValue];
+    12240:   68:}
+unconditional  0 taken 12240
+        -:   69:
+function -[BarChartViewController barChartView:horizontalTitlseForHorizontalIndex:] called 1360 returned 100% blocks executed 100%
+        -:   70:-(NSString *)barChartView:(EWBarChartView *)barChartView horizontalTitlseForHorizontalIndex:(NSUInteger)horizontalIndex
+        -:   71:{
+     1360:   72:    return self.arrayTitle[horizontalIndex];
+     1360:   73:}
+unconditional  0 taken 1360
+        -:   74:
+        -:   75:#pragma mark - EWBarChartViewDelegate
+        -:   76:
+function -[BarChartViewController barChartView:colorForBarAtBarIndex:] called 4080 returned 100% blocks executed 100%
+        -:   77:-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtBarIndex:(NSUInteger)barIndex
+        -:   78:{
+     4080:   79:    if (barIndex == 0) {
+branch  0 taken 1360
+branch  1 taken 2720
+     1360:   80:        return [UIColor redColor];
+unconditional  0 taken 1360
+        -:   81:    }
+     2720:   82:    else if(barIndex == 1)
+branch  0 taken 1360
+branch  1 taken 1360
+        -:   83:    {
+     1360:   84:        return [UIColor yellowColor];
+unconditional  0 taken 1360
+        -:   85:    }
+     1360:   86:    return nil;
+unconditional  0 taken 1360
+     4080:   87:}
+unconditional  0 taken 4080
+        -:   88:
+function -[BarChartViewController barChartView:colorForBarAtHorizontalIndex:] called 4080 returned 100% blocks executed 80%
+        -:   89:-(UIColor *)barChartView:(EWBarChartView *)barChartView colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex
+        -:   90:{
+     4080:   91:    switch (horizontalIndex) {
+branch  0 taken 816
+branch  1 taken 816
+branch  2 taken 816
+branch  3 taken 816
+branch  4 taken 816
+branch  5 taken 0
+        -:   92:        case 0:
+      816:   93:            return [UIColor redColor];
+unconditional  0 taken 816
+        -:   94:            break;
+        -:   95:        case 1:
+      816:   96:            return [UIColor blackColor];
+unconditional  0 taken 816
+        -:   97:            break;
+        -:   98:        case 2:
+      816:   99:            return [UIColor greenColor];
+unconditional  0 taken 816
+        -:  100:            break;
+        -:  101:        case 3:
+      816:  102:            return [UIColor yellowColor];
+unconditional  0 taken 816
+        -:  103:            break;
+        -:  104:        case 4:
+      816:  105:            return [UIColor grayColor];
+unconditional  0 taken 816
+        -:  106:            break;
+        -:  107:
+        -:  108:        default:
+    #####:  109:            break;
+unconditional  0 never executed
+    #####:  110:    }return nil;
+unconditional  0 never executed
+     4080:  111:}
+unconditional  0 taken 4080
+        -:  112:
+        -:  113:@end

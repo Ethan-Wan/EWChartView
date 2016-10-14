@@ -1,0 +1,627 @@
+        -:    0:Source:/Users/wansy/Documents/project/BYSelf/EWChartView/EWChartView/EWChartViews/EWBarChartView.m
+        -:    0:Graph:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWBarChartView.gcno
+        -:    0:Data:/Users/wansy/Library/Developer/Xcode/DerivedData/EWChartView-gwaqvpfjysmdagbdartktpszyxpm/Build/Intermediates/EWChartView.build/Debug-iphonesimulator/EWChartView.build/Objects-normal/x86_64/EWBarChartView.gcda
+        -:    0:Runs:10
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  EWBarChartView.m
+        -:    3://  EWChartView
+        -:    4://
+        -:    5://  Created by wansy on 15/8/5.
+        -:    6://  Copyright (c) 2015年 wansy. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#import "EWBarChartView.h"
+        -:   10:
+        -:   11://default parameter
+        -:   12:NSInteger static const   kEWBarChartViewBarNumber         = 1;
+        -:   13:CGFloat   static const   kEWChartViewDefalutCachedHeight  = -1.0f;
+        -:   14:CGFloat   static const   kEWChartViewXYAxisPadding        = 3.0f;
+        -:   15:BOOL      static const   kEWChartViewShowBarValues         = NO;
+        -:   16:
+        -:   17://一个表的柱状图之间的距离 *0.5
+        -:   18:CGFloat   static const   kEWBarChartViewBarMargin          = 3.0f;
+        -:   19://多个柱状图的柱之间的距离
+        -:   20:CGFloat   static const   kEWBarChartViewMarginBetweenBarChart  = 1.0f;
+        -:   21:
+        -:   22:CGFloat   static const   kEWBarChartViewValueMargin        = 3.0f;
+        -:   23:
+        -:   24://macro
+        -:   25:#define kEWBarChartViewBarColor nil
+        -:   26:
+        -:   27:@interface EWChartView (Private)
+        -:   28:
+        -:   29:- (BOOL)hasMaximumValue;
+        -:   30:- (BOOL)hasMinimumValue;
+        -:   31:
+        -:   32:-(void)drawYAxisLabelsWithMaxValue:(CGFloat)maxValue minValue:(CGFloat)minValue context:(CGContextRef)ctx showGrid:(BOOL)showGrid;
+        -:   33:
+        -:   34:@end
+        -:   35:
+        -:   36:@interface EWBarChartInfo : NSObject
+        -:   37:
+function -[EWBarChartInfo y] called 8160 returned 100% blocks executed 100%
+function -[EWBarChartInfo setY:] called 4080 returned 100% blocks executed 100%
+    12240:   38:@property (nonatomic, assign) CGFloat y;
+unconditional  0 taken 8160
+unconditional  1 taken 4080
+function -[EWBarChartInfo height] called 4080 returned 100% blocks executed 100%
+function -[EWBarChartInfo setHeight:] called 4080 returned 100% blocks executed 100%
+     8160:   39:@property (nonatomic, assign) CGFloat height;
+unconditional  0 taken 4080
+unconditional  1 taken 4080
+function -[EWBarChartInfo value] called 4080 returned 100% blocks executed 100%
+function -[EWBarChartInfo setValue:] called 4080 returned 100% blocks executed 100%
+     8160:   40:@property (nonatomic, assign) CGFloat value;
+unconditional  0 taken 4080
+unconditional  1 taken 4080
+        -:   41:
+        -:   42:@end
+        -:   43:
+        -:   44:@interface EWBarChartView()
+        -:   45:
+function -[EWBarChartView chartData] called 816 returned 100% blocks executed 100%
+function -[EWBarChartView setChartData:] called 272 returned 100% blocks executed 100%
+     1088:   46:@property (nonatomic, strong) NSArray *chartData;
+unconditional  0 taken 816
+unconditional  1 taken 272
+function -[EWBarChartView setCachedMinHeight:] called 272 returned 100% blocks executed 100%
+      272:   47:@property (nonatomic, assign) CGFloat cachedMinHeight;
+unconditional  0 taken 272
+function -[EWBarChartView setCachedMaxHeight:] called 272 returned 100% blocks executed 100%
+      272:   48:@property (nonatomic, assign) CGFloat cachedMaxHeight;
+unconditional  0 taken 272
+function -[EWBarChartView dataNumber] called 2176 returned 100% blocks executed 100%
+function -[EWBarChartView setDataNumber:] called 272 returned 100% blocks executed 100%
+     2448:   49:@property (nonatomic, assign) NSInteger dataNumber;
+unconditional  0 taken 2176
+unconditional  1 taken 272
+        -:   50:
+        -:   51:@end
+        -:   52:
+function -[EWBarChartView .cxx_destruct] called 0 returned 0% blocks executed 0%
+    #####:   53:@implementation EWBarChartView
+unconditional  0 never executed
+        -:   54:@dynamic dataSource;
+        -:   55:@dynamic delegate;
+        -:   56:
+        -:   57:#pragma mark - alloc/init
+        -:   58:
+function -[EWBarChartView initWithFrame:] called 272 returned 100% blocks executed 100%
+        -:   59:- (id)initWithFrame:(CGRect)frame
+        -:   60:{
+      272:   61:    self = [super initWithFrame:frame];
+      272:   62:    if(self){
+branch  0 taken 272
+branch  1 taken 0
+      272:   63:        [self setup];
+      272:   64:    }
+unconditional  0 taken 272
+      272:   65:    return self;
+      272:   66:}
+unconditional  0 taken 272
+        -:   67:
+function -[EWBarChartView initWithCoder:] called 0 returned 0% blocks executed 0%
+        -:   68:- (id)initWithCoder:(NSCoder *)aDecoder
+        -:   69:{
+    #####:   70:    self = [super initWithCoder:aDecoder];
+    #####:   71:    if(self){
+branch  0 never executed
+branch  1 never executed
+    #####:   72:        [self setup];
+    #####:   73:    }
+unconditional  0 never executed
+    #####:   74:    return self;
+    #####:   75:}
+unconditional  0 never executed
+        -:   76:
+        -:   77:#pragma mark - Private Method
+        -:   78:
+function -[EWBarChartView setup] called 272 returned 100% blocks executed 100%
+        -:   79:- (void)setup
+        -:   80:{
+      272:   81:    self.barColor = kEWBarChartViewBarColor;
+      272:   82:    self.showBarValues = kEWChartViewShowBarValues;
+      272:   83:}
+unconditional  0 taken 272
+        -:   84:
+function -[EWBarChartView numberOfBarInLineChart] called 1088 returned 100% blocks executed 80%
+        -:   85:-(NSInteger)numberOfBarInLineChart
+        -:   86:{
+     1088:   87:    if ([self.dataSource respondsToSelector:@selector(numberOfBarInBarChartView:)])
+branch  0 taken 1088
+branch  1 taken 0
+        -:   88:    {
+     1088:   89:        return [self.dataSource numberOfBarInBarChartView:self];
+unconditional  0 taken 1088
+        -:   90:    }else
+        -:   91:    {
+    #####:   92:        return kEWBarChartViewBarNumber;
+unconditional  0 never executed
+        -:   93:    }
+     1088:   94:}
+unconditional  0 taken 1088
+        -:   95:
+function -[EWBarChartView colorForBarAtBarIndex:] called 4080 returned 100% blocks executed 80%
+        -:   96:-(UIColor *)colorForBarAtBarIndex:(NSUInteger)barIndex;
+        -:   97:{
+     4080:   98:    if ([self.delegate respondsToSelector:@selector(barChartView:colorForBarAtBarIndex:)])
+branch  0 taken 4080
+branch  1 taken 0
+        -:   99:    {
+     4080:  100:        return [self.delegate barChartView:self colorForBarAtBarIndex:barIndex];
+unconditional  0 taken 4080
+        -:  101:    }else
+        -:  102:    {
+    #####:  103:        return self.barColor;
+unconditional  0 never executed
+        -:  104:    }
+     4080:  105:}
+unconditional  0 taken 4080
+        -:  106:
+function -[EWBarChartView colorForBarAtHorizontalIndex:] called 4080 returned 100% blocks executed 80%
+        -:  107:-(UIColor *)colorForBarAtHorizontalIndex:(NSUInteger)horizontalIndex;
+        -:  108:{
+     4080:  109:    if ([self.delegate respondsToSelector:@selector(barChartView:colorForBarAtHorizontalIndex:)])
+branch  0 taken 4080
+branch  1 taken 0
+        -:  110:    {
+     4080:  111:        return [self.delegate barChartView:self colorForBarAtHorizontalIndex:horizontalIndex];
+unconditional  0 taken 4080
+        -:  112:    }else
+        -:  113:    {
+    #####:  114:        return self.barColor;
+unconditional  0 never executed
+        -:  115:    }
+     4080:  116:}
+unconditional  0 taken 4080
+        -:  117:
+function -[EWBarChartView showBarValuesAtHorizontalIndex:atBarIndex:] called 4080 returned 100% blocks executed 80%
+        -:  118:-(BOOL)showBarValuesAtHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex
+        -:  119:{
+     4080:  120:    if ([self.delegate respondsToSelector:@selector(barChartView:showBarValuesAtHorizontalIndex:atBarIndex:)])
+branch  0 taken 0
+branch  1 taken 4080
+        -:  121:    {
+    #####:  122:        return [self.delegate barChartView:self showBarValuesAtHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+unconditional  0 never executed
+        -:  123:    }else
+        -:  124:    {
+     4080:  125:        return self.showBarValues;
+unconditional  0 taken 4080
+        -:  126:    }
+        -:  127:
+     4080:  128:}
+unconditional  0 taken 4080
+        -:  129:
+        -:  130:/**
+        -:  131: *  水平方向上数据个数
+        -:  132: *
+        -:  133: *  @return 数据个数
+        -:  134: */
+function -[EWBarChartView dataCount] called 272 returned 100% blocks executed 73%
+        -:  135:- (NSUInteger)dataCount
+        -:  136:{
+      272:  137:    NSUInteger dataCount = 0;
+      272:  138:    NSInteger numberOfBar = [self numberOfBarInLineChart];
+     2176:  139:    for (NSInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+unconditional  0 taken 272
+branch  1 taken 816
+branch  2 taken 272
+unconditional  3 taken 816
+        -:  140:    {
+     2448:  141:        NSAssert([self.dataSource respondsToSelector:@selector(barChartView:numberOfBarAtBarIndex:)], @"EWBarChartView // dataSource must implement - (NSUInteger)barChartView:(EWBarChartView *)barChartView numberOfBarAtBarIndex:(NSUInteger)barIndex;");
+unconditional  0 taken 816
+branch  1 taken 0
+branch  2 taken 816
+branch  3 never executed
+branch  4 never executed
+unconditional  5 never executed
+unconditional  6 never executed
+unconditional  7 never executed
+unconditional  8 taken 816
+      816:  142:        NSUInteger barDataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      816:  143:        if (barDataCount > dataCount)
+branch  0 taken 272
+branch  1 taken 544
+        -:  144:        {
+      272:  145:            dataCount = barDataCount;
+      272:  146:        }
+unconditional  0 taken 272
+      816:  147:    }
+unconditional  0 taken 816
+      272:  148:    return dataCount;
+unconditional  0 taken 272
+        -:  149:}
+        -:  150:
+        -:  151:/**
+        -:  152: *  将数据转化成图表中的高度
+        -:  153: *
+        -:  154: *  @param valueHeight 水平方向上数据的值
+        -:  155: */
+function -[EWBarChartView standardizedHeightForvalueHeight:] called 4080 returned 100% blocks executed 80%
+        -:  156:-(CGFloat)standardizedHeightForvalueHeight:(CGFloat)valueHeight
+        -:  157:{
+     4080:  158:    CGFloat minHeight = [self minimumValue];
+     4080:  159:    CGFloat maxHeight = [self maximumValue];
+        -:  160:    
+     4080:  161:    if ((maxHeight - minHeight) <= 0)
+branch  0 taken 0
+branch  1 taken 4080
+        -:  162:    {
+    #####:  163:        return 0;
+unconditional  0 never executed
+        -:  164:    }
+        -:  165:    
+     4080:  166:    return ((valueHeight - minHeight) / (maxHeight - minHeight)) * (self.bounds.size.height - kEWChartViewHeaderPadding - kEWChartViewXAxisHeight);
+unconditional  0 taken 4080
+     4080:  167:}
+unconditional  0 taken 4080
+        -:  168:
+        -:  169:/**
+        -:  170: *  每个柱的宽度
+        -:  171: */
+function -[EWBarChartView barWidthWithBarCount:stepLength:] called 272 returned 100% blocks executed 100%
+        -:  172:-(CGFloat)barWidthWithBarCount:(NSInteger)barChartCount stepLength:(CGFloat)xstepLength
+        -:  173:{
+      272:  174:    return (xstepLength - 2*kEWBarChartViewBarMargin - (barChartCount - 1)*kEWBarChartViewMarginBetweenBarChart)/barChartCount;
+unconditional  0 taken 272
+        -:  175:}
+        -:  176:
+        -:  177:#pragma mark - Public Method
+        -:  178:
+function -[EWBarChartView reloadData] called 272 returned 100% blocks executed 77%
+        -:  179:-(void)reloadData
+        -:  180:{
+        -:  181:    // Reset
+      272:  182:    self.cachedMinHeight = kEWChartViewDefalutCachedHeight;
+      272:  183:    self.cachedMaxHeight = kEWChartViewDefalutCachedHeight;
+        -:  184:    
+      272:  185:    self.dataNumber = [self dataCount];
+        -:  186:    
+      272:  187:    CGRect mainViewRect = CGRectMake(kEWChartViewYAxisWidth, kEWChartViewHeaderPadding, self.bounds.size.width - kEWChartViewYAxisWidth -0.5, self.bounds.size.height - kEWChartViewXAxisHeight - kEWChartViewHeaderPadding);
+        -:  188:    
+      272:  189:    CGFloat yOffset = 0;
+        -:  190:    
+      272:  191:    NSMutableArray *mutableChartData = [NSMutableArray array];
+      272:  192:    NSUInteger numberOfBar = [self numberOfBarInLineChart];
+        -:  193:    
+     2176:  194:    for (NSUInteger barIndex=0; barIndex < numberOfBar; barIndex++)
+unconditional  0 taken 272
+branch  1 taken 816
+branch  2 taken 272
+unconditional  3 taken 816
+        -:  195:    {
+      816:  196:        NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+      816:  197:        NSMutableArray *barInfoData = [NSMutableArray array];
+     9792:  198:        for (NSUInteger horizontalIndex=0; horizontalIndex < dataCount; horizontalIndex++)
+unconditional  0 taken 816
+branch  1 taken 4080
+branch  2 taken 816
+unconditional  3 taken 4080
+        -:  199:        {
+    16320:  200:            NSAssert([self.dataSource respondsToSelector:@selector(barChartView:verticalValueForHorizontalIndex:atBarIndex:)], @"EWLineChartView // dataSource must implement - (CGFloat)barChartView:(EWBarChartView *)barChartView verticalValueForHorizontalIndex:(NSUInteger)horizontalIndex atBarIndex:(NSUInteger)barIndex;");
+unconditional  0 taken 4080
+branch  1 taken 0
+branch  2 taken 4080
+branch  3 never executed
+branch  4 never executed
+unconditional  5 never executed
+unconditional  6 never executed
+unconditional  7 never executed
+unconditional  8 taken 4080
+unconditional  9 taken 4080
+        -:  201:            
+     4080:  202:            EWBarChartInfo *barInfo = [[EWBarChartInfo alloc] init];
+        -:  203:            
+     4080:  204:            CGFloat valueHeight =  [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+     4080:  205:            CGFloat standardizedHeight = [self standardizedHeightForvalueHeight:valueHeight];
+     4080:  206:            yOffset = mainViewRect.size.height +  kEWChartViewHeaderPadding - standardizedHeight;
+        -:  207:            
+     4080:  208:            barInfo.y = yOffset;
+     4080:  209:            barInfo.height = standardizedHeight;
+     4080:  210:            barInfo.value = valueHeight;
+        -:  211:            
+     4080:  212:            [barInfoData addObject:barInfo];
+     4080:  213:        }
+unconditional  0 taken 4080
+      816:  214:        [mutableChartData addObject:barInfoData];
+      816:  215:    }
+unconditional  0 taken 816
+      272:  216:    self.chartData = [NSArray arrayWithArray:mutableChartData];
+        -:  217:    
+      272:  218:    [self setNeedsDisplay];
+        -:  219:
+      272:  220:}
+unconditional  0 taken 272
+        -:  221:
+        -:  222:#pragma mark - Draw 
+        -:  223:
+function -[EWBarChartView drawRect:] called 272 returned 100% blocks executed 80%
+        -:  224:- (void)drawRect:(CGRect)rect
+        -:  225:{
+      272:  226:    [super drawRect:rect];
+        -:  227:    
+      272:  228:    if (self.chartData.count <= 0) {
+branch  0 taken 0
+branch  1 taken 272
+    #####:  229:        return;
+unconditional  0 never executed
+        -:  230:    }
+      272:  231:    CGContextRef ctx = UIGraphicsGetCurrentContext();
+        -:  232:    
+      272:  233:    [self drawBarChart:ctx];
+        -:  234:    
+      272:  235:    [self drawXYLabelText:ctx];
+      544:  236:}
+unconditional  0 taken 272
+unconditional  1 taken 272
+        -:  237:
+function -[EWBarChartView drawBarChart:] called 272 returned 100% blocks executed 73%
+        -:  238:-(void)drawBarChart:(CGContextRef)ctx
+        -:  239:{
+      272:  240:    int index = 0;
+        -:  241:    
+      272:  242:    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5) / self.dataNumber;
+        -:  243:    
+      272:  244:    CGFloat barWidth = [self barWidthWithBarCount:self.chartData.count stepLength:xstepLength];
+        -:  245:    
+     2176:  246:    for (NSArray *barData in self.chartData)
+branch  0 taken 272
+branch  1 taken 0
+unconditional  2 taken 272
+branch  3 taken 0
+branch  4 taken 816
+unconditional  5 never executed
+        -:  247:    {
+      816:  248:        if (barData.count == 0)
+branch  0 taken 0
+branch  1 taken 816
+        -:  249:        {
+    #####:  250:            continue;
+unconditional  0 never executed
+        -:  251:        }
+      816:  252:        __block CGFloat barX = kEWChartViewYAxisWidth + kEWBarChartViewBarMargin + index * (barWidth + kEWBarChartViewMarginBetweenBarChart);
+        -:  253:        
+        -:  254:        
+function __31-[EWBarChartView drawBarChart:]_block_invoke called 4080 returned 100% blocks executed 100%
+     4896:  255:        [barData enumerateObjectsUsingBlock:^(EWBarChartInfo *barInfo, NSUInteger idx, BOOL *stop) {
+branch  0 taken 816
+branch  1 taken 0
+     4080:  256:            CGContextSaveGState(ctx);
+        -:  257:            
+     4080:  258:            CGContextAddRect(ctx, CGRectMake(barX, barInfo.y, barWidth, barInfo.height));
+        -:  259:            
+     4080:  260:            [[self colorForBarAtBarIndex:index] set];
+     4080:  261:            [[self colorForBarAtHorizontalIndex:idx] set];
+        -:  262:            
+     4080:  263:            CGContextFillPath(ctx);
+        -:  264:            
+        -:  265:            //画数值
+     4080:  266:            if ([self showBarValuesAtHorizontalIndex:idx atBarIndex:index]) {
+branch  0 taken 4080
+branch  1 taken 0
+     4080:  267:                CGPoint point = CGPointMake(barX , barInfo.y);
+     4080:  268:                [self drawValueAtPoint:point value:barInfo.value];
+     4080:  269:            }
+unconditional  0 taken 4080
+        -:  270:            
+     4080:  271:            barX += xstepLength;
+     4080:  272:            CGContextRestoreGState(ctx);
+function __copy_helper_block_ called 0 returned 0% blocks executed 0%
+function __destroy_helper_block_ called 0 returned 0% blocks executed 0%
+     4080:  273:        }];
+unconditional  0 taken 4080
+unconditional  1 never executed
+unconditional  2 never executed
+        -:  274:
+        -:  275:        
+      816:  276:        index++;
+     2176:  277:    }
+unconditional  0 taken 816
+branch  1 taken 544
+branch  2 taken 272
+branch  3 taken 0
+branch  4 taken 272
+unconditional  5 taken 272
+unconditional  6 never executed
+      272:  278:}
+unconditional  0 taken 272
+        -:  279:
+        -:  280:/**
+        -:  281: *  画坐标值
+        -:  282: *
+        -:  283: *  @param ctx 上下文
+        -:  284: */
+function -[EWBarChartView drawXYLabelText:] called 272 returned 100% blocks executed 100%
+        -:  285:-(void)drawXYLabelText:(CGContextRef)ctx
+        -:  286:{
+        -:  287:    //draw y axis labels
+      272:  288:    [self drawYAxisLabelsWithMaxValue:[self maximumValue] minValue:[self minimumValue] context:ctx showGrid:NO];
+        -:  289:    
+        -:  290:    //draw x axis labels
+      272:  291:    CGFloat xstepLength = (self.bounds.size.width - kEWChartViewYAxisWidth - 0.5)/ self.dataNumber;
+        -:  292:
+     3264:  293:    for (int index = 0; index < self.dataNumber; index++) {
+unconditional  0 taken 272
+branch  1 taken 1360
+branch  2 taken 272
+unconditional  3 taken 1360
+     1360:  294:        NSString *title = nil;
+     1360:  295:        if([self.dataSource respondsToSelector:@selector(barChartView:horizontalTitlseForHorizontalIndex:)])
+branch  0 taken 1360
+branch  1 taken 0
+        -:  296:        {
+     1360:  297:            title = [self.dataSource barChartView:self horizontalTitlseForHorizontalIndex:index];
+     1360:  298:        }
+unconditional  0 taken 1360
+     1360:  299:        CGContextSaveGState(ctx);
+        -:  300:        {
+     1360:  301:            CGSize valueSize = [title sizeWithAttributes:[super xLabelAttributes]];
+     1360:  302:            CGFloat pointY = (2 * self.bounds.size.height - kEWChartViewXYAxisPadding - kEWChartViewXAxisHeight) * 0.5 - valueSize.height * 0.5;
+     1360:  303:            CGFloat pointX = kEWChartViewYAxisWidth + xstepLength * 0.5 + xstepLength * index - valueSize.width * 0.5;
+        -:  304:            
+     1360:  305:            CGPoint point = (CGPoint){pointX,pointY};
+     1360:  306:            [title drawAtPoint:point withAttributes:[super xLabelAttributes]];
+        -:  307:        }
+     1360:  308:        CGContextRestoreGState(ctx);
+     1360:  309:    }
+unconditional  0 taken 1360
+      272:  310:}
+unconditional  0 taken 272
+        -:  311:
+        -:  312:/**
+        -:  313: *  画具体数据值
+        -:  314: *
+        -:  315: *  @param point 需要处理的坐标点
+        -:  316: */
+function -[EWBarChartView drawValueAtPoint:value:] called 4080 returned 100% blocks executed 100%
+        -:  317:-(void)drawValueAtPoint:(CGPoint)point value:(CGFloat)value
+        -:  318:{
+     4080:  319:    NSString *barValue = [NSString stringWithFormat:@"%.1f",value];
+        -:  320:    
+     4080:  321:    CGSize valueSize = [barValue sizeWithAttributes:[super valueAttributes]];
+        -:  322:    
+     4080:  323:    CGPoint valuePoint = CGPointMake(point.x , point.y - valueSize.height  - kEWBarChartViewValueMargin);
+        -:  324:    
+     4080:  325:    [barValue drawAtPoint:valuePoint withAttributes:[super valueAttributes]];
+     4080:  326:}
+unconditional  0 taken 4080
+        -:  327:
+        -:  328:#pragma mark - Getter And Setter
+        -:  329:
+function -[EWBarChartView minimumValue] called 4624 returned 100% blocks executed 80%
+        -:  330:- (CGFloat)minimumValue
+        -:  331:{
+     4624:  332:    if ([self hasMinimumValue])
+branch  0 taken 4624
+branch  1 taken 0
+        -:  333:    {
+     4624:  334:        return fminf(self.cachedMinHeight, [super minimumValue]);
+unconditional  0 taken 4624
+        -:  335:    }
+    #####:  336:    return self.cachedMinHeight;
+unconditional  0 never executed
+     4624:  337:}
+unconditional  0 taken 4624
+        -:  338:
+function -[EWBarChartView maximumValue] called 5984 returned 100% blocks executed 80%
+        -:  339:- (CGFloat)maximumValue
+        -:  340:{
+     5984:  341:    if ([self hasMaximumValue])
+branch  0 taken 5984
+branch  1 taken 0
+        -:  342:    {
+     5984:  343:        return fmaxf(self.cachedMaxHeight, [super maximumValue]);
+unconditional  0 taken 5984
+        -:  344:    }
+    #####:  345:    return self.cachedMaxHeight;
+unconditional  0 never executed
+     5984:  346:}
+unconditional  0 taken 5984
+        -:  347:
+function -[EWBarChartView cachedMinHeight] called 4624 returned 100% blocks executed 100%
+        -:  348:-(CGFloat)cachedMinHeight
+        -:  349:{
+     4624:  350:    if (_cachedMinHeight == kEWChartViewDefalutCachedHeight) {
+branch  0 taken 272
+branch  1 taken 4352
+      272:  351:        CGFloat minHeight = FLT_MAX;
+      272:  352:        NSUInteger numberOfBar = [self numberOfBarInLineChart];
+     2176:  353:        for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+unconditional  0 taken 272
+branch  1 taken 816
+branch  2 taken 272
+unconditional  3 taken 816
+        -:  354:        {
+      816:  355:            NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+     9792:  356:            for (NSUInteger horizontalIndex = 0; horizontalIndex < dataCount; horizontalIndex++)
+unconditional  0 taken 816
+branch  1 taken 4080
+branch  2 taken 816
+unconditional  3 taken 4080
+        -:  357:            {
+     4080:  358:                CGFloat height = [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+     4080:  359:                if (height < minHeight)
+branch  0 taken 1632
+branch  1 taken 2448
+        -:  360:                {
+     1632:  361:                    minHeight = height;
+     1632:  362:                }
+unconditional  0 taken 1632
+     4080:  363:            }
+unconditional  0 taken 4080
+      816:  364:        }
+unconditional  0 taken 816
+      272:  365:        _cachedMinHeight = minHeight;
+      272:  366:    }
+unconditional  0 taken 272
+     4624:  367:    return _cachedMinHeight;
+unconditional  0 taken 4624
+        -:  368:}
+        -:  369:
+function -[EWBarChartView cachedMaxHeight] called 5984 returned 100% blocks executed 100%
+        -:  370:-(CGFloat)cachedMaxHeight
+        -:  371:{
+     5984:  372:    if (_cachedMaxHeight == kEWChartViewDefalutCachedHeight) {
+branch  0 taken 272
+branch  1 taken 5712
+      272:  373:        CGFloat maxHeight = 0;
+      272:  374:        NSUInteger numberOfBar = [self numberOfBarInLineChart];
+     2176:  375:        for (NSUInteger barIndex = 0; barIndex < numberOfBar; barIndex++)
+unconditional  0 taken 272
+branch  1 taken 816
+branch  2 taken 272
+unconditional  3 taken 816
+        -:  376:        {
+      816:  377:            NSUInteger dataCount = [self.dataSource barChartView:self numberOfBarAtBarIndex:barIndex];
+     9792:  378:            for (NSUInteger horizontalIndex = 0; horizontalIndex < dataCount; horizontalIndex++)
+unconditional  0 taken 816
+branch  1 taken 4080
+branch  2 taken 816
+unconditional  3 taken 4080
+        -:  379:            {
+     4080:  380:                CGFloat height = [self.dataSource barChartView:self verticalValueForHorizontalIndex:horizontalIndex atBarIndex:barIndex];
+     4080:  381:                if (height > maxHeight)
+branch  0 taken 544
+branch  1 taken 3536
+        -:  382:                {
+      544:  383:                    maxHeight = height;
+      544:  384:                }
+unconditional  0 taken 544
+     4080:  385:            }
+unconditional  0 taken 4080
+      816:  386:        }
+unconditional  0 taken 816
+      272:  387:        _cachedMaxHeight = maxHeight;
+      272:  388:    }
+unconditional  0 taken 272
+     5984:  389:    return _cachedMaxHeight;
+unconditional  0 taken 5984
+        -:  390:}
+        -:  391:
+        -:  392:
+        -:  393:@end
+        -:  394:
+        -:  395:@implementation EWBarChartInfo
+        -:  396:
+        -:  397:#pragma mark - Alloc/Init
+        -:  398:
+function -[EWBarChartInfo init] called 4080 returned 100% blocks executed 100%
+        -:  399:- (id)init
+        -:  400:{
+     4080:  401:    self = [super init];
+     4080:  402:    if (self)
+branch  0 taken 4080
+branch  1 taken 0
+        -:  403:    {
+     4080:  404:        _y = 0;
+     4080:  405:        _height = 0;
+     4080:  406:        _value = 0;
+     4080:  407:    }
+unconditional  0 taken 4080
+     4080:  408:    return self;
+     4080:  409:}
+unconditional  0 taken 4080
+        -:  410:
+        -:  411:@end

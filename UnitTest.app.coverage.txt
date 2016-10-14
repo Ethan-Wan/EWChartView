@@ -1,0 +1,462 @@
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/objc/objc.h:
+       |    1|/*
+       |    2| * Copyright (c) 1999-2007 Apple Inc.  All Rights Reserved.
+       |    3| * 
+       |    4| * @APPLE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * This file contains Original Code and/or Modifications of Original Code
+       |    7| * as defined in and that are subject to the Apple Public Source License
+       |    8| * Version 2.0 (the 'License'). You may not use this file except in
+       |    9| * compliance with the License. Please obtain a copy of the License at
+       |   10| * http://www.opensource.apple.com/apsl/ and read it before using this
+       |   11| * file.
+       |   12| * 
+       |   13| * The Original Code and all software distributed under the License are
+       |   14| * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   15| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   16| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   17| * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+       |   18| * Please see the License for the specific language governing rights and
+       |   19| * limitations under the License.
+       |   20| * 
+       |   21| * @APPLE_LICENSE_HEADER_END@
+       |   22| */
+       |   23|/*
+       |   24| *	objc.h
+       |   25| *	Copyright 1988-1996, NeXT Software, Inc.
+       |   26| */
+       |   27|
+       |   28|#ifndef _OBJC_OBJC_H_
+       |   29|#define _OBJC_OBJC_H_
+       |   30|
+       |   31|#include <sys/types.h>      // for __DARWIN_NULL
+       |   32|#include <Availability.h>
+       |   33|#include <objc/objc-api.h>
+       |   34|#include <stdbool.h>
+       |   35|
+       |   36|#if !OBJC_TYPES_DEFINED
+       |   37|/// An opaque type that represents an Objective-C class.
+       |   38|typedef struct objc_class *Class;
+       |   39|
+       |   40|/// Represents an instance of a class.
+       |   41|struct objc_object {
+       |   42|    Class isa  OBJC_ISA_AVAILABILITY;
+       |   43|};
+       |   44|
+       |   45|/// A pointer to an instance of a class.
+       |   46|typedef struct objc_object *id;
+       |   47|#endif
+       |   48|
+       |   49|/// An opaque type that represents a method selector.
+       |   50|typedef struct objc_selector *SEL;
+       |   51|
+       |   52|/// A pointer to the function of a method implementation. 
+       |   53|#if !OBJC_OLD_DISPATCH_PROTOTYPES
+       |   54|typedef void (*IMP)(void /* id, SEL, ... */ ); 
+       |   55|#else
+       |   56|typedef id (*IMP)(id, SEL, ...); 
+       |   57|#endif
+       |   58|
+       |   59|#define OBJC_BOOL_DEFINED
+       |   60|
+       |   61|/// Type to represent a boolean value.
+       |   62|#if (TARGET_OS_IPHONE && __LP64__)  ||  TARGET_OS_WATCH
+       |   63|#define OBJC_BOOL_IS_BOOL 1
+       |   64|typedef bool BOOL;
+       |   65|#else
+       |   66|#define OBJC_BOOL_IS_CHAR 1
+       |   67|typedef signed char BOOL; 
+       |   68|// BOOL is explicitly signed so @encode(BOOL) == "c" rather than "C" 
+       |   69|// even if -funsigned-char is used.
+       |   70|#endif
+       |   71|
+       |   72|#if __has_feature(objc_bool)
+      1|   73|#define YES __objc_yes
+       |   74|#define NO  __objc_no
+       |   75|#else
+       |   76|#define YES ((BOOL)1)
+       |   77|#define NO  ((BOOL)0)
+       |   78|#endif
+       |   79|
+       |   80|#ifndef Nil
+       |   81|# if __has_feature(cxx_nullptr)
+       |   82|#   define Nil nullptr
+       |   83|# else
+       |   84|#   define Nil __DARWIN_NULL
+       |   85|# endif
+       |   86|#endif
+       |   87|
+       |   88|#ifndef nil
+       |   89|# if __has_feature(cxx_nullptr)
+       |   90|#   define nil nullptr
+       |   91|# else
+      1|   92|#   define nil __DARWIN_NULL
+       |   93|# endif
+       |   94|#endif
+       |   95|
+       |   96|#ifndef __strong
+       |   97|# if !__has_feature(objc_arc)
+       |   98|#   define __strong /* empty */
+       |   99|# endif
+       |  100|#endif
+       |  101|
+       |  102|#ifndef __unsafe_unretained
+       |  103|# if !__has_feature(objc_arc)
+       |  104|#   define __unsafe_unretained /* empty */
+       |  105|# endif
+       |  106|#endif
+       |  107|
+       |  108|#ifndef __autoreleasing
+       |  109|# if !__has_feature(objc_arc)
+       |  110|#   define __autoreleasing /* empty */
+       |  111|# endif
+       |  112|#endif
+       |  113|
+       |  114|
+       |  115|/** 
+       |  116| * Returns the name of the method specified by a given selector.
+       |  117| * 
+       |  118| * @param sel A pointer of type \c SEL. Pass the selector whose name you wish to determine.
+       |  119| * 
+       |  120| * @return A C string indicating the name of the selector.
+       |  121| */
+       |  122|OBJC_EXPORT const char *sel_getName(SEL sel)
+       |  123|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  124|
+       |  125|/** 
+       |  126| * Registers a method with the Objective-C runtime system, maps the method 
+       |  127| * name to a selector, and returns the selector value.
+       |  128| * 
+       |  129| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  130| * 
+       |  131| * @return A pointer of type SEL specifying the selector for the named method.
+       |  132| * 
+       |  133| * @note You must register a method name with the Objective-C runtime system to obtain the
+       |  134| *  method’s selector before you can add the method to a class definition. If the method name
+       |  135| *  has already been registered, this function simply returns the selector.
+       |  136| */
+       |  137|OBJC_EXPORT SEL sel_registerName(const char *str)
+       |  138|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  139|
+       |  140|/** 
+       |  141| * Returns the class name of a given object.
+       |  142| * 
+       |  143| * @param obj An Objective-C object.
+       |  144| * 
+       |  145| * @return The name of the class of which \e obj is an instance.
+       |  146| */
+       |  147|OBJC_EXPORT const char *object_getClassName(id obj)
+       |  148|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  149|
+       |  150|/** 
+       |  151| * Returns a pointer to any extra bytes allocated with an instance given object.
+       |  152| * 
+       |  153| * @param obj An Objective-C object.
+       |  154| * 
+       |  155| * @return A pointer to any extra bytes allocated with \e obj. If \e obj was
+       |  156| *   not allocated with any extra bytes, then dereferencing the returned pointer is undefined.
+       |  157| * 
+       |  158| * @note This function returns a pointer to any extra bytes allocated with the instance
+       |  159| *  (as specified by \c class_createInstance with extraBytes>0). This memory follows the
+       |  160| *  object's ordinary ivars, but may not be adjacent to the last ivar.
+       |  161| * @note The returned pointer is guaranteed to be pointer-size aligned, even if the area following
+       |  162| *  the object's last ivar is less aligned than that. Alignment greater than pointer-size is never
+       |  163| *  guaranteed, even if the area following the object's last ivar is more aligned than that.
+       |  164| * @note In a garbage-collected environment, the memory is scanned conservatively.
+       |  165| */
+       |  166|OBJC_EXPORT void *object_getIndexedIvars(id obj)
+       |  167|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  168|
+       |  169|/** 
+       |  170| * Identifies a selector as being valid or invalid.
+       |  171| * 
+       |  172| * @param sel The selector you want to identify.
+       |  173| * 
+       |  174| * @return YES if selector is valid and has a function implementation, NO otherwise. 
+       |  175| * 
+       |  176| * @warning On some platforms, an invalid reference (to invalid memory addresses) can cause
+       |  177| *  a crash. 
+       |  178| */
+       |  179|OBJC_EXPORT BOOL sel_isMapped(SEL sel)
+       |  180|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  181|
+       |  182|/** 
+       |  183| * Registers a method name with the Objective-C runtime system.
+       |  184| * 
+       |  185| * @param str A pointer to a C string. Pass the name of the method you wish to register.
+       |  186| * 
+       |  187| * @return A pointer of type SEL specifying the selector for the named method.
+       |  188| * 
+       |  189| * @note The implementation of this method is identical to the implementation of \c sel_registerName.
+       |  190| * @note Prior to OS X version 10.0, this method tried to find the selector mapped to the given name
+       |  191| *  and returned \c NULL if the selector was not found. This was changed for safety, because it was
+       |  192| *  observed that many of the callers of this function did not check the return value for \c NULL.
+       |  193| */
+       |  194|OBJC_EXPORT SEL sel_getUid(const char *str)
+       |  195|    OBJC_AVAILABLE(10.0, 2.0, 9.0, 1.0);
+       |  196|
+       |  197|typedef const void* objc_objectptr_t;
+       |  198|
+       |  199|
+       |  200|// Obsolete ARC conversions.
+       |  201|
+       |  202|OBJC_EXPORT id objc_retainedObject(objc_objectptr_t obj)
+       |  203|    OBJC_UNAVAILABLE("use CFBridgingRelease() or a (__bridge_transfer id) cast instead");
+       |  204|OBJC_EXPORT id objc_unretainedObject(objc_objectptr_t obj)
+       |  205|    OBJC_UNAVAILABLE("use a (__bridge id) cast instead");
+       |  206|OBJC_EXPORT objc_objectptr_t objc_unretainedPointer(id obj)
+       |  207|    OBJC_UNAVAILABLE("use a __bridge cast instead");
+       |  208|
+       |  209|
+       |  210|#if !__OBJC2__
+       |  211|
+       |  212|// The following declarations are provided here for source compatibility.
+       |  213|
+       |  214|#if defined(__LP64__)
+       |  215|    typedef long arith_t;
+       |  216|    typedef unsigned long uarith_t;
+       |  217|#   define ARITH_SHIFT 32
+       |  218|#else
+       |  219|    typedef int arith_t;
+       |  220|    typedef unsigned uarith_t;
+       |  221|#   define ARITH_SHIFT 16
+       |  222|#endif
+       |  223|
+       |  224|typedef char *STR;
+       |  225|
+       |  226|#define ISSELECTOR(sel) sel_isMapped(sel)
+       |  227|#define SELNAME(sel)	sel_getName(sel)
+       |  228|#define SELUID(str)	sel_getUid(str)
+       |  229|#define NAMEOF(obj)     object_getClassName(obj)
+       |  230|#define IV(obj)         object_getIndexedIvars(obj)
+       |  231|
+       |  232|#endif
+       |  233|
+       |  234|#endif  /* _OBJC_OBJC_H_ */
+
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk/usr/include/sys/_types.h:
+       |    1|/*
+       |    2| * Copyright (c) 2003-2007 Apple Inc. All rights reserved.
+       |    3| *
+       |    4| * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
+       |    5| * 
+       |    6| * This file contains Original Code and/or Modifications of Original Code
+       |    7| * as defined in and that are subject to the Apple Public Source License
+       |    8| * Version 2.0 (the 'License'). You may not use this file except in
+       |    9| * compliance with the License. The rights granted to you under the License
+       |   10| * may not be used to create, or enable the creation or redistribution of,
+       |   11| * unlawful or unlicensed copies of an Apple operating system, or to
+       |   12| * circumvent, violate, or enable the circumvention or violation of, any
+       |   13| * terms of an Apple operating system software license agreement.
+       |   14| * 
+       |   15| * Please obtain a copy of the License at
+       |   16| * http://www.opensource.apple.com/apsl/ and read it before using this file.
+       |   17| * 
+       |   18| * The Original Code and all software distributed under the License are
+       |   19| * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+       |   20| * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+       |   21| * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+       |   22| * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+       |   23| * Please see the License for the specific language governing rights and
+       |   24| * limitations under the License.
+       |   25| * 
+       |   26| * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+       |   27| */
+       |   28|
+       |   29|#ifndef _SYS__TYPES_H_
+       |   30|#define _SYS__TYPES_H_
+       |   31|
+       |   32|#include <sys/cdefs.h>
+       |   33|#include <machine/_types.h>
+       |   34|
+       |   35|/*
+       |   36| * Type definitions; takes common type definitions that must be used
+       |   37| * in multiple header files due to [XSI], removes them from the system
+       |   38| * space, and puts them in the implementation space.
+       |   39| */
+       |   40|
+       |   41|#ifdef __cplusplus
+       |   42|#ifdef __GNUG__
+       |   43|#define __DARWIN_NULL __null
+       |   44|#else /* ! __GNUG__ */
+       |   45|#ifdef __LP64__
+       |   46|#define __DARWIN_NULL (0L)
+       |   47|#else /* !__LP64__ */
+       |   48|#define __DARWIN_NULL 0
+       |   49|#endif /* __LP64__ */
+       |   50|#endif /* __GNUG__ */
+       |   51|#else /* ! __cplusplus */
+      1|   52|#define __DARWIN_NULL ((void *)0)
+       |   53|#endif /* __cplusplus */
+       |   54|
+       |   55|typedef	__int64_t	__darwin_blkcnt_t;	/* total blocks */
+       |   56|typedef	__int32_t	__darwin_blksize_t;	/* preferred block size */
+       |   57|typedef __int32_t	__darwin_dev_t;		/* dev_t */
+       |   58|typedef unsigned int	__darwin_fsblkcnt_t;	/* Used by statvfs and fstatvfs */
+       |   59|typedef unsigned int	__darwin_fsfilcnt_t;	/* Used by statvfs and fstatvfs */
+       |   60|typedef __uint32_t	__darwin_gid_t;		/* [???] process and group IDs */
+       |   61|typedef __uint32_t	__darwin_id_t;		/* [XSI] pid_t, uid_t, or gid_t*/
+       |   62|typedef __uint64_t	__darwin_ino64_t;	/* [???] Used for 64 bit inodes */
+       |   63|#if __DARWIN_64_BIT_INO_T
+       |   64|typedef __darwin_ino64_t __darwin_ino_t;	/* [???] Used for inodes */
+       |   65|#else /* !__DARWIN_64_BIT_INO_T */
+       |   66|typedef __uint32_t	__darwin_ino_t;		/* [???] Used for inodes */
+       |   67|#endif /* __DARWIN_64_BIT_INO_T */
+       |   68|typedef __darwin_natural_t __darwin_mach_port_name_t; /* Used by mach */
+       |   69|typedef __darwin_mach_port_name_t __darwin_mach_port_t; /* Used by mach */
+       |   70|typedef __uint16_t	__darwin_mode_t;	/* [???] Some file attributes */
+       |   71|typedef __int64_t	__darwin_off_t;		/* [???] Used for file sizes */
+       |   72|typedef __int32_t	__darwin_pid_t;		/* [???] process and group IDs */
+       |   73|typedef __uint32_t	__darwin_sigset_t;	/* [???] signal set */
+       |   74|typedef __int32_t	__darwin_suseconds_t;	/* [???] microseconds */
+       |   75|typedef __uint32_t	__darwin_uid_t;		/* [???] user IDs */
+       |   76|typedef __uint32_t	__darwin_useconds_t;	/* [???] microseconds */
+       |   77|typedef	unsigned char	__darwin_uuid_t[16];
+       |   78|typedef	char	__darwin_uuid_string_t[37];
+       |   79|
+       |   80|#include <sys/_pthread/_pthread_types.h>
+       |   81|
+       |   82|#if defined(__GNUC__) && (__GNUC__ == 3 && __GNUC_MINOR__ >= 5 || __GNUC__ > 3)
+       |   83|#define __offsetof(type, field) __builtin_offsetof(type, field)
+       |   84|#else /* !(gcc >= 3.5) */
+       |   85|#define __offsetof(type, field) ((size_t)(&((type *)0)->field))
+       |   86|#endif /* (gcc >= 3.5) */
+       |   87|
+       |   88|
+       |   89|#endif	/* _SYS__TYPES_H_ */
+
+/Users/wansy/Documents/project/BYSelf/UnitTest/UnitTest/AppDelegate.m:
+       |    1|//
+       |    2|//  AppDelegate.m
+       |    3|//  UnitTest
+       |    4|//
+       |    5|//  Created by wansy on 16/10/13.
+       |    6|//  Copyright © 2016年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "AppDelegate.h"
+       |   10|
+       |   11|@interface AppDelegate ()
+       |   12|
+       |   13|@end
+       |   14|
+       |   15|@implementation AppDelegate
+       |   16|
+       |   17|
+      1|   18|- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+      1|   19|    // Override point for customization after application launch.
+      1|   20|    return YES;
+      1|   21|}
+       |   22|
+       |   23|
+      0|   24|- (void)applicationWillResignActive:(UIApplication *)application {
+      0|   25|    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+      0|   26|    // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+      0|   27|}
+       |   28|
+       |   29|
+      0|   30|- (void)applicationDidEnterBackground:(UIApplication *)application {
+      0|   31|    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+      0|   32|    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+      0|   33|}
+       |   34|
+       |   35|
+      0|   36|- (void)applicationWillEnterForeground:(UIApplication *)application {
+      0|   37|    // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+      0|   38|}
+       |   39|
+       |   40|
+      1|   41|- (void)applicationDidBecomeActive:(UIApplication *)application {
+      1|   42|    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+      1|   43|}
+       |   44|
+       |   45|
+      0|   46|- (void)applicationWillTerminate:(UIApplication *)application {
+      0|   47|    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+      0|   48|}
+       |   49|
+       |   50|
+       |   51|@end
+
+/Users/wansy/Documents/project/BYSelf/UnitTest/UnitTest/MaxNumber.m:
+       |    1|//
+       |    2|//  MaxNumber.m
+       |    3|//  UnitTest
+       |    4|//
+       |    5|//  Created by wansy on 16/10/13.
+       |    6|//  Copyright © 2016年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "MaxNumber.h"
+       |   10|
+       |   11|@implementation MaxNumber
+       |   12|
+       |   13|+(int)getMaxNumber:(int)a b:(int)b c:(int)c
+      4|   14|{
+      4|   15|    if(a > b){
+      2|   16|        if(a > c){
+      1|   17|            return a;
+      1|   18|        }else{
+      1|   19|            return c;
+      1|   20|        }
+      2|   21|    }else{
+      2|   22|        if(b > c){
+      1|   23|            return b;
+      1|   24|        }else{
+      1|   25|            return c;
+      1|   26|        }
+      2|   27|    }
+      4|   28|}
+       |   29|
+       |   30|
+       |   31|@end
+
+/Users/wansy/Documents/project/BYSelf/UnitTest/UnitTest/ViewController.m:
+       |    1|//
+       |    2|//  ViewController.m
+       |    3|//  UnitTest
+       |    4|//
+       |    5|//  Created by wansy on 16/10/13.
+       |    6|//  Copyright © 2016年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import "ViewController.h"
+       |   10|
+       |   11|@interface ViewController ()
+       |   12|
+       |   13|@end
+       |   14|
+       |   15|@implementation ViewController
+       |   16|
+      1|   17|- (void)viewDidLoad {
+      1|   18|    [super viewDidLoad];
+      1|   19|    // Do any additional setup after loading the view, typically from a nib.
+      1|   20|}
+       |   21|
+       |   22|
+      0|   23|- (void)didReceiveMemoryWarning {
+      0|   24|    [super didReceiveMemoryWarning];
+      0|   25|    // Dispose of any resources that can be recreated.
+      0|   26|}
+       |   27|
+       |   28|
+       |   29|@end
+
+/Users/wansy/Documents/project/BYSelf/UnitTest/UnitTest/main.m:
+       |    1|//
+       |    2|//  main.m
+       |    3|//  UnitTest
+       |    4|//
+       |    5|//  Created by wansy on 16/10/13.
+       |    6|//  Copyright © 2016年 wansy. All rights reserved.
+       |    7|//
+       |    8|
+       |    9|#import <UIKit/UIKit.h>
+       |   10|#import "AppDelegate.h"
+       |   11|
+      1|   12|int main(int argc, char * argv[]) {
+      1|   13|    @autoreleasepool {
+      1|   14|        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+      1|   15|    }
+      1|   16|}
+
