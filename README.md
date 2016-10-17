@@ -4,7 +4,7 @@
 
 首先新建一个项目，并确认你选上了Unit tests选项
 
-![](http://coding.hengtiansoft.com/mobilecoe/ios-standardization-doc/raw/master/images/CodeCoverage/UnitTests.png)
+![](https://github.com/Ethan-Wan/EWChartView/raw/master/CodeCoverage/UnitTests.png)
 
 #### 二. 勾选code coverage
 
